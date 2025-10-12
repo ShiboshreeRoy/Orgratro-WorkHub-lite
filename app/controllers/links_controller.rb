@@ -5,10 +5,24 @@ class LinksController < ApplicationController
   # Set link for show, edit, update, destroy actions
   before_action :set_learn_and_earn, only: %i[ show edit update destroy ]
 
-  # GET /links or /links.json
+  # app/controllers/links_controller.rb
   def index
-      @links = Link.page(params[:page]).per(10)  # 10 items per page
+  @links = Link.page(params[:page]).per(10)
+
+  respond_to do |format|
+    format.html
+    format.json do
+      render json: {
+        links: @links,
+        meta: {
+          current_page: @links.current_page,
+          total_pages: @links.total_pages,
+          total_count: @links.total_count
+        }
+      }
+    end
   end
+end
 
 
   # GET /links/1 or /links/1.json

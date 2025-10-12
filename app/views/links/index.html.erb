@@ -15,12 +15,16 @@
 <!-- Links Grid -->
 <div id="links" class="flex justify-center  items-center gap-6">
     <%= render 'link'%>
+    
 </div>
 
 <!-- Pagination -->
-<div class="flex justify-center mt-10">
-  <%= paginate @links , class: "px-4 py-2 text-3xl bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-200 shadow-md flex items-center"%>
+<div class="flex justify-center mt-10 text-white">
+ <%= paginate @links,  class: "text-white text-3xl" %>
 </div>
+
+
+
 
 <!-- Tailwind Custom Style (optional override) -->
 <style>

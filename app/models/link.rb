@@ -4,8 +4,7 @@ class Link < ApplicationRecord
     has_many :learn_and_earns, dependent: :destroy
     #has_many :file
     has_many_attached :files
-
-
+    paginates_per 10  # Default items per page for pagination
 
     has_many :user_links, dependent: :nullify
   
