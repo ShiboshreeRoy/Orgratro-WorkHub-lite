@@ -1,22 +1,56 @@
-<h1>Tasks</h1>
+<body class="bg-black text-blue-100">
+<h1 class="text-3xl font-bold text-blue-400 mb-6 text-center">📋 Tasks</h1>
 
-<%= link_to "New Task", new_task_path, class: "btn btn-primary" %>
+<!-- Only admins see the "New Task" button -->
+<% if current_user.admin? %>
+  <div class="text-center mb-6">
+    <%= link_to "➕ New Task", new_task_path,
+                class: "inline-block px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 transition" %>
+  </div>
+<% end %>
 
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Type</th>
-    <th>Actions</th>
-  </tr>
-  <% @tasks.each do |task| %>
+<!-- Tasks Table -->
+<table class="w-full border border-blue-800 text-blue-100 bg-black rounded-xl shadow-lg">
+  <thead class="bg-blue-950 text-blue-400">
     <tr>
-      <td><%= task.name %></td>
-      <td><%= task.task_type %></td>
-      <td>
-        <%= link_to "Edit", edit_task_path(task) %> |
-        <%= link_to "Delete", task_path(task), method: :delete, data: { confirm: "Are you sure?" } %> |
-        <%= link_to "Send to All", send_to_all_task_path(task), method: :post, data: { confirm: "Send to all users?" } %>
-      </td>
+      <th class="px-4 py-3 border-b border-blue-800 text-left">Name</th>
+      <th class="px-4 py-3 border-b border-blue-800 text-left">Type</th>
+      <th class="px-4 py-3 border-b border-blue-800 text-left">Link</th>
+      <th class="px-4 py-3 border-b border-blue-800 text-left">Description</th>
+      <th class="px-4 py-3 border-b border-blue-800 text-left">Proved</th>
+      <% if current_user.admin? %>
+        <th class="px-4 py-3 border-b border-blue-800 text-left">Actions</th>
+      <% end %>
     </tr>
-  <% end %>
+  </thead>
+
+  <tbody>
+    <% @tasks.each do |task| %>
+      <tr class="hover:bg-blue-950 transition">
+        <td class="px-4 py-3 border-b border-blue-900"><%= task.name %></td>
+        <td class="px-4 py-3 border-b border-blue-900"><%= task.task_type %></td>
+        <td class="px-4 py-3 border-b border-blue-900"><%= task.link %></td>
+        <td class="px-4 py-3 border-b border-blue-900"><%= task.description %></td>
+        <td class="px-4 py-3 border-b border-blue-900"><%= task.image %></td>
+
+
+        <% if current_user.admin? %>
+          <td class="px-4 py-3 border-b border-blue-900 space-x-3">
+            <%= link_to "✏️ Edit", edit_task_path(task),
+                        class: "text-blue-400 hover:text-blue-300" %> |
+            <%= link_to "🗑️ Delete", task_path(task),
+                        method: :delete,
+                        data: { confirm: "Are you sure?" },
+                        class: "text-red-400 hover:text-red-300" %> |
+            <%= link_to "📢 Send to All", send_to_all_task_path(task),
+                        method: :post,
+                        data: { confirm: "Send this task to all users?" },
+                        class: "text-yellow-400 hover:text-yellow-300" %>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
 </table>
+
+</body>

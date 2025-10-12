@@ -1,36 +1,46 @@
-<%= form_with(model: @task, class: "max-w-2xl mx-auto bg-black text-blue-100 p-8 rounded-2xl shadow-2xl space-y-6") do |f| %>
-  <!-- Form Title -->
-  <h2 class="text-2xl font-bold text-blue-400 flex items-center gap-2">
-    <i class="fa-solid fa-list-check"></i>
-    Create New Task
-  </h2>
+<body class="bg-black">
+  <%= form_with(model: @task, class: "max-w-2xl mx-auto bg-black text-blue-100 p-8 rounded-2xl shadow-2xl space-y-6", multipart: true) do |f| %>
+    
+    <!-- Form Title -->
+    <h2 class="text-2xl font-bold text-blue-400 flex items-center gap-2">
+      <i class="fa-solid fa-list-check"></i>
+      Create New Task
+    </h2>
 
-  <!-- Task Name -->
-  <div>
-    <%= f.label :name, "Task Name", class: "block text-sm font-medium text-blue-300 mb-2" %>
-    <%= f.text_field :name, class: "w-full px-4 py-2 bg-gray-900 border border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" %>
-  </div>
+    <!-- Task Name -->
+    <div>
+      <%= f.label :name, "Task Name", class: "block text-sm font-medium text-blue-300 mb-2" %>
+      <%= f.text_field :name, class: "w-full px-4 py-2 bg-gray-900 border border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" %>
+    </div>
 
-  <!-- Task Type -->
-  <div>
-    <%= f.label :task_type, "Task Type", class: "block text-sm font-medium text-blue-300 mb-2" %>
-    <%= f.select :task_type, Task::TASK_TYPES, {}, class: "w-full px-4 py-2 bg-gray-900 border border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" %>
-  </div>
+    <!-- Task Type -->
+    <div>
+      <%= f.label :task_type, "Task Type", class: "block text-sm font-medium text-blue-300 mb-2" %>
+      <%= f.select :task_type, Task::TASK_TYPES, {}, class: "w-full px-4 py-2 bg-gray-900 border border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" %>
+    </div>
 
-  <!-- Task Link -->
-  <div>
-    <%= f.label :link, "Task Link", class: "block text-sm font-medium text-blue-300 mb-2" %>
-    <%= f.text_field :link, class: "w-full px-4 py-2 bg-gray-900 border border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" %>
-  </div>
+    <!-- Task Link (optional if Excel is uploaded) -->
+    <div>
+      <%= f.label :link, "Single Task Link", class: "block text-sm font-medium text-blue-300 mb-2" %>
+      <%= f.text_field :link, placeholder: "https://example.com/task", class: "w-full px-4 py-2 bg-gray-900 border border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" %>
+    </div>
 
-  <!-- Description -->
-  <div>
-    <%= f.label :description, "Description", class: "block text-sm font-medium text-blue-300 mb-2" %>
-    <%= f.text_area :description, rows: 4, class: "w-full px-4 py-2 bg-gray-900 border border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" %>
-  </div>
+    <!-- Excel Upload -->
+    <div>
+      <%= f.label :file, "📂 Upload Excel file for multiple task links", class: "block text-sm font-medium text-blue-300 mb-2" %>
+      <%= f.file_field :file, accept: ".xlsx,.xls,.csv", class: "w-full text-blue-100 bg-gray-900 border border-blue-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 outline-none" %>
+      <p class="text-sm text-blue-400 mt-1">Format: First column should contain task links.</p>
+    </div>
 
-  <!-- Submit Button -->
-  <div class="text-center">
-    <%= f.submit "Create Task", class: "px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 ease-in-out" %>
-  </div>
-<% end %>
+    <!-- Description -->
+    <div>
+      <%= f.label :description, "Description", class: "block text-sm font-medium text-blue-300 mb-2" %>
+      <%= f.text_area :description, rows: 4, class: "w-full px-4 py-2 bg-gray-900 border border-blue-500 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none" %>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center">
+      <%= f.submit "Create Task(s)", class: "px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-xl shadow-lg transform hover:scale-105 transition-all duration-200 ease-in-out" %>
+    </div>
+  <% end %>
+</body>
