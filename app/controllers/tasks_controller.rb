@@ -6,10 +6,13 @@ class TasksController < ApplicationController
   before_action :require_admin!, except: [:index, :show]
 
   def index
-    # Normal users: see only visible tasks
-    # Admins: see everything
-    @tasks = Task.order(created_at: :desc)
-  end
+  # Normal users: see only visible tasks
+  # Admins: see everything
+  @tasks = Task.order(created_at: :desc)
+               .page(params[:page])
+               .per(10)  # Adjust the number of tasks per page
+end
+
 
   def show
   end
