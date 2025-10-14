@@ -50,10 +50,13 @@
 
 
         <%= link_to new_admin_notification_path,class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
-          <i class="fas fa-bell"></i> Send Notifications
+          <i class="fas fa-bell "></i> Send Notifications
         <% end %>
 
-        <%= link_to 'Referrals', admin_referrals_path, class: "px-4 py-2 rounded-lg #{current_page?(admin_referrals_path) ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}" %>
+        <%= link_to admin_referrals_path, class: "px-4 py-2 rounded-lg flex items-center space-x-2 #{current_page?(admin_referrals_path) ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}" do %>
+  <i class="fas fa-user-friends"></i> <!-- Font Awesome icon -->
+  <span>Referrals</span>
+<% end %>
 
         <%= link_to   edit_user_registration_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-cogs"></i> Settings
