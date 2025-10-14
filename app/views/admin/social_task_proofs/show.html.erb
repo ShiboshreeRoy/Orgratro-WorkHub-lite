@@ -1,0 +1,16 @@
+<h2>Proof ##<%= @proof.id %></h2>
+<p>User: <%= link_to @proof.user.email, admin_social_task_proof_path(@proof) %></p>
+<p>URL: <%= link_to @proof.post_url, @proof.post_url, target: '_blank' %></p>
+<p>Status: <%= @proof.status %></p>
+
+
+<%= form_with url: admin_social_task_proof_path(@proof), method: :patch, local: true do |f| %>
+<%= hidden_field_tag :approve_action, 'approve' %>
+<%= f.submit 'Approve', data: { confirm: 'Are you sure? Approving will mark it complete.' } %>
+<% end %>
+
+
+<%= form_with url: admin_social_task_proof_path(@proof), method: :patch, local: true do |f| %>
+<%= hidden_field_tag :approve_action, 'reject' %>
+<%= f.submit 'Reject', data: { confirm: 'Reject proof?' } %>
+<% end %>

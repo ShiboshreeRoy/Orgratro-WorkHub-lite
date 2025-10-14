@@ -1,0 +1,10 @@
+<h2>Proof</h2>
+<p>URL: <%= link_to @proof.post_url, @proof.post_url, target: '_blank', rel: 'noopener' %></p>
+<p>Status: <%= @proof.status.titleize %></p>
+<% if @proof.approved? %>
+<p>Approved at: <%= @proof.approved_at %></p>
+<% elsif @proof.rejected? %>
+<p>Rejected by admin.</p>
+<% else %>
+<p>Waiting for admin approval.</p>
+<% end %>

@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
   
   
-  
+   resources :social_task_proofs, only: [:new, :create, :index, :show]
+
   namespace :admin do
     resources :notifications, only: [:new, :create]
+    resources :social_task_proofs, only: [:index, :show, :update]
   end
   
  

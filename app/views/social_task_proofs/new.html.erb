@@ -1,0 +1,9 @@
+<%= form_with model: @proof, local: true do |f| %>
+  <%= f.label :task_id, "Select Task" %>
+  <%= f.collection_select :task_id, SocialTask.all, :id, :name, prompt: "Choose a task" %>
+
+  <%= f.label :post_url %>
+  <%= f.text_field :post_url %>
+
+  <%= f.submit "Submit Proof" %>
+<% end %>

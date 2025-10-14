@@ -16,3 +16,7 @@ User.create!(
   role: "admin"
 )
 puts  "Accunt create successfully !"
+
+SocialTask.create(name: "Like on Facebook")
+SocialTask.create(name: "Share on Instagram")
+SocialTask.create(name: "Follow on Twitter")

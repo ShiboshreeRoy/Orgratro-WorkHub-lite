@@ -76,6 +76,12 @@ class User < ApplicationRecord
     super && !suspended?
   end
 
+  has_many :social_task_proofs, dependent: :destroy
+
+
+  def social_tasks_completed_count
+      social_task_proofs.approved.count
+  end
   # Optional: custom message
   def inactive_message
     !suspended? ? super : :suspended

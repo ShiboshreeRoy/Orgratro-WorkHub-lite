@@ -1,0 +1,26 @@
+<h2>All proofs</h2>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>User</th>
+<th>URL</th>
+<th>Status</th>
+<th>Submitted</th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<% @proofs.each do |p| %>
+<tr>
+<td><%= p.id %></td>
+<td><%= link_to p.user.email, admin_social_task_proof_path(p) %></td>
+<td><%= truncate(p.post_url, length: 60) %></td>
+<td><%= p.status %></td>
+<td><%= time_ago_in_words(p.created_at) %> ago</td>
+<td><%= link_to 'View', admin_social_task_proof_path(p) %></td>
+</tr>
+<% end %>
+</tbody>
+</table>
+<%= link_to "Add Proved", new_social_task_proof_path%>

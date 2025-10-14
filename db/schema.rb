@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_10_11_154716) do
+ActiveRecord::Schema[7.2].define(version: 2025_10_14_141343) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -121,6 +121,25 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_11_154716) do
     t.index ["token"], name: "index_referrals_on_token", unique: true
   end
 
+  create_table "social_task_proofs", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "post_url"
+    t.integer "status"
+    t.bigint "task_id"
+    t.datetime "approved_at"
+    t.text "notes"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["task_id"], name: "index_social_task_proofs_on_task_id"
+    t.index ["user_id"], name: "index_social_task_proofs_on_user_id"
+  end
+
+  create_table "social_tasks", force: :cascade do |t|
+    t.string "name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "tasks", force: :cascade do |t|
     t.string "name"
     t.string "task_type"
@@ -200,6 +219,7 @@ ActiveRecord::Schema[7.2].define(version: 2025_10_11_154716) do
   add_foreign_key "notifications", "users"
   add_foreign_key "referrals", "users", column: "referred_user_id"
   add_foreign_key "referrals", "users", column: "referrer_id"
+  add_foreign_key "social_task_proofs", "users"
   add_foreign_key "tasks", "users"
   add_foreign_key "user_links", "links"
   add_foreign_key "user_links", "users"
