@@ -31,10 +31,15 @@
       </tbody>
     </table>
   </div>
+<div class="mt-4">
+  <%= link_to "Download PDF", admin_referrals_path(format: :pdf), 
+              class: "px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" %>
+</div>
 
   <!-- Pagination -->
   <div class="mt-6 flex justify-center">
     <%= paginate @referrals %>
   </div>
 </div>
+
 </body>
