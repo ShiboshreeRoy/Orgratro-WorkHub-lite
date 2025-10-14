@@ -1,0 +1,40 @@
+<body class="bg-black text-blue-400">
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+  <div class="flex justify-between items-center mb-6">
+    <h2 class="text-3xl font-bold text-white">All Referrals</h2>
+    <span class="text-gray-200 font-semibold">Total Referrals: <%= @total_referrals %></span>
+  </div>
+
+  <div class="overflow-x-auto bg-gray-900 rounded-xl shadow-md">
+    <table class="min-w-full divide-y divide-gray-700">
+      <thead class="bg-gray-800">
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-300">Referrer</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-300">Referred User</th>
+          <th class="px-6 py-3 text-left text-sm font-semibold text-gray-300">Joined At</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-gray-700">
+        <% @referrals.each do |referral| %>
+          <tr class="hover:bg-gray-700 transition">
+            <td class="px-6 py-4 text-sm text-blue-400">
+              <%= referral.referrer&.email || "N/A" %>
+            </td>
+            <td class="px-6 py-4 text-sm text-blue-400">
+              <%= referral.referred_user&.email || "N/A" %>
+            </td>
+            <td class="px-6 py-4 text-sm text-gray-300">
+              <%= referral.created_at.strftime("%B %d, %Y %H:%M") %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="mt-6 flex justify-center">
+    <%= paginate @referrals %>
+  </div>
+</div>
+</body>

@@ -3,17 +3,20 @@ Rails.application.routes.draw do
   
    resources :social_task_proofs, only: [:new, :create, :index, :show]
 
-  namespace :admin do
-    resources :notifications, only: [:new, :create]
-    resources :social_task_proofs, only: [:index, :show, :update]
-  end
-  
- 
+namespace :admin do
+  resources :notifications, only: [:new, :create]
+  resources :social_task_proofs, only: [:index, :show, :update]
+  resources :users, only: [:index, :show]       # ← add this
+  get 'referrals', to: 'referrals#index', as: 'referrals'
+end
+
+
   get "user_dashbord/index"
   get "reports/index"
   get "profile/index"
   get "reports/user_clicks", to: "reports#user_clicks"
   get "reports/user_clicks.pdf", to: "reports#user_clicks", defaults: { format: :pdf }
+  #get 'referrals', to: 'referrals#index', as: 'referrals'
 
   resources :withdrawals
  resources :clicks, only: [:create]

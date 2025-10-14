@@ -53,6 +53,8 @@
           <i class="fas fa-bell"></i> Send Notifications
         <% end %>
 
+        <%= link_to 'Referrals', admin_referrals_path, class: "px-4 py-2 rounded-lg #{current_page?(admin_referrals_path) ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}" %>
+
         <%= link_to   edit_user_registration_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-cogs"></i> Settings
         <% end %>
