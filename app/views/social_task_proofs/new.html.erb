@@ -1,9 +1,22 @@
-<%= form_with model: @proof, local: true do |f| %>
-  <%= f.label :task_id, "Select Task" %>
-  <%= f.collection_select :task_id, SocialTask.all, :id, :name, prompt: "Choose a task" %>
+<body class="bg-black text-blue-400">
+<div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mt-8">
+  <h2 class="text-2xl font-semibold text-gray-800 mb-6">Submit Proof</h2>
 
-  <%= f.label :post_url %>
-  <%= f.text_field :post_url %>
+  <%= form_with model: @proof, local: true do |f| %>
+    <div class="mb-4">
+      <%= f.label :task_id, "Select Task", class: "block text-gray-700 font-medium mb-2" %>
+      <%= f.collection_select :task_id, SocialTask.all, :id, :name, { prompt: "Choose a task" }, 
+            { class: "w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" } %>
+    </div>
 
-  <%= f.submit "Submit Proof" %>
-<% end %>
+    <div class="mb-4">
+      <%= f.label :post_url, class: "block text-gray-700 font-medium mb-2" %>
+      <%= f.text_field :post_url, class: "w-full border-gray-300 rounded-lg shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500" %>
+    </div>
+
+    <div class="mt-6">
+      <%= f.submit "Submit Proof", class: "w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition" %>
+    </div>
+  <% end %>
+</div>
+</body>

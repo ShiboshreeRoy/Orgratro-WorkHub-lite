@@ -1,16 +1,50 @@
-<h2>Proof ##<%= @proof.id %></h2>
-<p>User: <%= link_to @proof.user.email, admin_social_task_proof_path(@proof) %></p>
-<p>URL: <%= link_to @proof.post_url, @proof.post_url, target: '_blank' %></p>
-<p>Status: <%= @proof.status %></p>
+<body class="bg-black text-blue-400">
+<div class="max-w-xl mx-auto mt-8 bg-white p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all">
+  <h2 class="text-2xl font-semibold text-gray-800 mb-4">Proof ##<%= @proof.id %></h2>
 
+  <div class="mb-3">
+    <p class="text-gray-700"><span class="font-medium">User:</span> 
+      <%= link_to @proof.user.email, admin_social_task_proof_path(@proof), class: "text-blue-600 hover:underline" %>
+    </p>
+  </div>
 
-<%= form_with url: admin_social_task_proof_path(@proof), method: :patch, local: true do |f| %>
-<%= hidden_field_tag :approve_action, 'approve' %>
-<%= f.submit 'Approve', data: { confirm: 'Are you sure? Approving will mark it complete.' } %>
-<% end %>
+  <div class="mb-3">
+    <p class="text-gray-700"><span class="font-medium">URL:</span> 
+      <%= link_to @proof.post_url, @proof.post_url, target: '_blank', rel: 'noopener', class: "text-blue-600 hover:underline" %>
+    </p>
+  </div>
 
+  <div class="mb-4">
+    <p class="text-gray-700"><span class="font-medium">Status:</span> 
+      <span class="px-2 py-1 rounded-full text-sm font-semibold
+        <%= case @proof.status
+            when 'approved' then 'bg-green-100 text-green-800'
+            when 'rejected' then 'bg-red-100 text-red-800'
+            else 'bg-yellow-100 text-yellow-800'
+            end %>">
+        <%= @proof.status.titleize %>
+      </span>
+    </p>
+  </div>
 
-<%= form_with url: admin_social_task_proof_path(@proof), method: :patch, local: true do |f| %>
-<%= hidden_field_tag :approve_action, 'reject' %>
-<%= f.submit 'Reject', data: { confirm: 'Reject proof?' } %>
-<% end %>
+  <div class="flex gap-4 mt-6">
+    <%= form_with url: admin_social_task_proof_path(@proof), method: :patch, local: true do |f| %>
+      <%= hidden_field_tag :approve_action, 'approve' %>
+      <%= f.submit 'Approve', 
+          class: "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition",
+          data: { confirm: 'Are you sure? Approving will mark it complete.' } %>
+    <% end %>
+
+    <%= form_with url: admin_social_task_proof_path(@proof), method: :patch, local: true do |f| %>
+      <%= hidden_field_tag :approve_action, 'reject' %>
+      <%= f.submit 'Reject', 
+          class: "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition",
+          data: { confirm: 'Reject proof?' } %>
+    <% end %>
+  </div>
+
+  <div class="mt-4">
+    <%= link_to 'Back to All Proofs', admin_social_task_proofs_path, class: "inline-block px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition" %>
+  </div>
+</div>
+</body>

@@ -3,9 +3,11 @@ module Admin
     before_action :authenticate_admin!
     before_action :set_proof, only: [:show, :update]
 
-    def index
-      @proofs = SocialTaskProof.order(created_at: :desc).page(params[:page])
+   def index
+     @proofs = SocialTaskProof.order(created_at: :desc).page(params[:page]).per(10) 
+  # .per(10) sets 10 proofs per page, adjust as needed
     end
+
 
     def show
     end

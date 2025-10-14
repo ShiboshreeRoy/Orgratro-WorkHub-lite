@@ -1,10 +1,40 @@
-<h2>Proof</h2>
-<p>URL: <%= link_to @proof.post_url, @proof.post_url, target: '_blank', rel: 'noopener' %></p>
-<p>Status: <%= @proof.status.titleize %></p>
-<% if @proof.approved? %>
-<p>Approved at: <%= @proof.approved_at %></p>
-<% elsif @proof.rejected? %>
-<p>Rejected by admin.</p>
-<% else %>
-<p>Waiting for admin approval.</p>
-<% end %>
+<body class="bg-black text-blue-400">
+<div class="max-w-xl mx-auto mt-8 bg-white p-6 rounded-lg shadow-md">
+  <h2 class="text-2xl font-semibold text-gray-800 mb-4">Proof Details</h2>
+
+  <div class="mb-4">
+    <p class="text-gray-700"><span class="font-medium">URL:</span> 
+   <%= link_to truncate(@proof.post_url, length: 30), @proof.post_url, target: '_blank', rel: 'noopener', class: "text-blue-600 hover:underline" %>
+
+       </p>
+  </div>
+
+  <div class="mb-4">
+    <p class="text-gray-700"><span class="font-medium">Status:</span> 
+      <span class="px-2 py-1 rounded-full text-sm font-semibold
+        <%= case @proof.status
+            when 'approved' then 'bg-green-100 text-green-800'
+            when 'rejected' then 'bg-red-100 text-red-800'
+            else 'bg-yellow-100 text-yellow-800'
+            end %>">
+        <%= @proof.status.titleize %>
+      </span>
+    </p>
+  </div>
+
+  <div class="mb-4">
+    <% if @proof.approved? %>
+      <p class="text-gray-600"><span class="font-medium">Approved at:</span> <%= @proof.approved_at.strftime("%B %d, %Y %H:%M") %></p>
+    <% elsif @proof.rejected? %>
+      <p class="text-gray-600">Rejected by admin.</p>
+    <% else %>
+      <p class="text-gray-600">Waiting for admin approval.</p>
+    <% end %>
+  </div>
+
+  <div class="mt-6">
+    <%= link_to 'Back to All Proofs', admin_social_task_proofs_path, class: "inline-block px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition" %>
+  </div>
+</div>
+
+</body>

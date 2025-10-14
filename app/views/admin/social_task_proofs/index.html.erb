@@ -1,3 +1,39 @@
-<% @proofs.each do |proof| %>
-  <%= link_to "View", admin_social_task_proof_path(proof) %>
-<% end %>
+<body class="bg-black text-blue-400 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <h2 class="text-3xl font-bold text-white mb-6">All Proofs</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @proofs.each do |proof| %>
+        <div class="bg-gray-900 p-4 rounded-xl shadow-md hover:shadow-xl transition flex flex-col justify-between">
+          <div class="mb-4">
+            <p class="text-gray-300"><span class="font-medium text-white">User:</span> 
+              <%= link_to proof.user.email, admin_social_task_proof_path(proof), class: "text-blue-400 hover:underline" %>
+            </p>
+            <p class="text-gray-400 text-sm mt-1 "><span class="font-medium text-white">URL:</span> 
+              <%= truncate(proof.post_url, length: 10) %>
+            </p>
+            <p class="mt-2">
+              <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                <%= case proof.status
+                    when 'approved' then 'bg-green-600 text-white'
+                    when 'rejected' then 'bg-red-600 text-white'
+                    else 'bg-yellow-500 text-white'
+                    end %>">
+                <%= proof.status.titleize %>
+              </span>
+            </p>
+          </div>
+
+          <div class="mt-auto">
+            <%= link_to "View", admin_social_task_proof_path(proof), class: "w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</body>
+
+
+<div class="mt-6 flex justify-center">
+    <%= paginate @proofs %>
+</div>

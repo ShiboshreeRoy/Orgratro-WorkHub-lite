@@ -3,9 +3,13 @@ class SocialTaskProofsController < ApplicationController
     before_action :set_proof, only: [:show]
 
 
-    def index
-        @proofs = current_user.social_task_proofs.order(created_at: :desc)
-    end
+   def index
+  @proofs = current_user.social_task_proofs
+                        .order(created_at: :desc)
+                        .page(params[:page])
+                        .per(10)  # Adjust the number of items per page
+   
+end
 
 
     def new
