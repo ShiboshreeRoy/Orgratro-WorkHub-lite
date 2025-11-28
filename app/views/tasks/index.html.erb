@@ -16,6 +16,7 @@
       <th class="px-4 py-3 border-b border-blue-800 text-left">Name</th>
       <th class="px-4 py-3 border-b border-blue-800 text-left">Type</th>
       <th class="px-4 py-3 border-b border-blue-800 text-left">Link</th>
+      <th class="px-4 py-3 border-b border-blue-800 text-left">Description</th>
       
       <% if current_user.admin? %>
         <th class="px-4 py-3 border-b border-blue-800 text-left">Actions</th>
@@ -29,7 +30,7 @@
         <td class="px-4 py-3 border-b border-blue-900"><%= task.name %></td>
         <td class="px-4 py-3 border-b border-blue-900"><%= task.task_type %></td>
         <td class="px-4 py-3 border-b border-blue-900"><%= task.link %></td>
-        
+        <td class="px-4 py-3 border-b border-blue-900"><%= task.description %></td>
 
 
         <% if current_user.admin? %>

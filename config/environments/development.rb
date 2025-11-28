@@ -37,7 +37,7 @@ Rails.application.configure do
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
   config.middleware.insert_before 0, Rack::Static,
-    urls: ["/_/2-MgjLv-.js"], root: "public"
+    urls: [ "/_/2-MgjLv-.js" ], root: "public"
 
   # Disable caching for Action Mailer templates even if Action Controller
   # caching is enabled.
@@ -74,6 +74,7 @@ Rails.application.configure do
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
+  Rails.application.routes.default_url_options[:host] = "https://org.orgatroworkhub.xyz"
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
@@ -92,5 +93,4 @@ Rails.application.configure do
   password: ENV["GMAIL_PASSWORD"],
   enable_starttls_auto: true
 }
-
 end

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>URL Shortener</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+  body {
+    background-color: #0a0a12;
+    background-image: 
+      radial-gradient(circle at 10% 20%, rgba(30, 58, 138, 0.1) 0%, rgba(0, 0, 0, 0) 40%),
+      radial-gradient(circle at 90% 80%, rgba(30, 64, 175, 0.1) 0%, rgba(0, 0, 0, 0) 40%);
+    color: #e0f2fe;
+    font-family: 'Inter', sans-serif;
+  }
+</style>
+</head>
+<body class="  p-4">
+
+  <div class="w-full mt-5 mb-5 max-w-lg bg-white/10 backdrop-blur-xl shadow-2xl p-8 rounded-2xl border border-white/20">
+
+    <h1 class="text-3xl font-bold text-white text-center mb-6 drop-shadow-sm">
+      URL Shortener
+    </h1>
+
+    <!-- Form -->
+    <form onsubmit="createShort(event)" class="space-y-4">
+      <input id="url" 
+             type="text" 
+             placeholder="Enter long URL"
+             class="w-full p-3 rounded-xl bg-white/20 text-white placeholder-white/60 border border-white/30 focus:bg-white/30 focus:ring-2 focus:ring-blue-300 outline-none transition">
+      
+      <button type="submit"
+              class="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 transition font-semibold text-white shadow-lg">
+        Shorten URL
+      </button>
+    </form>
+
+    <!-- Result -->
+    <div id="result" class="mt-6"></div>
+  </div>
+
+<script>
+function createShort(e) {
+  e.preventDefault();
+  let url = document.getElementById("url").value;
+
+  fetch('/short_links', {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ original: url })
+  })
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("result").innerHTML = `
+      <div class="bg-white/20 backdrop-blur-xl p-4 rounded-xl border border-white/20 shadow-lg mt-4">
+        <p class="text-white font-medium mb-2">Short Link:</p>
+
+        <div class="flex space-x-2">
+          <input id="short" 
+                 value="${data.short_url}" 
+                 readonly 
+                 class="flex-1 p-3 bg-white/30 text-white rounded-xl border border-white/30 outline-none" />
+
+          <button onclick="copyShort()"
+                  class="px-4 py-3 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl shadow">
+            Copy
+          </button>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function copyShort() {
+  let copyText = document.getElementById("short");
+  navigator.clipboard.writeText(copyText.value)
+    .then(() => {
+      // Toast style notification
+      const toast = document.createElement('div');
+      toast.innerText = "Copied!";
+      toast.className = "fixed bottom-5 right-5 bg-green-500 text-white px-4 py-2 rounded shadow-lg animate-fade";
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 1500);
+    });
+}
+</script>
+
+<style>
+@keyframes fade {
+  0% { opacity: 0; transform: translateY(10px); }
+  10% { opacity: 1; transform: translateY(0); }
+  90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+
+.animate-fade {
+  animation: fade 1.5s ease forwards;
+}
+</style>
+
+</body>
+</html>

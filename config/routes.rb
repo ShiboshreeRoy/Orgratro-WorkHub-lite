@@ -1,13 +1,11 @@
 Rails.application.routes.draw do
-  
-  
-   resources :social_task_proofs, only: [:new, :create, :index, :show]
+   resources :social_task_proofs, only: [ :new, :create, :index, :show ]
 
 namespace :admin do
-  resources :notifications, only: [:new, :create]
-  resources :social_task_proofs, only: [:index, :show, :update]
-  resources :users, only: [:index, :show]       # ← add this
-  get 'referrals', to: 'referrals#index', as: 'referrals'
+  resources :notifications, only: [ :new, :create ]
+  resources :social_task_proofs, only: [ :index, :show, :update ]
+  resources :users, only: [ :index, :show ]       # ← add this
+  get "referrals", to: "referrals#index", as: "referrals"
 end
 
 
@@ -16,10 +14,10 @@ end
   get "profile/index"
   get "reports/user_clicks", to: "reports#user_clicks"
   get "reports/user_clicks.pdf", to: "reports#user_clicks", defaults: { format: :pdf }
-  #get 'referrals', to: 'referrals#index', as: 'referrals'
+  # get 'referrals', to: 'referrals#index', as: 'referrals'
 
   resources :withdrawals
- resources :clicks, only: [:create]
+ resources :clicks, only: [ :create ]
 
   resources :learn_and_earns do
      member do
@@ -27,13 +25,13 @@ end
      end
   end
 
-  resources :notifications, only: [:index,:destroy]
+  resources :notifications, only: [ :index, :destroy ]
 
-  resources :contact_messages, only: [:new, :create, :index, :show, :destroy]
+  resources :contact_messages, only: [ :new, :create, :index, :show, :destroy ]
 
-   devise_for :users, 
-  controllers: { registrations: 'users/registrations' }, 
-  sign_out_via: [:get, :delete]
+   devise_for :users,
+  controllers: { registrations: "users/registrations" },
+  sign_out_via: [ :get, :delete ]
 
    resources :links do
     collection { post :import }
@@ -41,24 +39,23 @@ end
 
   post "click_link/:id", to: "clicks#create", as: "click_link"
   get "click_window/:id", to: "links#click_window", as: :click_window
-  
-
- 
 
 
-  resources :admin, only: [:index, :create, :edit, :update, :show, :destroy], controller: 'admin' do
+
+
+
+  resources :admin, only: [ :index, :create, :edit, :update, :show, :destroy ], controller: "admin" do
   member do
     get :toggle_suspend
   patch :toggle_suspend
-  
   end
 end
 
 
-resources :referrals, only: [:index, :create]
+resources :referrals, only: [ :index, :create ]
 
 
-  resources :admin_dashbord, only: [:index]
+  resources :admin_dashbord, only: [ :index ]
 
  resources :welcome do
   collection do
@@ -69,14 +66,13 @@ resources :referrals, only: [:index, :create]
   end
 end
 
-  
+
 
 resources :tasks do
-
   member do
     get :send_to_all
   end
-   resources :user_tasks, only: [:new, :create]
+   resources :user_tasks, only: [ :new, :create ]
 end
 
 
@@ -86,6 +82,10 @@ resources :user_tasks do
   end
 end
 
+
+resources :short_links, only: [ :create, :index ]
+
+  get "/s/:slug", to: "short_links#redirect", as: :short_redirect
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -97,6 +97,6 @@ end
   get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
   get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
 
-  # Defines the root path route ("/")
+   # Defines the root path route ("/")
    root "welcome#index"
 end
