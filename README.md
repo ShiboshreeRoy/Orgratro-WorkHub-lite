@@ -1,4 +1,4 @@
-# Orgratro WorkHub 🏢
+# Orgratro WorkHub lite🏢
 
 [![Website](https://img.shields.io/badge/Website-Online-brightgreen)](https://org.orgatroworkhub.xyz)
 [![License](https://img.shields.io/badge/License-Proprietary-red)](https://org.orgatroworkhub.xyz)
