@@ -1,0 +1,140 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold text-green-400 mb-8">📊 Analytics Dashboard</h1>
+
+  <!-- Stats Cards -->
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Total Users</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @total_users %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Active Today</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @active_users_today %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Pending Withdrawals</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @pending_withdrawals %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Total Earnings</p>
+      <p class="text-4xl font-extrabold text-green-100">$<%= number_with_precision(@total_earnings, precision: 2) %></p>
+    </div>
+  </section>
+
+  <!-- Additional Stats -->
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Task Completion Rate</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @task_completion_rate %>%</p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Total Referrals</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @total_referrals %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Referral Conversion</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @referral_conversion_rate %>%</p>
+    </div>
+  </section>
+
+  <!-- Charts Section -->
+  <section class="mb-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">📈 Recent Analytics Trend</h2>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800 text-sm">
+          <thead class="bg-black text-green-100 uppercase tracking-wider">
+            <tr>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Date</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Active Users</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Total Users</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Earnings</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800 text-green-300">
+            <% @recent_analytics.each do |snapshot| %>
+              <tr class="hover:bg-green-900 transition-colors">
+                <td class="px-6 py-3"><%= snapshot.date.strftime("%b %d, %Y") %></td>
+                <td class="px-6 py-3"><%= snapshot.active_users_today %></td>
+                <td class="px-6 py-3"><%= snapshot.total_users %></td>
+                <td class="px-6 py-3">$<%= number_with_precision(snapshot.total_earnings, precision: 2) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Recent Activities -->
+  <section class="mb-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">📝 Recent Activities</h2>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800 text-sm">
+          <thead class="bg-black text-green-100 uppercase tracking-wider">
+            <tr>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">User</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Action</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Timestamp</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Details</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800 text-green-300">
+            <% @recent_activities.each do |activity| %>
+              <tr class="hover:bg-green-900 transition-colors">
+                <td class="px-6 py-3"><%= activity.user.email %></td>
+                <td class="px-6 py-3 capitalize"><%= activity.action %></td>
+                <td class="px-6 py-3"><%= activity.timestamp.strftime("%b %d, %Y %H:%M") %></td>
+                <td class="px-6 py-3 max-w-xs truncate" title="<%= activity.details %>"><%= activity.details.present? ? activity.details.to_s.truncate(50) : 'N/A' %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Active Users -->
+  <section class="mb-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">🏆 Top Active Users</h2>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800 text-sm">
+          <thead class="bg-black text-green-100 uppercase tracking-wider">
+            <tr>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Rank</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">User</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Activity Count</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800 text-green-300">
+            <% @top_active_users.each_with_index do |item, index| %>
+              <tr class="hover:bg-green-900 transition-colors">
+                <td class="px-6 py-3">#<%= index + 1 %></td>
+                <td class="px-6 py-3"><%= item[:user].email %></td>
+                <td class="px-6 py-3"><%= item[:count] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation to Other Analytics Pages -->
+  <section class="mt-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">🔍 Explore More Analytics</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <%= link_to "User Analytics", user_analytics_analytics_path, class: "bg-green-700 hover:bg-green-800 text-white font-semibold py-3 px-6 rounded transition focus:outline-none focus:ring-4 focus:ring-green-500 text-center" %>
+      <%= link_to "Financial Analytics", financial_analytics_analytics_path, class: "bg-green-700 hover:bg-green-800 text-white font-semibold py-3 px-6 rounded transition focus:outline-none focus:ring-4 focus:ring-green-500 text-center" %>
+      <%= link_to "Task Analytics", task_analytics_analytics_path, class: "bg-green-700 hover:bg-green-800 text-white font-semibold py-3 px-6 rounded transition focus:outline-none focus:ring-4 focus:ring-green-500 text-center" %>
+      <%= link_to "Referral Analytics", referral_analytics_analytics_path, class: "bg-green-700 hover:bg-green-800 text-white font-semibold py-3 px-6 rounded transition focus:outline-none focus:ring-4 focus:ring-green-500 text-center" %>
+    </div>
+  </section>
+</div>

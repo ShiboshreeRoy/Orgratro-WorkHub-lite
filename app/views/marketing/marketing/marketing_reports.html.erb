@@ -1,0 +1,154 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">📊 Marketing Reports</h1>
+    
+    <!-- Report Filters -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Report Filters</h2>
+      <%= form_with url: marketing_reports_path, method: :get, local: true, class: "space-y-4" do |form| %>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <%= form.label :report_type, "Report Type", class: "block text-sm font-medium mb-1" %>
+            <%= form.select :report_type, options_for_select([
+              ['Comprehensive', 'comprehensive'],
+              ['Performance', 'performance'],
+              ['Engagement', 'engagement'],
+              ['Revenue Impact', 'revenue_impact'],
+              ['ROI Analysis', 'roi_analysis']
+            ], @report_type), {}, { class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" } %>
+          </div>
+          
+          <div>
+            <%= form.label :start_date, "Start Date", class: "block text-sm font-medium mb-1" %>
+            <%= form.date_field :start_date, value: @start_date, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div>
+            <%= form.label :end_date, "End Date", class: "block text-sm font-medium mb-1" %>
+            <%= form.date_field :end_date, value: @end_date, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <%= form.submit "Generate Report", class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Report Summary Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Campaigns</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_report[:total_campaigns] rescue 0 %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Click Through Rate</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_report[:click_through_rate] ? "#{@marketing_report[:click_through_rate].round(2)}%" : "N/A" rescue "N/A" %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Conversion Rate</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_report[:conversion_rate] ? "#{@marketing_report[:conversion_rate].round(2)}%" : "N/A" rescue "N/A" %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">ROI</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_report[:roi] ? "#{@marketing_report[:roi].round(2)}%" : "N/A" rescue "N/A" %></p>
+      </div>
+    </div>
+    
+    <!-- Detailed Report Data -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Detailed Report</h2>
+      
+      <% if @marketing_report.present? %>
+        <div class="space-y-6">
+          <!-- Campaign Performance -->
+          <div>
+            <h3 class="text-xl font-semibold mb-3">Campaign Performance</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-green-800">
+                <thead>
+                  <tr>
+                    <th class="px-6 py-3 text-left">Campaign</th>
+                    <th class="px-6 py-3 text-left">Impressions</th>
+                    <th class="px-6 py-3 text-left">Clicks</th>
+                    <th class="px-6 py-3 text-left">Conversions</th>
+                    <th class="px-6 py-3 text-left">Revenue</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-green-800">
+                  <% @marketing_report[:campaign_performance]&.each do |campaign| %>
+                    <tr>
+                      <td class="px-6 py-4"><%= campaign[:name] || 'N/A' %></td>
+                      <td class="px-6 py-4"><%= campaign[:impressions] || 0 %></td>
+                      <td class="px-6 py-4"><%= campaign[:clicks] || 0 %></td>
+                      <td class="px-6 py-4"><%= campaign[:conversions] || 0 %></td>
+                      <td class="px-6 py-4"><%= number_to_currency(campaign[:revenue] || 0) %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Channel Performance -->
+          <div>
+            <h3 class="text-xl font-semibold mb-3">Channel Performance</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-green-800">
+                <thead>
+                  <tr>
+                    <th class="px-6 py-3 text-left">Channel</th>
+                    <th class="px-6 py-3 text-left">Engagement</th>
+                    <th class="px-6 py-3 text-left">Cost</th>
+                    <th class="px-6 py-3 text-left">ROI</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-green-800">
+                  <% @marketing_report[:channel_performance]&.each do |channel| %>
+                    <tr>
+                      <td class="px-6 py-4"><%= channel[:name] || 'N/A' %></td>
+                      <td class="px-6 py-4"><%= channel[:engagement] || 0 %></td>
+                      <td class="px-6 py-4"><%= number_to_currency(channel[:cost] || 0) %></td>
+                      <td class="px-6 py-4"><%= channel[:roi] ? "#{channel[:roi].round(2)}%" : "N/A" %></td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+          <!-- Key Metrics -->
+          <div>
+            <h3 class="text-xl font-semibold mb-3">Key Metrics</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div class="bg-gray-800 p-4 rounded-lg">
+                <h4 class="font-semibold">New Users Acquired</h4>
+                <p class="text-2xl font-bold text-green-400"><%= @marketing_report[:metrics]&.dig(:new_users_acquired) || 0 %></p>
+              </div>
+              
+              <div class="bg-gray-800 p-4 rounded-lg">
+                <h4 class="font-semibold">Revenue Generated</h4>
+                <p class="text-2xl font-bold text-green-400"><%= number_to_currency(@marketing_report[:metrics]&.dig(:revenue_generated) || 0) %></p>
+              </div>
+              
+              <div class="bg-gray-800 p-4 rounded-lg">
+                <h4 class="font-semibold">Customer Acquisition Cost</h4>
+                <p class="text-2xl font-bold text-green-400"><%= number_to_currency(@marketing_report[:metrics]&.dig(:customer_acquisition_cost) || 0) %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% else %>
+        <p class="text-center py-8 text-gray-500">No report data available. Select a date range and report type to generate a report.</p>
+      <% end %>
+    </div>
+    
+    <!-- Back to Dashboard -->
+    <div class="mt-8 text-center">
+      <%= link_to "← Back to Marketing Dashboard", marketing_dashboard_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,84 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">🎯 Marketing Dashboard</h1>
+    
+    <!-- Marketing Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Promotional Codes</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:total_promotional_codes] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Promotional Codes</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:active_promotional_codes] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Achievements</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:total_achievements] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Unlocked Achievements</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:unlocked_achievements] %></p>
+      </div>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Email Campaigns</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:total_email_campaigns] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Email Campaigns</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:active_email_campaigns] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Affiliate Programs</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:total_affiliate_programs] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Affiliates</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:active_affiliates] %></p>
+      </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Quick Actions</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <%= link_to "Create Promo Code", marketing_promotional_codes_path, class: "bg-green-700 hover:bg-green-600 text-white p-4 rounded-lg text-center transition" %>
+        <%= link_to "Manage Achievements", marketing_achievements_path, class: "bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-lg text-center transition" %>
+        <%= link_to "Email Campaigns", marketing_email_campaigns_path, class: "bg-blue-700 hover:bg-blue-600 text-white p-4 rounded-lg text-center transition" %>
+        <%= link_to "Affiliate Programs", marketing_affiliate_programs_path, class: "bg-yellow-700 hover:bg-yellow-600 text-white p-4 rounded-lg text-center transition" %>
+      </div>
+    </div>
+    
+    <!-- Marketing Funnel -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Marketing Funnel Overview</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+        <div>
+          <div class="text-3xl font-bold text-blue-400"><%= User.count %></div>
+          <div class="text-sm text-gray-400">Visitors</div>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-green-400"><%= User.where('created_at > ?', 30.days.ago).count %></div>
+          <div class="text-sm text-gray-400">Signups</div>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-yellow-400"><%= User.where('last_active_at > ?', 7.days.ago).count %></div>
+          <div class="text-sm text-gray-400">Activations</div>
+        </div>
+        <div>
+          <div class="text-3xl font-bold text-purple-400"><%= Referral.count %></div>
+          <div class="text-sm text-gray-400">Conversions</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

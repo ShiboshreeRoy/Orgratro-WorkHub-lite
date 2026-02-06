@@ -11,8 +11,7 @@ class User < ApplicationRecord
  validates :referral_code, presence: true, uniqueness: true
 
 
-
-         
+ 
   enum role: { standard: 1, admin: 2, staff: 3 }
 
   has_many :clicks, dependent: :destroy
@@ -24,50 +23,28 @@ class User < ApplicationRecord
   belongs_to :referred_by, class_name: 'User', optional: true
   has_many :referrals_received, class_name: 'User', foreign_key: :referred_by_id
 
-  has_many :sent_referrals, class_name: 'Referral', foreign_key: :referrer_id, dependent: :nullify
-  has_many :received_referrals, class_name: 'Referral', foreign_key: :referred_user_id
-  belongs_to :referred_by, class_name: 'User', optional: true
+  has_many :referrals_made, class_name: 'Referral', foreign_key: :referrer_id, dependent: :nullify
+  has_many :referrals_received, class_name: 'Referral', foreign_key: :referred_user_id
 
   before_validation :ensure_referral_code, on: :create
 
    validates :referral_code, presence: true, uniqueness: true
 
 
-  # Returns count of claimed referrals
-  def total_referrals
-    sent_referrals.where(claimed: true).count
-  end
 
-
-  # Safely increment referral balance
-  def credit_referral(amount)
-    self.class.where(id: id)
-            .update_all("referral_balance = COALESCE(referral_balance, 0) + #{amount.to_d}")
-            reload
-  end
-
-
-  # Returns the last unclaimed referral or creates a new one
-  def last_or_new_referral
-    Referral.where(referrer: self, claimed: false).last || create_referral_token!
-  end
-
-  # Generates a new referral token (optionally for email)
-  def create_referral_token!(invite_email: nil)
-    sent_referrals.create!(invite_email: invite_email)
-  end
   
   #validates :proof, presence: true, on: :update  # proof required when user submits
 
   has_many :user_links
   has_many :seen_links, through: :user_links, source: :link
- 
+
   has_many :user_tasks, dependent: :destroy
   has_many :tasks, through: :user_tasks
 
 
   def total_earned
-    clicks.count* 0.0003222222222
+    # Calculate based on transaction records for accuracy
+    transactions.credits.sum(:amount)
   end
 
   
@@ -77,6 +54,14 @@ class User < ApplicationRecord
   end
 
   has_many :social_task_proofs, dependent: :destroy
+  has_many :transactions, dependent: :destroy
+  has_many :user_achievements, dependent: :destroy
+  has_many :achievements, through: :user_achievements
+  has_many :user_activity_logs, dependent: :destroy
+  has_many :user_promotional_codes, dependent: :destroy
+  has_many :promotional_codes, through: :user_promotional_codes
+  has_many :affiliate_relationships, dependent: :destroy
+  has_many :affiliate_programs, through: :affiliate_relationships
 
 
   def social_tasks_completed_count
@@ -108,25 +93,37 @@ class User < ApplicationRecord
   
 # Returns count of successful/claimed referrals
   def total_referrals
-   sent_referrals.where(claimed: true).count
+   referrals_made.where(claimed: true).count
   end
 
 
-# Safely increment referral balance (DB-side to avoid race)
+# Safely increment referral balance with transaction recording
   def credit_referral(amount)
     amount = BigDecimal(amount.to_s)
-    self.class.where(id: id).update_all("referral_balance = COALESCE(referral_balance, 0) + #{amount}")
-reload
+    with_lock do
+      self.class.where(id: id).update_all("referral_balance = COALESCE(referral_balance, 0) + #{amount}")
+      # Create transaction record for referral bonus
+      transactions.create!(
+        amount: amount,
+        transaction_type: 'credit',
+        description: "Referral bonus"
+      )
+      reload
+    end
   end
 
 
 # Create or return a fresh referral token for sharing
   def create_referral_token!(invite_email: nil)
-    sent_referrals.create!(invite_email: invite_email)
+    referrals_made.create!(invite_email: invite_email)
+  end
+
+  # Get the last referral or create a new one
+  def last_or_new_referral
+    referrals_made.last || create_referral_token!
   end
 
   
-
 
 private
 
@@ -137,5 +134,4 @@ private
      break token unless self.class.exists?(referral_code: token)
    end
   end
-
 end

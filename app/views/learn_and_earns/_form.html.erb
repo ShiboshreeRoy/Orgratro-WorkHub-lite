@@ -1,6 +1,6 @@
 <body class="bg-black text-blue-300 min-h-screen">
   <div class="flex justify-center items-center min-h-screen p-6">
-    <%= form_with(model: learn_and_earn, local: true, class: "w-full max-w-3xl bg-black text-blue-100 p-8 rounded-2xl shadow-2xl") do |form| %>
+    <%= form_with(model: learn_and_earn, local: true, multipart: true, class: "w-full max-w-3xl bg-black text-blue-100 p-8 rounded-2xl shadow-2xl") do |form| %>
       <h2 class="text-3xl font-extrabold text-blue-400 mb-8 text-center">
         <%= learn_and_earn.new_record? ? "Submit Learn & Earn Entry" : "Edit Learn & Earn Entry" %>
       </h2>
@@ -17,22 +17,114 @@
       <% end %>
 
       <% if current_user.admin? %>
-        <!-- Link -->
-        <div class="mb-6">
-          <%= form.label :link, "Referral Link", class: "block text-sm font-medium text-blue-200 mb-1" %>
-          <%= form.text_field :link, class: "w-full p-3 bg-gray-900 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400 shadow-sm" %>
-        </div>
+        <!-- Single Entry Fields -->
+        <div class="mb-6 bg-gray-900 p-6 rounded-xl border border-blue-800">
+          <h3 class="text-xl font-bold mb-4 text-blue-300 flex items-center gap-2">
+            <i class="fas fa-plus-circle"></i> Single Entry
+          </h3>
+          
+          <!-- Link -->
+          <div class="mb-4">
+            <%= form.label :link, "Referral Link", class: "block text-sm font-medium text-blue-200 mb-1" %>
+            <%= form.text_field :link, class: "w-full p-3 bg-gray-800 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400 shadow-sm" %>
+            <div class="mt-2 flex flex-wrap gap-2">
+              <span class="text-xs text-gray-400">Examples:</span>
+              <%= link_to "Demo Link 1", "#", class: "text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded cursor-pointer", onclick: "fillDemoUrl('https://example.com/demo1'); return false;" %>
+              <%= link_to "Demo Link 2", "#", class: "text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded cursor-pointer", onclick: "fillDemoUrl('https://example.com/demo2'); return false;" %>
+            </div>
+          </div>
 
-        <!-- Social Post -->
-        <div class="mb-6">
-          <%= form.label :social_post, "Social Media Post (URL or text)", class: "block text-sm font-medium text-blue-200 mb-1" %>
-          <%= form.text_area :social_post, rows: 4, class: "w-full p-3 bg-gray-900 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400 shadow-sm resize-none" %>
+          <!-- Social Post -->
+          <div class="mb-4">
+            <%= form.label :social_post, "Social Media Post (URL or text)", class: "block text-sm font-medium text-blue-200 mb-1" %>
+            <%= form.text_area :social_post, rows: 3, class: "w-full p-3 bg-gray-800 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400 shadow-sm resize-none" %>
+          </div>
+        </div>
+        
+        <!-- Divider -->
+        <div class="relative flex items-center my-8">
+          <div class="flex-grow border-t border-gray-600"></div>
+          <span class="flex-shrink mx-4 text-gray-500 text-sm">OR</span>
+          <div class="flex-grow border-t border-gray-600"></div>
+        </div>
+        
+        <!-- Bulk Upload Section -->
+        <div class="mb-6 bg-gray-900 p-6 rounded-xl border border-blue-800">
+          <h3 class="text-xl font-bold mb-4 text-blue-300 flex items-center gap-2">
+            <i class="fas fa-file-excel"></i> Bulk Upload via Excel/CSV
+          </h3>
+          
+          <div class="mb-4">
+            <%= form.label :file, "Upload Excel/CSV File", class: "block text-sm font-medium text-blue-200 mb-1" %>
+            <div class="flex items-center justify-center w-full">
+              <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-lg cursor-pointer bg-gray-800 border-gray-600 hover:border-blue-500 hover:bg-gray-700 transition-all">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg class="w-12 h-12 mb-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  <p class="text-sm mb-1 text-blue-300">Click to upload Excel/CSV files</p>
+                  <p class="text-xs text-gray-400">.xlsx, .xls, .csv files only</p>
+                  <p class="text-xs text-gray-500 mt-2">Format: Columns should be titled "link", "social_post"</p>
+                </div>
+                <%= form.file_field :file, accept: ".xlsx,.xls,.csv", class: "hidden" %>
+              </label>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap justify-center gap-3">
+              <%= link_to "📄 Download Excel Template", "/templates/learn_earn_template.xlsx", class: "inline-block text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg" %>
+              <%= link_to "📄 Download CSV Template", "/templates/learn_earn_template.csv", class: "inline-block text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Divider -->
+        <div class="relative flex items-center my-8">
+          <div class="flex-grow border-t border-gray-600"></div>
+          <span class="flex-shrink mx-4 text-gray-500 text-sm">OR</span>
+          <div class="flex-grow border-t border-gray-600"></div>
+        </div>
+        
+        <!-- Bulk Upload Section -->
+        <div class="mb-6 bg-gray-900 p-6 rounded-xl border border-blue-800">
+          <h3 class="text-xl font-bold mb-4 text-blue-300 flex items-center gap-2">
+            <i class="fas fa-file-excel"></i> Bulk Upload via Excel/CSV
+          </h3>
+          
+          <div class="mb-4">
+            <%= form.label :file, "Upload Excel/CSV File", class: "block text-sm font-medium text-blue-200 mb-1" %>
+            <div class="flex items-center justify-center w-full">
+              <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-lg cursor-pointer bg-gray-800 border-gray-600 hover:border-blue-500 hover:bg-gray-700 transition-all">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg class="w-12 h-12 mb-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                  </svg>
+                  <p class="text-sm mb-1 text-blue-300">Click to upload Excel/CSV files</p>
+                  <p class="text-xs text-gray-400">.xlsx, .xls, .csv files only</p>
+                  <p class="text-xs text-gray-500 mt-2">Format: Columns should be titled "link", "social_post"</p>
+                </div>
+                <%= form.file_field :file, accept: ".xlsx,.xls,.csv", class: "hidden" %>
+              </label>
+            </div>
+            
+            <div class="mt-4 flex flex-wrap justify-center gap-3">
+              <%= link_to "📄 Download Excel Template", "/templates/learn_earn_template.xlsx", class: "inline-block text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg" %>
+              <%= link_to "📄 Download CSV Template", "/templates/learn_earn_template.csv", class: "inline-block text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
+            </div>
+          </div>
         </div>
       <% else %>
         <!-- Link (read-only for user) -->
         <div class="mb-6">
           <%= form.label :link, "Referral Link", class: "block text-sm font-medium text-blue-200 mb-1" %>
-          <%= form.text_field :link, class: "w-full p-3 cursor-not-allowed select-none bg-gray-900 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400 shadow-sm", disabled: true %>
+          <div class="flex items-center justify-between gap-2">
+            <%= form.text_field :link, class: "flex-grow p-3 cursor-not-allowed select-none bg-gray-900 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400 shadow-sm", disabled: true %>
+            <button
+              type="button"
+              class="shrink-0 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 transition copy-btn"
+              onclick="copyToClipboard('<%= j @learn_and_earn.link rescue '' %>'); showNotification('Link copied to clipboard!'); return false;">
+              Copy
+            </button>
+          </div>
         </div>
 
         <!-- Social Post (read-only for user) -->
@@ -67,5 +159,51 @@
         <%= form.submit learn_and_earn.new_record? ? "Submit Entry" : "Update Entry", class: "bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-8 rounded-xl shadow-md transition-all duration-200" %>
       </div>
     <% end %>
+    
+    <script>
+      function fillDemoUrl(url) {
+        const urlField = document.getElementById('learn_and_earn_link');
+        if (urlField) {
+          urlField.value = url;
+        }
+      }
+      
+      function copyToClipboard(text) {
+        if (!text) return;
+        navigator.clipboard.writeText(text).then(function() {
+          console.log('Copied to clipboard');
+        }).catch(function(err) {
+          console.error('Could not copy text: ', err);
+          // Fallback for older browsers
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+        });
+      }
+      
+      function showNotification(message) {
+        // Remove any existing notifications
+        const existing = document.querySelector('.toast-notification');
+        if (existing) existing.remove();
+        
+        // Create notification element
+        const notification = document.createElement('div');
+        notification.className = 'toast-notification fixed top-4 right-4 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+        notification.textContent = message;
+        
+        // Add to DOM
+        document.body.appendChild(notification);
+        
+        // Auto-remove after 3 seconds
+        setTimeout(() => {
+          if (notification.parentNode) {
+            notification.remove();
+          }
+        }, 3000);
+      }
+    </script>
   </div>
 </body>

@@ -2,9 +2,21 @@
   <h1 class="text-3xl font-bold text-blue-400 mb-6 text-center">Add Learn & Earn Links</h1>
 
   <% if current_user.admin? %>
-    <div class="text-center mb-6">
+    <div class="text-center mb-6 flex flex-col sm:flex-row justify-center gap-4 items-center">
+      <div class="text-blue-300 text-sm">
+        Showing <%= @learn_and_earns.total_count %> pending/rejected entries
+      </div>
       <%= link_to "New Learn & Earn", new_learn_and_earn_path,
           class: "inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded transition" %>
+      <%= button_to "🚀 Send to All Users", bulk_create_learn_and_earns_path, 
+          method: :post,
+          params: { confirm: "Are you sure you want to send this to ALL users?" },
+          class: "inline-block bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-5 rounded transition",
+          form: { onsubmit: "return confirm('Are you sure you want to send this to ALL users?')" } %>
+    </div>
+  <% else %>
+    <div class="text-center mb-6 text-blue-300 text-sm">
+      Showing <%= @learn_and_earns.total_count %> of your entries
     </div>
   <% end %>
 
@@ -78,6 +90,18 @@
       </tbody>
     </table>
   </div>
+
+  <!-- Pagination -->
+  <% if @learn_and_earns.total_pages > 1 %>
+    <div class="mt-8 flex justify-center">
+      <%= paginate @learn_and_earns %>
+    </div>
+    
+    <div class="mt-4 text-center text-blue-300 text-sm">
+      Page <%= @learn_and_earns.current_page %> of <%= @learn_and_earns.total_pages %> 
+      (<%= @learn_and_earns.offset_value + 1 %> - <%= [@learn_and_earns.offset_value + @learn_and_earns.limit_value, @learn_and_earns.total_count].min %> of <%= @learn_and_earns.total_count %> entries)
+    </div>
+  <% end %>
 
   <!-- Copy Button Script with Event Delegation -->
   <script>

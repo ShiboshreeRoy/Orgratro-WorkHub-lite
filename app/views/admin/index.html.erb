@@ -60,6 +60,24 @@
         <% end %>
       </section>
 
+      <!-- Navigation Links -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <%= link_to "📊 Dashboard", analytics_dashboard_path, class: "bg-gray-900 p-4 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition hover:bg-green-900" %>
+        <%= link_to "👥 Users", analytics_user_analytics_path, class: "bg-gray-900 p-4 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition hover:bg-green-900" %>
+        <%= link_to "💰 Finance", analytics_financial_analytics_path, class: "bg-gray-900 p-4 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition hover:bg-green-900" %>
+        <%= link_to "✅ Tasks", analytics_task_analytics_path, class: "bg-gray-900 p-4 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition hover:bg-green-900" %>
+        <%= link_to "🔗 Referrals", analytics_referral_analytics_path, class: "bg-gray-900 p-4 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition hover:bg-green-900" %>
+      </section>
+      
+      <!-- Advanced Feature Links -->
+      <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
+        <%= link_to "🎯 Marketing", marketing_dashboard_path, class: "bg-blue-900 p-4 rounded-xl shadow-lg border border-blue-700 text-center hover:shadow-blue-500/70 transition hover:bg-blue-800" %>
+        <%= link_to "🏆 Achievements", marketing_achievements_path, class: "bg-purple-900 p-4 rounded-xl shadow-lg border border-purple-700 text-center hover:shadow-purple-500/70 transition hover:bg-purple-800" %>
+        <%= link_to "🏷️ Promos", marketing_promotional_codes_path, class: "bg-indigo-900 p-4 rounded-xl shadow-lg border border-indigo-700 text-center hover:shadow-indigo-500/70 transition hover:bg-indigo-800" %>
+        <%= link_to "💳 Payments", payment_dashboard_path, class: "bg-yellow-900 p-4 rounded-xl shadow-lg border border-yellow-700 text-center hover:shadow-yellow-500/70 transition hover:bg-yellow-800" %>
+        <%= link_to "🤝 Affiliates", marketing_affiliate_programs_path, class: "bg-pink-900 p-4 rounded-xl shadow-lg border border-pink-700 text-center hover:shadow-pink-500/70 transition hover:bg-pink-800" %>
+      </section>
+
       <!-- Stats Cards -->
       <section class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         <% stats = {
@@ -125,8 +143,9 @@
                   <%= f.submit "Update", class: "bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-md transition" %>
                   <%= link_to(user.suspended? ? "Unsuspend" : "Suspend", toggle_suspend_admin_path(user), method: :patch, data: { confirm: "Are you sure?" }, class: "bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded shadow transition") %>
                 </div>
-                <div class="text-center md:text-left">
-                  <%= link_to "Show & Delete", admin_path(user),class: "bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow transition" %>
+                <div class="flex flex-col md:flex-row gap-2 justify-center md:justify-start">
+                  <%= link_to "Show", admin_path(user), class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow transition" %>
+                  <%= button_to "Delete", admin_path(user), data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this user?" }, class: "bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded shadow transition" %>
                 </div>
               </div>
             <% end %>

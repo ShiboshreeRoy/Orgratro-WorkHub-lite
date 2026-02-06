@@ -27,9 +27,21 @@
 
     <!-- Excel Upload -->
     <div>
-      <%= f.label :file, "📂 Upload Excel file for multiple task links", class: "block text-sm font-medium text-blue-300 mb-2" %>
+      <%= f.label :file, "📂 Upload Excel/CSV file for multiple tasks", class: "block text-sm font-medium text-blue-300 mb-2" %>
       <%= f.file_field :file, accept: ".xlsx,.xls,.csv", class: "w-full text-blue-100 bg-gray-900 border border-blue-500 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-400 outline-none" %>
-      <p class="text-sm text-blue-400 mt-1">Format: First column should contain task links.</p>
+      <div class="mt-2 p-3 bg-gray-800 rounded-lg">
+        <p class="text-sm text-blue-300 font-medium mb-1">📋 Required Excel/CSV Format:</p>
+        <ul class="text-xs text-blue-200 space-y-1">
+          <li>• <strong>Column 1:</strong> Task Name</li>
+          <li>• <strong>Column 2:</strong> Task Type (URL, Social, Survey, etc.)</li>
+          <li>• <strong>Column 3:</strong> Task Link/URL</li>
+          <li>• <strong>Column 4:</strong> Description (optional)</li>
+        </ul>
+        <p class="text-xs text-blue-400 mt-2">💡 First row should contain headers. Link column is required.</p>
+        <div class="mt-2">
+          <%= link_to "📄 Download Sample Template (CSV)", sample_template_tasks_path, class: "inline-block text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded" %>
+        </div>
+      </div>
     </div>
 
     <!-- Description -->

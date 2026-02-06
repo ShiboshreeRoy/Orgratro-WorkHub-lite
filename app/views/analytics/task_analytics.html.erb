@@ -1,0 +1,105 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold text-green-400 mb-8">✅ Task Analytics</h1>
+
+  <!-- Task Stats Cards -->
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Total Tasks</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @total_tasks %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Completed</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @completed_tasks %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Pending Review</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @pending_tasks %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Completion Rate</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @task_completion_rate %>%</p>
+    </div>
+  </section>
+
+  <!-- Task Completion Over Time -->
+  <section class="mb-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">📅 Task Completions Over Time</h2>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800 text-sm">
+          <thead class="bg-black text-green-100 uppercase tracking-wider">
+            <tr>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Date</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Completed Tasks</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800 text-green-300">
+            <% @task_completions_by_day.each do |date, count| %>
+              <tr class="hover:bg-green-900 transition-colors">
+                <td class="px-6 py-3"><%= Date.parse(date).strftime("%b %d, %Y") if date.is_a?(String) %></td>
+                <td class="px-6 py-3"><%= count %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Top Performers -->
+  <section class="mb-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">🏆 Top Task Performers</h2>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800 text-sm">
+          <thead class="bg-black text-green-100 uppercase tracking-wider">
+            <tr>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Rank</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">User</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Completed Tasks</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800 text-green-300">
+            <% @top_performers.each_with_index do |(user, count), index| %>
+              <tr class="hover:bg-green-900 transition-colors">
+                <td class="px-6 py-3">#<%= index + 1 %></td>
+                <td class="px-6 py-3"><%= user.email %></td>
+                <td class="px-6 py-3"><%= count %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Task Types Distribution (if available) -->
+  <% if @task_types && @task_types.any? %>
+    <section class="mb-8">
+      <h2 class="text-3xl font-semibold text-green-400 mb-4">📊 Task Types Distribution</h2>
+      <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-green-800 text-sm">
+            <thead class="bg-black text-green-100 uppercase tracking-wider">
+              <tr>
+                <th class="bg-black text-green-100 px-6 py-3 text-left">Task Type</th>
+                <th class="bg-black text-green-100 px-6 py-3 text-left">Count</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-green-800 text-green-300">
+              <% @task_types.each do |type, count| %>
+                <tr class="hover:bg-green-900 transition-colors">
+                  <td class="px-6 py-3 capitalize"><%= type %></td>
+                  <td class="px-6 py-3"><%= count %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  <% end %>
+</div>

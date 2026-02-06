@@ -1,0 +1,52 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold text-green-400 mb-8">👥 User Analytics</h1>
+
+  <!-- Export Button -->
+  <div class="mb-6">
+    <%= link_to "Export as CSV", user_analytics_analytics_path(format: :csv), 
+        class: "bg-green-700 hover:bg-green-800 text-white font-semibold py-2 px-4 rounded transition" %>
+  </div>
+
+  <!-- User Analytics Table -->
+  <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 overflow-x-auto">
+    <table class="min-w-full divide-y divide-green-800 text-sm">
+      <thead class="bg-black text-green-100 uppercase tracking-wider">
+        <tr>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">ID</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Email</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Role</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Balance</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Referral Balance</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Total Clicks</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Tasks Completed</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Created At</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Last Sign In</th>
+          <th class="bg-black text-green-100 px-6 py-3 text-left">Activities</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-green-800 text-green-300">
+        <% @users.each do |user| %>
+          <tr class="hover:bg-green-900 transition-colors">
+            <td class="px-6 py-3"><%= user.id %></td>
+            <td class="px-6 py-3 truncate max-w-xs" title="<%= user.email %>"><%= user.email %></td>
+            <td class="px-6 py-3 capitalize"><%= user.role %></td>
+            <td class="px-6 py-3">$<%= number_with_precision(user.balance || 0, precision: 2) %></td>
+            <td class="px-6 py-3">$<%= number_with_precision(user.referral_balance || 0, precision: 2) %></td>
+            <td class="px-6 py-3"><%= user.total_clicks || 0 %></td>
+            <td class="px-6 py-3"><%= user.tasks_completed || 0 %></td>
+            <td class="px-6 py-3"><%= user.created_at.strftime("%b %d, %Y") %></td>
+            <td class="px-6 py-3"><%= user.last_sign_in_at&.strftime("%b %d, %Y %H:%M") || 'Never' %></td>
+            <td class="px-6 py-3"><%= user.user_activity_logs&.count || 0 %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <% if @users.respond_to?(:current_page) %>
+    <div class="mt-6 flex justify-center">
+      <%= paginate @users %>
+    </div>
+  <% end %>
+</div>

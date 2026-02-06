@@ -1,0 +1,74 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">💰 Financial Analytics</h1>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Revenue</h3>
+        <p class="text-3xl font-bold text-green-400"><%= number_to_currency(@total_revenue, unit: "$", precision: 2) %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Pending Payouts</h3>
+        <p class="text-3xl font-bold text-green-400"><%= number_to_currency(@pending_payouts, unit: "$", precision: 2) %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Completed Payouts</h3>
+        <p class="text-3xl font-bold text-green-400"><%= number_to_currency(@completed_payouts, unit: "$", precision: 2) %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Withdrawals</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @withdrawal_stats[:total_requests] %></p>
+      </div>
+    </div>
+    
+    <!-- Withdrawal Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Pending</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @withdrawal_stats[:pending] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Approved</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @withdrawal_stats[:approved] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Rejected</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @withdrawal_stats[:rejected] %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Success Rate</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @withdrawal_stats[:total_requests] > 0 ? ((@withdrawal_stats[:approved].to_f / @withdrawal_stats[:total_requests]) * 100).round(2) : 0 %>%</p>
+      </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Daily Earnings</h2>
+      <div class="h-64 flex items-center justify-center text-gray-500">
+        <!-- Chart would be rendered here with JavaScript library -->
+        <p>Daily earnings chart would appear here (using Chart.js or similar)</p>
+      </div>
+    </div>
+    
+    <!-- Monthly Earnings -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Monthly Earnings</h2>
+      <div class="h-64 flex items-center justify-center text-gray-500">
+        <!-- Chart would be rendered here with JavaScript library -->
+        <p>Monthly earnings chart would appear here (using Chart.js or similar)</p>
+      </div>
+    </div>
+    
+    <!-- Back to Dashboard -->
+    <div class="mt-8 text-center">
+      <%= link_to "← Back to Dashboard", analytics_dashboard_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+    </div>
+  </div>
+</div>

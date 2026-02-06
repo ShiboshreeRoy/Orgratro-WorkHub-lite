@@ -11,7 +11,7 @@
       <% if current_user.balance < 100.00 %>
         <div class="bg-red-700/20 border border-red-600 text-red-300 font-semibold text-center p-5 rounded-2xl shadow-inner mb-8 text-sm sm:text-base">
           You need at least <span class="font-bold">$100.00</span> to request a withdrawal.<br>
-          Current Balance: <span class="font-mono text-white">$<%= number_with_precision(current_user.balance, precision: 2) %></span>
+          Current Balance: <span class="font-mono text-red-500">$<%= number_with_precision(current_user.balance, precision: 2) %></span>
         </div>
       <% else %>
 
@@ -38,11 +38,147 @@
             </p>
           </div>
 
+          <!-- Payment Method Selection -->
+          <div>
+            <label for="withdrawal_payment_method" class="block text-white font-semibold mb-2 text-lg sm:text-xl tracking-wide">
+              Payment Method
+            </label>
+            <%= form.select :payment_method, options_for_select([
+              ['Select Payment Method', ''],
+              ['🏦 Bank Transfer', 'bank_transfer'],
+              ['📱 Bkash', 'bkash'],
+              ['📱 Nagad', 'nagad'],
+              ['📱 Rocket', 'rocket'],
+              ['💳 PayPal', 'paypal'],
+              ['💳 Mastercard', 'mastercard'],
+              ['💳 Visa Card', 'visa'],
+              ['🪙 USDT (TRC20)', 'usdt_trc20'],
+              ['🪙 USDT (ERC20)', 'usdt_erc20'],
+              ['₿ Bitcoin', 'bitcoin'],
+              ['⧫ Ethereum', 'ethereum']
+            ], @withdrawal.payment_method), {}, 
+            { class: "w-full px-4 py-3 rounded-2xl bg-gray-700 bg-opacity-30 text-white border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-600 focus:outline-none shadow-lg transition-all duration-300" } %>
+          </div>
+
+          <!-- Payment Details Field -->
+          <div id="payment_details_field" style="display: <%= @withdrawal.payment_method.present? ? 'block' : 'none' %>" >
+            <label for="withdrawal_payment_details" class="block text-white font-semibold mb-2 text-lg sm:text-xl tracking-wide">
+              Payment Details
+              <span id="payment_details_hint" class="text-gray-400 text-sm font-normal ml-2">
+                Enter your payment account information
+              </span>
+            </label>
+            <%= form.text_field :payment_details,
+                placeholder: "Enter your payment details (e.g., account number, email, wallet address)",
+                class: "w-full px-4 py-3 rounded-2xl bg-gray-700 bg-opacity-30 text-white placeholder-gray-400 border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-600 focus:outline-none shadow-lg transition-all duration-300" %>
+            <p id="payment_details_help" class="mt-1 text-sm text-gray-400 font-medium tracking-wide">
+              We'll send your withdrawal to this account
+            </p>
+          </div>
+
           <!-- Submit Button -->
           <div class="text-center">
             <%= form.submit "🚀 Request Withdrawal", class: "inline-block bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 text-white font-bold px-8 sm:px-10 py-3 sm:py-4 rounded-3xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition duration-300 select-none w-full sm:w-auto" %>
           </div>
 
+          <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              const paymentMethodSelect = document.getElementById('withdrawal_payment_method');
+              const paymentDetailsField = document.getElementById('payment_details_field');
+              
+              // Function to update field visibility
+              function updatePaymentDetailsVisibility() {
+                if (paymentMethodSelect.value !== '') {
+                  paymentDetailsField.style.display = 'block';
+                  
+                  // Update placeholder and hint based on selected method
+                  const placeholders = {
+                    'bank_transfer': 'Enter bank account number, account holder name, and bank details',
+                    'bkash': 'Enter your bKash mobile number',
+                    'nagad': 'Enter your Nagad mobile number',
+                    'rocket': 'Enter your Rocket mobile number',
+                    'paypal': 'Enter your PayPal email address',
+                    'mastercard': 'Enter last 4 digits of your Mastercard',
+                    'visa': 'Enter last 4 digits of your Visa card',
+                    'usdt_trc20': 'Enter your USDT TRC20 wallet address',
+                    'usdt_erc20': 'Enter your USDT ERC20 wallet address',
+                    'bitcoin': 'Enter your Bitcoin wallet address',
+                    'ethereum': 'Enter your Ethereum wallet address'
+                  };
+                  
+                  const hints = {
+                    'bank_transfer': 'Account number, holder name, and bank details',
+                    'bkash': 'Mobile number registered with bKash',
+                    'nagad': 'Mobile number registered with Nagad',
+                    'rocket': 'Mobile number registered with Rocket',
+                    'paypal': 'Email address linked to your PayPal account',
+                    'mastercard': 'Last 4 digits of card number',
+                    'visa': 'Last 4 digits of card number',
+                    'usdt_trc20': 'TRC20 compatible wallet address',
+                    'usdt_erc20': 'ERC20 compatible wallet address',
+                    'bitcoin': 'BTC wallet address',
+                    'ethereum': 'ETH wallet address'
+                  };
+                  
+                  const paymentDetailsInput = document.querySelector('#withdrawal_payment_details');
+                  const paymentDetailsHint = document.getElementById('payment_details_hint');
+                  const paymentDetailsHelp = document.getElementById('payment_details_help');
+                  
+                  if (paymentMethodSelect.value in placeholders) {
+                    paymentDetailsInput.placeholder = placeholders[paymentMethodSelect.value];
+                    paymentDetailsHint.textContent = hints[paymentMethodSelect.value];
+                    
+                    // Update input type and pattern based on payment method
+                    if (paymentMethodSelect.value === 'paypal') {
+                      paymentDetailsInput.type = 'email';
+                    } else if (['mastercard', 'visa'].includes(paymentMethodSelect.value)) {
+                      paymentDetailsInput.type = 'text';
+                      paymentDetailsInput.pattern = '[0-9]{4}-?[0-9]{4}-?[0-9]{4}-?[0-9]{4}';
+                    } else if (['bkash', 'nagad', 'rocket'].includes(paymentMethodSelect.value)) {
+                      paymentDetailsInput.type = 'tel';
+                      paymentDetailsInput.pattern = '[0-9]{11}';
+                    } else {
+                      paymentDetailsInput.type = 'text';
+                      paymentDetailsInput.removeAttribute('pattern');
+                    }
+                    
+                    // Update help text based on method
+                    const helpTexts = {
+                      'paypal': 'We will send your withdrawal to this PayPal account',
+                      'bkash': 'We will send your withdrawal to this bKash account',
+                      'nagad': 'We will send your withdrawal to this Nagad account',
+                      'rocket': 'We will send your withdrawal to this Rocket account',
+                      'usdt_trc20': 'We will send USDT to this TRC20 wallet address',
+                      'usdt_erc20': 'We will send USDT to this ERC20 wallet address',
+                      'bitcoin': 'We will send BTC to this wallet address',
+                      'ethereum': 'We will send ETH to this wallet address',
+                      'bank_transfer': 'We will process bank transfer to this account',
+                      'mastercard': 'We will process withdrawal to this card',
+                      'visa': 'We will process withdrawal to this card'
+                    };
+                    
+                    if (paymentMethodSelect.value in helpTexts) {
+                      paymentDetailsHelp.textContent = helpTexts[paymentMethodSelect.value];
+                    } else {
+                      paymentDetailsHelp.textContent = 'We will send your withdrawal to this account';
+                    }
+                  } else {
+                    // Reset to default input type
+                    paymentDetailsInput.type = 'text';
+                    paymentDetailsInput.removeAttribute('pattern');
+                  }
+                } else {
+                  paymentDetailsField.style.display = 'none';
+                }
+              }
+              
+              // Initial call to set visibility
+              updatePaymentDetailsVisibility();
+              
+              // Event listener for when payment method changes
+              paymentMethodSelect.addEventListener('change', updatePaymentDetailsVisibility);
+            });
+          </script>
         <% end %>
       <% end %>
 

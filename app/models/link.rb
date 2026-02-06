@@ -12,5 +12,7 @@ class Link < ApplicationRecord
     has_many :user_links
     has_many :viewed_by_users, through: :user_links, source: :user
 
+    validates :url, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL including http:// or https://" }, uniqueness: { case_sensitive: false }
+    validates :title, presence: true, length: { minimum: 3, maximum: 255 }
     
 end

@@ -1,22 +1,130 @@
-<body class="bg-black text-blue-400">
-<div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mt-8">
-  <h2 class="text-2xl font-semibold text-gray-800 mb-6">Submit Proof</h2>
+<body class="bg-gradient-to-br from-gray-900 via-black to-gray-900 text-blue-100 min-h-screen font-sans antialiased">
+  <div class="flex justify-center items-center min-h-screen px-4 py-12">
+    <div class="w-full max-w-2xl bg-gray-900/80 backdrop-blur-lg rounded-3xl shadow-2xl border border-gray-700/50 p-8">
+      
+      <!-- Header -->
+      <div class="text-center mb-8">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-500/10 rounded-full mb-4 border border-blue-500/30">
+          <i class="fas fa-check-circle text-blue-400 text-2xl"></i>
+        </div>
+        <h1 class="text-3xl font-bold text-white mb-2">Submit Task Proof</h1>
+        <p class="text-blue-300/80">Complete your social task and earn rewards</p>
+      </div>
 
-  <%= form_with model: @proof, local: true do |f| %>
-    <div class="mb-4">
-      <%= f.label :task_id, "Select Task", class: "block text-gray-700 font-medium mb-2" %>
-      <%= f.collection_select :task_id, SocialTask.all, :id, :name, { prompt: "Choose a task" }, 
-            { class: "w-full border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500" } %>
-    </div>
+      <!-- Task Info -->
+      <% if params[:task_id] %>
+        <% task = SocialTask.find(params[:task_id]) %>
+        <div class="bg-gray-800/50 rounded-2xl p-6 mb-6 border border-gray-700/30">
+          <h3 class="text-lg font-semibold text-blue-300 mb-3 flex items-center gap-2">
+            <i class="fas fa-bullhorn"></i> Task Details
+          </h3>
+          <div class="flex items-start gap-4">
+            <% if task.has_image? %>
+              <img src="<%= task.display_image_url %>" alt="<%= task.name %>" class="w-16 h-16 rounded-lg object-cover">
+            <% else %>
+              <div class="w-16 h-16 rounded-lg bg-blue-500/20 flex items-center justify-center">
+                <i class="fas fa-bullhorn text-blue-400 text-xl"></i>
+              </div>
+            <% end %>
+            <div>
+              <h4 class="font-semibold text-white text-lg"><%= task.name %></h4>
+              <p class="text-sm text-gray-300 mt-1"><%= task.description %></p>
+              <a href="<%= task.url %>" target="_blank" class="text-xs text-blue-400 hover:text-blue-300 mt-2 inline-flex items-center">
+                <i class="fas fa-external-link-alt mr-1"></i> View Task Details
+              </a>
+            </div>
+          </div>
+        </div>
+      <% end %>
 
-    <div class="mb-4">
-      <%= f.label :post_url, class: "block text-gray-700 font-medium mb-2" %>
-      <%= f.text_field :post_url, class: "w-full border-gray-300 rounded-lg shadow-sm px-3 py-2 focus:ring-blue-500 focus:border-blue-500" %>
-    </div>
+      <!-- Form -->
+      <div class="bg-gray-800/50 rounded-2xl p-6 border border-gray-700/30">
+        <h3 class="text-lg font-semibold text-blue-300 mb-6 flex items-center gap-2">
+          <i class="fas fa-file-upload"></i> Submission Form
+        </h3>
+        
+        <%= form_with model: @proof, local: true, class: "space-y-6" do |f| %>
+          <% if @proof.errors.any? %>
+            <div class="bg-red-900/30 border border-red-700 rounded-xl p-4">
+              <div class="flex items-center gap-2 mb-2">
+                <i class="fas fa-exclamation-circle text-red-400"></i>
+                <h4 class="text-red-300 font-semibold"><%= pluralize(@proof.errors.count, "error") %> prevented submission:</h4>
+              </div>
+              <ul class="list-disc list-inside text-red-200 text-sm space-y-1">
+                <% @proof.errors.full_messages.each do |message| %>
+                  <li><%= message %></li>
+                <% end %>
+              </ul>
+            </div>
+          <% end %>
 
-    <div class="mt-6">
-      <%= f.submit "Submit Proof", class: "w-full bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-700 transition" %>
+          <!-- Task Selection -->
+          <div>
+            <%= f.label :task_id, class: "block text-sm font-semibold text-blue-200 mb-2 flex items-center gap-2" %>
+            <% if params[:task_id] %>
+              <%= f.hidden_field :task_id, value: params[:task_id] %>
+              <div class="bg-gray-900/50 px-4 py-3 rounded-xl border border-gray-700">
+                <span class="text-white font-medium"><%= SocialTask.find(params[:task_id]).name %></span>
+              </div>
+            <% else %>
+              <%= f.collection_select :task_id, SocialTask.all, :id, :name, { prompt: "Select a task to complete" }, 
+                    { class: "w-full rounded-xl border border-gray-700 bg-gray-900/50 px-4 py-3 text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" } %>
+            <% end %>
+            <p class="mt-2 text-xs text-blue-400/80">Choose the social task you've completed</p>
+          </div>
+
+          <!-- Proof URL -->
+          <div>
+            <%= f.label :post_url, class: "block text-sm font-semibold text-blue-200 mb-2 flex items-center gap-2" %>
+            <div class="relative">
+              <%= f.url_field :post_url, 
+                  class: "w-full rounded-xl border border-gray-700 bg-gray-900/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200",
+                  placeholder: "https://social-media-platform.com/your-post-url" %>
+            </div>
+            <p class="mt-2 text-xs text-blue-400/80 flex items-center gap-1">
+              <i class="fas fa-info-circle text-xs"></i>
+              Paste the link to your social media post that completes this task
+            </p>
+          </div>
+
+          <!-- Submission Tips -->
+          <div class="bg-blue-900/20 rounded-xl p-4 border border-blue-700/30">
+            <h4 class="text-sm font-semibold text-blue-300 mb-3 flex items-center gap-2">
+              <i class="fas fa-lightbulb"></i> Submission Tips
+            </h4>
+            <ul class="text-xs text-blue-200/90 space-y-2">
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-1">✓</span>
+                <span>Make sure your post is public and visible</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-1">✓</span>
+                <span>Include all required elements from the task description</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-400 mt-1">✓</span>
+                <span>Double-check the URL before submitting</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-700/50">
+            <%= link_to social_task_proofs_path, 
+                class: "flex items-center gap-2 text-gray-400 hover:text-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-gray-800/50 transition-colors" do %>
+              <i class="fas fa-arrow-left"></i>
+              Cancel
+            <% end %>
+            
+            <%= f.submit "Submit Proof",
+                class: "w-full sm:w-auto bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-green-500/30 transition-all duration-300 transform hover:-translate-y-0.5" %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="mt-6 text-center">
+        <%= link_to "← Back to Dashboard", user_dashbord_index_path, class: "text-blue-400 hover:text-blue-300 font-semibold inline-flex items-center gap-2 transition-colors" %>
+      </div>
     </div>
-  <% end %>
-</div>
+  </div>
 </body>

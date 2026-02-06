@@ -29,6 +29,10 @@
           <i class="fas fa-graduation-cap mr-2"></i> Learn & Earn
         <% end %>
 
+        <%= link_to   admin_social_tasks_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+          <i class="fas fa-tasks mr-2"></i> Social Tasks
+        <% end %>
+
         <%= link_to   admin_social_task_proofs_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-graduation-cap mr-2"></i> Aprove Social Task
         <% end %>
@@ -53,9 +57,8 @@
           <i class="fas fa-bell "></i> Send Notifications
         <% end %>
 
-        <%= link_to admin_referrals_path, class: "px-4 py-2 rounded-lg flex items-center space-x-2 #{current_page?(admin_referrals_path) ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}" do %>
-  <i class="fas fa-user-friends"></i> <!-- Font Awesome icon -->
-  <span>Referrals</span>
+        <%= link_to admin_referrals_path, class: "flex items-center gap-3 hover:text-blue-400 transition #{current_page?(admin_referrals_path) ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700'}" do %>
+          <i class="fas fa-user-friends"></i><span> Referrals</span>
 <% end %>
 
         <%= link_to   edit_user_registration_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
@@ -132,6 +135,114 @@
           </div>
         </div>
 
+        <!-- User Balance Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div class="bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-blue-400 transition">
+            <h2 class="text-xl font-semibold text-blue-300 mb-2">
+              <i class="fas fa-wallet mr-2"></i>Total Balance
+            </h2>
+            <p class="text-white text-3xl">$<%= number_with_precision(@total_balance, precision: 2) %></p>
+          </div>
+          
+          <div class="bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-blue-400 transition">
+            <h2 class="text-xl font-semibold text-blue-300 mb-2">
+              <i class="fas fa-calculator mr-2"></i>Average Balance
+            </h2>
+            <p class="text-white text-3xl">$<%= number_with_precision(@avg_balance, precision: 2) %></p>
+          </div>
+          
+          <div class="bg-gray-900 p-6 rounded-lg shadow-lg hover:shadow-blue-400 transition">
+            <h2 class="text-xl font-semibold text-blue-300 mb-2">
+              <i class="fas fa-users mr-2"></i>Active Users
+            </h2>
+            <p class="text-white text-3xl"><%= @total_user.count %></p>
+          </div>
+        </div>
+        
+        <!-- Top Users by Balance -->
+        <div class="bg-gray-900 mt-6 p-6 rounded-lg shadow-lg overflow-x-auto">
+          <h2 class="text-xl font-semibold text-white mb-4">
+            <i class="fas fa-trophy mr-2"></i>Top Users by Balance
+          </h2>
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-700">
+              <thead class="bg-gray-800">
+                <tr>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">User</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Balance</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Role</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Status</th>
+                  <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-700">
+                <% @users_with_balance.each do |user| %>
+                  <tr>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-white">
+                      <%= user.name.present? ? user.name : 'N/A' %>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-white">
+                      <%= user.email %>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-white">
+                      $<%= number_with_precision(user.balance, precision: 2) %>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-white">
+                      <span class="px-2 py-1 rounded text-xs font-medium
+                        <% if user.admin? %>
+                          bg-purple-600 text-white
+                        <% elsif user.staff? %>
+                          bg-blue-600 text-white
+                        <% else %>
+                          bg-green-600 text-white
+                        <% end %>
+                      ">
+                        <%= user.role.titleize %>
+                      </span>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm text-white">
+                      <% if user.suspended? %>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-red-600 text-white">Suspended</span>
+                      <% else %>
+                        <span class="px-2 py-1 rounded text-xs font-medium bg-green-600 text-white">Active</span>
+                      <% end %>
+                    </td>
+                    <td class="px-4 py-3 whitespace-nowrap text-sm">
+                      <%= form_with model: [user], url: update_balance_admin_path(user), method: :patch, local: true, class: "flex items-center space-x-2" do |f| %>
+                        <%= f.number_field :balance, value: user.balance, step: 0.01, class: "w-24 px-2 py-1 text-white rounded text-sm" %>
+                        <%= f.submit 'Update', class: "px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm" %>
+                      <% end %>
+                      <%= link_to 'Manage', admin_user_path(user), class: "ml-2 px-3 py-1 bg-gray-600 text-white rounded hover:bg-gray-700 text-sm" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="bg-gray-900 mt-6 p-6 rounded-lg shadow-lg">
+          <h2 class="text-xl font-semibold text-blue-300 mb-4">
+            <i class="fas fa-bolt mr-2"></i>Quick Actions
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <%= link_to admin_index_path, class: "px-4 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition text-center" do %>
+              <i class="fas fa-users mr-2"></i> Manage All Users
+            <% end %>
+            <%= link_to admin_referrals_path, class: "px-4 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition text-center" do %>
+              <i class="fas fa-user-friends mr-2"></i> View Referrals
+            <% end %>
+            <%= link_to admin_social_task_proofs_path, class: "px-4 py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition text-center" do %>
+              <i class="fas fa-tasks mr-2"></i> Review Proofs
+            <% end %>
+            <%= link_to new_admin_social_task_path, class: "px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-center" do %>
+              <i class="fas fa-plus-circle mr-2"></i> Create Social Task
+            <% end %>
+          </div>
+        </div>
+        
         <!-- Recent Users List -->
         <div class="bg-gray-900 mt-6 p-6 rounded-lg shadow-lg overflow-x-auto">
           <h2 class="text-xl font-semibold text-blue-300 mb-4">
@@ -151,11 +262,119 @@
             <% end %>
           </ul>
         </div>
+        
+        <!-- Pending Learn & Earn Approvals -->
+        <% if @pending_learn_and_earns.any? %>
+          <div class="bg-gray-900 mt-6 p-6 rounded-lg shadow-lg overflow-x-auto">
+            <div class="flex justify-between items-center mb-4">
+              <h2 class="text-xl font-semibold text-blue-300">
+                <i class="fas fa-graduation-cap mr-2"></i>Pending Learn & Earn Approvals
+              </h2>
+              <%= link_to "View All", learn_and_earns_path, class: "text-blue-400 hover:text-blue-300 text-sm" %>
+            </div>
+            
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-800">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">User</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Referral Link</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Social Post</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Submitted</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                  <% @pending_learn_and_earns.each do |entry| %>
+                    <tr class="hover:bg-gray-800 transition">
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-white">
+                        <%= entry.user.email %>
+                      </td>
+                      <td class="px-4 py-3 text-sm text-white max-w-xs truncate">
+                        <%= entry.link %>
+                      </td>
+                      <td class="px-4 py-3 text-sm text-white max-w-xs truncate">
+                        <%= entry.social_post %>
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-white">
+                        <%= entry.created_at.strftime("%b %d, %Y") %>
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        <div class="flex space-x-2">
+                          <%= button_to "Approve", approve_learn_and_earn_path(entry), 
+                              method: :post, 
+                              class: "px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700 text-xs" %>
+                          <%= button_to "Reject", reject_learn_and_earn_path(entry), 
+                              method: :post, 
+                              class: "px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs" %>
+                          <%= link_to "View", learn_and_earn_path(entry), 
+                              class: "px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-xs" %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        <% end %>
+        
+        <!-- Social Tasks Overview -->
+        <div class="bg-gray-900 mt-6 p-6 rounded-lg shadow-lg">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-blue-300">
+              <i class="fas fa-tasks mr-2"></i>Social Tasks Overview
+            </h2>
+            <div class="flex space-x-2">
+              <%= link_to "View All", admin_social_tasks_path, class: "text-blue-400 hover:text-blue-300 text-sm" %>
+              <%= link_to "Create New", new_admin_social_task_path, class: "bg-orange-600 hover:bg-orange-700 text-white px-3 py-1 rounded text-sm" %>
+            </div>
+          </div>
+          
+          <% if @social_tasks.any? %>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-800">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Task Name</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Proofs</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Created</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Actions</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                  <% @social_tasks.each do |task| %>
+                    <tr class="hover:bg-gray-800 transition">
+                      <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-white">
+                        <%= task.name %>
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
+                        <%= task.social_task_proofs.count %> submissions
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
+                        <%= task.created_at.strftime("%b %d, %Y") %>
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        <div class="flex space-x-2">
+                          <%= link_to "View", admin_social_task_proofs_path, class: "text-blue-400 hover:text-blue-300 text-xs" %>
+                          <%= link_to "Edit", edit_admin_social_task_path(task), class: "text-green-400 hover:text-green-300 text-xs" %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="text-center py-8">
+              <div class="text-4xl mb-3">📝</div>
+              <p class="text-gray-400">No social tasks created yet.</p>
+              <%= link_to "Create First Social Task", new_admin_social_task_path, class: "mt-4 inline-block bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded transition" %>
+            </div>
+          <% end %>
+        </div>
       </section>
     </main>
   </div>
 </body>
 
-
-
- 

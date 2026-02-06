@@ -31,11 +31,11 @@
         <% end %>
 
         <%= link_to links_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
-          <i class="fas fa-tasks mr-2"></i> Complete Task & Earn
+          <i class="fas fa-link mr-2"></i> PTC Click & Earn
         <% end %>
 
         <%= link_to tasks_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
-         <i class="fas fa-play mr-2"></i> Complete Task & Earn
+         <i class="fas fa-mouse-pointer mr-2"></i> Click & Earn
         <% end %>
 
         <%= link_to user_tasks_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
@@ -58,6 +58,140 @@
                 <%= link_to referrals_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
            <i class="fas fa-user-friends animate-pulse mr-2"></i> Add Friends
         <% end %>
+
+        <!-- Social Tasks Quick Access -->
+        <div class="mt-6 pt-4 border-t border-gray-700">
+          <div class="px-4 mb-3">
+            <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Social Tasks</h3>
+            <p class="text-xs text-gray-400">Complete tasks to earn rewards</p>
+          </div>
+          
+          <% if @available_tasks.any? %>
+            <!-- Professional Image Slider -->
+            <div class="px-2 mb-4">
+              <div class="relative bg-gray-800/50 rounded-2xl p-4 border border-gray-700 overflow-hidden">
+                <div class="relative h-48 mb-4">
+                  <div id="task-slider" class="relative w-full h-full overflow-hidden rounded-xl">
+                    <% @available_tasks.each_with_index do |task, index| %>
+                      <div class="task-slide absolute inset-0 transition-opacity duration-500 <%= index == 0 ? 'opacity-100' : 'opacity-0' %>" data-index="<%= index %>">
+                        <% if task.has_image? %>
+                          <img src="<%= task.display_image_url %>" 
+                               alt="<%= task.name %>" 
+                               class="w-full h-full object-cover"
+                               onerror="this.parentElement.innerHTML='<div class=\'w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center\'><i class=\'fas fa-bullhorn text-blue-400 text-3xl\'></i></div>'">
+                        <% else %>
+                          <div class="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center">
+                            <i class="fas fa-bullhorn text-blue-400 text-3xl"></i>
+                          </div>
+                        <% end %>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
+                          <h4 class="text-white font-semibold text-sm mb-1"><%= task.name %></h4>
+                          <p class="text-gray-200 text-xs truncate"><%= truncate(task.description, length: 60) %></p>
+                        </div>
+                      </div>
+                    <% end %>
+                  </div>
+                  
+                  <!-- Slider Navigation -->
+                  <div class="absolute bottom-4 right-4 flex gap-2">
+                    <% @available_tasks.each_with_index do |task, index| %>
+                      <button class="slider-dot w-3 h-3 rounded-full <%= index == 0 ? 'bg-white' : 'bg-white/30' %>" 
+                              data-slide="<%= index %>"
+                              aria-label="Go to slide <%= index + 1 %>">
+                      </button>
+                    <% end %>
+                  </div>
+                  
+                  <!-- Navigation Arrows -->
+                  <button id="prev-slide" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition">
+                    <i class="fas fa-chevron-left"></i>
+                  </button>
+                  <button id="next-slide" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white p-2 rounded-full transition">
+                    <i class="fas fa-chevron-right"></i>
+                  </button>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                  <button id="preview-current-task" 
+                          class="flex-1 text-xs bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-3 py-2 rounded-lg transition-all duration-200 font-medium shadow hover:shadow-md flex items-center justify-center gap-1">
+                    <i class="fas fa-search"></i>
+                    Preview
+                  </button>
+                  <button id="complete-current-task"
+                          class="flex-1 text-xs bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-2 rounded-lg transition-all duration-200 font-medium shadow hover:shadow-md flex items-center justify-center gap-1">
+                    <i class="fas fa-check-circle"></i>
+                    Complete
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Task List (Hidden by default, can be toggled) -->
+            <div id="task-list" class="hidden space-y-3 px-2">
+              <% @available_tasks.each do |task| %>
+                <div class="bg-gray-800/50 rounded-xl p-4 border border-gray-700 hover:border-blue-500 transition-all duration-200 hover:shadow-lg">
+                  <div class="flex items-start gap-3">
+                    <% if task.has_image? %>
+                      <div class="flex-shrink-0">
+                        <img src="<%= task.display_image_url %>" alt="<%= task.name %>" class="w-12 h-12 rounded-lg object-cover border-2 border-gray-600 hover:border-blue-400 transition">
+                      </div>
+                    <% else %>
+                      <div class="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center flex-shrink-0 border-2 border-gray-600">
+                        <i class="fas fa-bullhorn text-blue-400 text-lg"></i>
+                      </div>
+                    <% end %>
+                    <div class="min-w-0 flex-1">
+                      <h4 class="text-sm font-semibold text-white mb-1 leading-tight"><%= task.name %></h4>
+                      <p class="text-xs text-gray-300 mb-2 line-clamp-2"><%= truncate(task.description, length: 60) %></p>
+                      <div class="flex gap-2">
+                        <button type="button" 
+                                data-task-id="<%= task.id %>"
+                                data-task-name="<%= task.name %>"
+                                data-task-description="<%= task.description %>"
+                                data-task-url="<%= task.url %>"
+                                data-task-image="<%= task.display_image_url if task.has_image? %>"
+                                class="task-preview-btn text-xs bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 font-medium shadow hover:shadow-md transform hover:-translate-y-0.5 flex items-center gap-1">
+                          <i class="fas fa-search"></i>
+                          Preview
+                        </button>
+                        <%= link_to new_social_task_proof_path(task_id: task.id), 
+                            class: "text-xs bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 font-medium shadow hover:shadow-md transform hover:-translate-y-0.5 flex items-center gap-1" do %>
+                          <i class="fas fa-check-circle"></i>
+                          Complete
+                        <% end %>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+            
+            <!-- Toggle Button -->
+            <div class="text-center px-2 pt-2">
+              <button id="toggle-task-view" class="text-xs text-blue-400 hover:text-blue-300 font-medium inline-flex items-center gap-1">
+                <i class="fas fa-list"></i>
+                <span id="toggle-text">Show All Tasks</span>
+              </button>
+            </div>
+            
+            <% if @available_tasks.count > 3 %>
+              <div class="text-center pt-3 px-2">
+                <%= link_to social_task_proofs_path, class: "text-xs text-blue-400 hover:text-blue-300 font-medium inline-flex items-center gap-1" do %>
+                  <i class="fas fa-plus-circle"></i> View All <%= @available_tasks.count %> Tasks
+                <% end %>
+              </div>
+            <% end %>
+          <% else %>
+            <div class="px-4 py-6 text-center">
+              <div class="w-12 h-12 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-3">
+                <i class="fas fa-tasks text-gray-500 text-xl"></i>
+              </div>
+              <p class="text-sm text-gray-500 font-medium mb-1">No tasks available</p>
+              <p class="text-xs text-gray-600">Check back later for new opportunities</p>
+            </div>
+          <% end %>
+        </div>
 
         <%= link_to destroy_user_session_path, method: :delete, data: { turbo_method: :delete, turbo_confirm: "Are You Sure!" }, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
           <i class="fas fa-sign-out-alt mr-2"></i> Logout
@@ -83,10 +217,9 @@
         </div>
         <div class="bg-gray-800 p-6 rounded-lg shadow hover:shadow-blue-500 transition">
           <p class="text-sm text-gray-400 mb-1">
-            <i class="fas fa-tasks mr-1"></i> Total Complite Task
+            <i class="fas fa-mouse-pointer mr-1"></i> Total Clicks
           </p>
-          <p class="text-2xl font-semibold text-blue-300"><%= @approved_tasks.count if current_user.admin? %>
-</p>
+          <p class="text-2xl font-semibold text-blue-300"><%= @total_clicks %></p>
         </div>
 
         <div class="bg-gray-800 p-6 rounded-lg shadow hover:shadow-blue-500 transition">
@@ -125,12 +258,12 @@
           <p class="text-sm text-gray-400 mb-1">
             <i class="fas fa-wallet mr-1"></i> Current Balance
           </p>
-          <p class="text-2xl font-semibold text-blue-300"><%= number_with_precision(current_user.balance, precision: 2) %></p>
+          <p class="text-2xl font-semibold text-blue-300"><%= number_with_precision(User.find(current_user.id).balance, precision: 2) %></p>
         </div>
       </div>
 
       <!-- Withdraw History -->
-      <div class="bg-gray-900 p-6 rounded-lg shadow">
+      <div class="bg-gray-900 p-6 rounded-lg shadow mb-8">
         <h3 class="text-2xl font-semibold text-blue-400 mb-4 flex items-center">
           <i class="fas fa-money-bill-wave mr-2"></i> Your Withdrawals
         </h3>
@@ -151,6 +284,634 @@
           <p class="text-sm text-gray-500">No withdrawals yet.</p>
         <% end %>
       </div>
+
+      <!-- Recent Proofs Section -->
+      <div class="bg-gray-900 p-6 rounded-lg shadow">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-2xl font-semibold text-blue-400 flex items-center gap-2">
+            <i class="fas fa-history"></i> Recent Submissions
+          </h3>
+          <div class="text-sm text-gray-400 flex items-center gap-2">
+            <i class="fas fa-info-circle"></i>
+            <span>Track your task progress</span>
+          </div>
+        </div>
+        
+        <% if @user_proofs.any? %>
+          <div class="space-y-4">
+            <% @user_proofs.each do |proof| %>
+              <div class="bg-gray-800 p-4 rounded-xl border-l-4 <%= proof.approved? ? 'border-green-500' : proof.rejected? ? 'border-red-500' : 'border-yellow-500' %> hover:shadow-md transition">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="flex-1">
+                    <h4 class="font-semibold text-white text-base mb-1"><%= proof.social_task.name %></h4>
+                    <div class="flex items-center gap-2 text-xs text-gray-400 mb-2">
+                      <i class="fas fa-link"></i>
+                      <%= link_to truncate(proof.post_url, length: 40), proof.post_url, target: "_blank", class: "hover:text-blue-400 truncate" %>
+                    </div>
+                  </div>
+                  <span class="text-xs px-3 py-1 rounded-full font-medium <%= 
+                    proof.approved? ? 'bg-green-900/30 text-green-400' : 
+                    proof.rejected? ? 'bg-red-900/30 text-red-400' : 
+                    'bg-yellow-900/30 text-yellow-400' 
+                  %>">
+                    <%= proof.status.capitalize %>
+                  </span>
+                </div>
+                <div class="flex justify-between items-center text-xs text-gray-500">
+                  <div class="flex items-center gap-1">
+                    <i class="far fa-clock"></i>
+                    <span>Submitted <%= time_ago_in_words(proof.created_at) %> ago</span>
+                  </div>
+                  <% if proof.approved? %>
+                    <div class="flex items-center gap-1 text-green-400">
+                      <i class="fas fa-coins"></i>
+                      <span>Rewards earned</span>
+                    </div>
+                  <% elsif proof.rejected? %>
+                    <div class="flex items-center gap-1 text-red-400">
+                      <i class="fas fa-times-circle"></i>
+                      <span>Review submission</span>
+                    </div>
+                  <% else %>
+                    <div class="flex items-center gap-1 text-yellow-400">
+                      <i class="fas fa-hourglass-half"></i>
+                      <span>Under review</span>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+            <% end %>
+          </div>
+          <div class="mt-6 text-center">
+            <%= link_to social_task_proofs_path, class: "inline-flex items-center gap-2 text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition font-medium" do %>
+              <i class="fas fa-eye"></i> View All Submissions
+            <% end %>
+          </div>
+        <% else %>
+          <div class="text-center py-12">
+            <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-file-alt text-gray-500 text-2xl"></i>
+            </div>
+            <h4 class="text-lg font-medium text-gray-300 mb-2">No submissions yet</h4>
+            <p class="text-gray-500 mb-6 max-w-md mx-auto">Start earning rewards by completing social tasks from the sidebar. Your submissions will appear here once you get started.</p>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center">
+              <%= link_to social_task_proofs_path, class: "inline-flex items-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-5 py-2.5 rounded-lg transition font-medium shadow hover:shadow-lg" do %>
+                <i class="fas fa-tasks"></i> View Available Tasks
+              <% end %>
+              <%= link_to user_dashbord_index_path, class: "inline-flex items-center gap-2 bg-gray-700 hover:bg-gray-600 text-white px-5 py-2.5 rounded-lg transition font-medium" do %>
+                <i class="fas fa-sync-alt"></i> Refresh Dashboard
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
     </main>
   </div>
+
+  <!-- Task Preview Modal -->
+  <div id="task-preview-modal" class="fixed inset-0 z-50 hidden">
+    <div class="absolute inset-0 bg-black/70 backdrop-blur-sm" data-close-modal></div>
+    <div class="relative min-h-screen flex items-center justify-center p-4">
+      <div class="bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden border border-gray-700">
+        <!-- Modal Header -->
+        <div class="flex justify-between items-center p-6 border-b border-gray-700">
+          <h3 class="text-xl font-bold text-white flex items-center gap-2">
+            <i class="fas fa-tasks text-blue-400"></i>
+            Task Preview
+          </h3>
+          <button data-close-modal class="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-800 transition">
+            <i class="fas fa-times text-xl"></i>
+          </button>
+        </div>
+        
+        <!-- Modal Content -->
+        <div class="p-6 overflow-y-auto max-h-[70vh]">
+          <div class="flex flex-col md:flex-row gap-6">
+            <!-- Image Section -->
+            <div class="md:w-1/3">
+              <div id="preview-image-container" class="bg-gray-800 rounded-xl overflow-hidden aspect-square flex items-center justify-center border border-gray-700">
+                <i class="fas fa-image text-gray-600 text-4xl"></i>
+              </div>
+            </div>
+            
+            <!-- Details Section -->
+            <div class="md:w-2/3">
+              <h2 id="preview-task-name" class="text-2xl font-bold text-white mb-3"></h2>
+              <p id="preview-task-description" class="text-gray-300 mb-6 leading-relaxed"></p>
+              
+              <div class="space-y-4">
+                <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+                  <i class="fas fa-link text-blue-400"></i>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-400 mb-1">Task URL</p>
+                    <div class="flex gap-2">
+                      <a id="preview-task-url" href="#" target="_blank" class="text-blue-400 hover:text-blue-300 text-sm font-medium truncate flex-1">View Task Details</a>
+                      <button id="copy-url-btn" class="text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 px-2 py-1 rounded transition flex items-center gap-1">
+                        <i class="fas fa-copy"></i>
+                        Copy
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+                  <i class="fas fa-image text-purple-400"></i>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs text-gray-400 mb-1">Task Image</p>
+                    <div class="flex gap-2">
+                      <span id="image-status" class="text-gray-300 text-sm truncate flex-1">Social media campaign image</span>
+                      <button id="download-image-btn" class="text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 px-2 py-1 rounded transition flex items-center gap-1">
+                        <i class="fas fa-download"></i>
+                        Download
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg border border-gray-700">
+                  <i class="fas fa-trophy text-yellow-400"></i>
+                  <div>
+                    <p class="text-xs text-gray-400">Rewards</p>
+                    <p class="text-white text-sm font-medium">Complete to earn rewards</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Modal Footer -->
+        <div class="flex flex-col sm:flex-row gap-3 p-6 border-t border-gray-700 bg-gray-800/30">
+          <button id="preview-complete-btn" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white py-3 px-4 rounded-lg font-semibold transition flex items-center justify-center gap-2">
+            <i class="fas fa-check-circle"></i>
+            Complete This Task
+          </button>
+          <button data-close-modal class="flex-1 bg-gray-700 hover:bg-gray-600 text-white py-3 px-4 rounded-lg font-semibold transition">
+            Close Preview
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript for Modal Functionality -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('task-preview-modal');
+      const closeButtons = document.querySelectorAll('[data-close-modal]');
+      const previewButtons = document.querySelectorAll('.task-preview-btn');
+      const completeBtn = document.getElementById('preview-complete-btn');
+      const copyUrlBtn = document.getElementById('copy-url-btn');
+      const downloadImageBtn = document.getElementById('download-image-btn');
+      
+      let currentTaskUrl = '';
+      let currentTaskImage = '';
+      let currentTaskName = '';
+      
+      // Open modal with task data
+      previewButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const taskId = this.dataset.taskId;
+          const taskName = this.dataset.taskName;
+          const taskDescription = this.dataset.taskDescription;
+          const taskUrl = this.dataset.taskUrl;
+          const taskImage = this.dataset.taskImage;
+          
+          // Store current task data
+          currentTaskUrl = taskUrl;
+          currentTaskImage = taskImage;
+          currentTaskName = taskName;
+          
+          // Update modal content
+          document.getElementById('preview-task-name').textContent = taskName;
+          document.getElementById('preview-task-description').textContent = taskDescription;
+          document.getElementById('preview-task-url').href = taskUrl;
+          document.getElementById('preview-task-url').textContent = taskUrl;
+          
+          // Update image section
+          const imageContainer = document.getElementById('preview-image-container');
+          const imageStatus = document.getElementById('image-status');
+          const downloadBtn = document.getElementById('download-image-btn');
+          
+          if (taskImage) {
+            imageContainer.innerHTML = `<img src="${taskImage}" alt="${taskName}" class="w-full h-full object-cover">`;
+            imageStatus.textContent = 'Social media campaign image';
+            imageStatus.classList.remove('text-red-400');
+            imageStatus.classList.add('text-gray-300');
+            downloadBtn.disabled = false;
+            downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          } else {
+            imageContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20"><i class="fas fa-bullhorn text-blue-400 text-4xl"></i></div>`;
+            imageStatus.textContent = 'No image available for this task';
+            imageStatus.classList.remove('text-gray-300');
+            imageStatus.classList.add('text-red-400');
+            downloadBtn.disabled = true;
+            downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          }
+          
+          // Set complete button link
+          completeBtn.onclick = function() {
+            window.location.href = '/social_task_proofs/new?task_id=' + taskId;
+          };
+          
+          // Show modal
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        });
+      });
+      
+      // Copy URL functionality
+      copyUrlBtn.addEventListener('click', async function() {
+        try {
+          await navigator.clipboard.writeText(currentTaskUrl);
+          // Show success feedback
+          const originalText = this.innerHTML;
+          this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          this.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+          this.classList.add('bg-green-600', 'hover:bg-green-700');
+          
+          setTimeout(() => {
+            this.innerHTML = originalText;
+            this.classList.remove('bg-green-600', 'hover:bg-green-700');
+            this.classList.add('bg-gray-700', 'hover:bg-gray-600');
+          }, 2000);
+        } catch (err) {
+          console.error('Failed to copy URL: ', err);
+          // Fallback for older browsers
+          const textArea = document.createElement('textarea');
+          textArea.value = currentTaskUrl;
+          document.body.appendChild(textArea);
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+          
+          // Show success feedback
+          const originalText = this.innerHTML;
+          this.innerHTML = '<i class="fas fa-check"></i> Copied!';
+          this.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+          this.classList.add('bg-green-600', 'hover:bg-green-700');
+          
+          setTimeout(() => {
+            this.innerHTML = originalText;
+            this.classList.remove('bg-green-600', 'hover:bg-green-700');
+            this.classList.add('bg-gray-700', 'hover:bg-gray-600');
+          }, 2000);
+        }
+      });
+      
+      // Download image functionality
+      downloadImageBtn.addEventListener('click', function() {
+        if (currentTaskImage && !this.disabled) {
+          try {
+            // Create temporary link for download
+            const link = document.createElement('a');
+            link.href = currentTaskImage;
+            link.download = currentTaskName.replace(/[^a-z0-9]/gi, '_').toLowerCase() + '_campaign_image.jpg';
+            link.target = '_blank';
+            
+            // Show download feedback
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Downloading...';
+            this.disabled = true;
+            
+            // Trigger download
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success feedback
+            setTimeout(() => {
+              this.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+              this.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+              this.classList.add('bg-green-600', 'hover:bg-green-700');
+            }, 500);
+            
+            // Reset button after delay
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.disabled = false;
+              this.classList.remove('bg-green-600', 'hover:bg-green-700');
+              this.classList.add('bg-gray-700', 'hover:bg-gray-600');
+            }, 2500);
+          } catch (error) {
+            console.error('Download failed:', error);
+            // Show error feedback
+            const originalText = this.innerHTML;
+            this.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Error';
+            this.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+            this.classList.add('bg-red-600', 'hover:bg-red-700');
+            this.disabled = true;
+            
+            setTimeout(() => {
+              this.innerHTML = originalText;
+              this.disabled = false;
+              this.classList.remove('bg-red-600', 'hover:bg-red-700');
+              this.classList.add('bg-gray-700', 'hover:bg-gray-600');
+            }, 2000);
+          }
+        }
+      });
+      
+      // Close modal
+      closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          modal.classList.add('hidden');
+          document.body.style.overflow = 'auto';
+        });
+      });
+      
+      // Close with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+          modal.classList.add('hidden');
+          document.body.style.overflow = 'auto';
+        }
+      });
+      
+      // Close when clicking outside modal
+      modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+          document.body.style.overflow = 'auto';
+        }
+      });
+      
+      // Task Slider Functionality
+      const slider = document.getElementById('task-slider');
+      const slides = document.querySelectorAll('.task-slide');
+      const dots = document.querySelectorAll('.slider-dot');
+      const prevBtn = document.getElementById('prev-slide');
+      const nextBtn = document.getElementById('next-slide');
+      const previewBtn = document.getElementById('preview-current-task');
+      const completeBtn = document.getElementById('complete-current-task');
+      const toggleBtn = document.getElementById('toggle-task-view');
+      const taskList = document.getElementById('task-list');
+      const toggleText = document.getElementById('toggle-text');
+      
+      let currentSlide = 0;
+      
+      // Initialize slider
+      if (slides.length > 0) {
+        updateSlider();
+        
+        // Auto-advance slider every 5 seconds
+        setInterval(() => {
+          nextSlide();
+        }, 5000);
+      }
+      
+      function updateSlider() {
+        // Update slides
+        slides.forEach((slide, index) => {
+          slide.style.opacity = index === currentSlide ? '1' : '0';
+          slide.style.zIndex = index === currentSlide ? '10' : '1';
+        });
+        
+        // Update dots
+        dots.forEach((dot, index) => {
+          dot.classList.toggle('bg-white', index === currentSlide);
+          dot.classList.toggle('bg-white/30', index !== currentSlide);
+        });
+        
+        // Update action buttons
+        const currentTask = <%= @available_tasks.to_json.html_safe %>[currentSlide];
+        if (currentTask) {
+          document.getElementById('preview-current-task').onclick = function() {
+            openPreviewModal(currentTask);
+          };
+          
+          document.getElementById('complete-current-task').onclick = function() {
+            window.location.href = '/social_task_proofs/new?task_id=' + currentTask.id;
+          };
+        }
+      }
+      
+      function nextSlide() {
+        currentSlide = (currentSlide + 1) % slides.length;
+        updateSlider();
+      }
+      
+      function prevSlide() {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+        updateSlider();
+      }
+      
+      function goToSlide(index) {
+        currentSlide = index;
+        updateSlider();
+      }
+      
+      function openPreviewModal(task) {
+        // Store current task data
+        currentTaskUrl = task.url;
+        currentTaskImage = task.image;
+        currentTaskName = task.name;
+        
+        // Update modal content
+        document.getElementById('preview-task-name').textContent = task.name;
+        document.getElementById('preview-task-description').textContent = task.description;
+        document.getElementById('preview-task-url').href = task.url;
+        document.getElementById('preview-task-url').textContent = task.url;
+        
+        // Update image section
+        const imageContainer = document.getElementById('preview-image-container');
+        const imageStatus = document.getElementById('image-status');
+        const downloadBtn = document.getElementById('download-image-btn');
+        
+        if (task.image) {
+          imageContainer.innerHTML = `<img src="${task.image}" alt="${task.name}" class="w-full h-full object-cover">`;
+          imageStatus.textContent = 'Social media campaign image';
+          imageStatus.classList.remove('text-red-400');
+          imageStatus.classList.add('text-gray-300');
+          downloadBtn.disabled = false;
+          downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        } else {
+          imageContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20"><i class="fas fa-bullhorn text-blue-400 text-4xl"></i></div>`;
+          imageStatus.textContent = 'No image available for this task';
+          imageStatus.classList.remove('text-gray-300');
+          imageStatus.classList.add('text-red-400');
+          downloadBtn.disabled = true;
+          downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        }
+        
+        // Set complete button link
+        document.getElementById('preview-complete-btn').onclick = function() {
+          window.location.href = '/social_task_proofs/new?task_id=' + task.id;
+        };
+        
+        // Show modal
+        document.getElementById('task-preview-modal').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+      }
+      
+      // Event Listeners for Modal Close
+      closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          document.getElementById('task-preview-modal').classList.add('hidden');
+          document.body.style.overflow = 'auto';
+        });
+      });
+      
+      // Close modal when clicking outside
+      document.getElementById('task-preview-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          document.getElementById('task-preview-modal').classList.add('hidden');
+          document.body.style.overflow = 'auto';
+        }
+      });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !document.getElementById('task-preview-modal').classList.contains('hidden')) {
+          document.getElementById('task-preview-modal').classList.add('hidden');
+          document.body.style.overflow = 'auto';
+        }
+      });
+      
+      // Initialize slider after DOM is fully loaded
+      function initializeSlider() {
+        const slider = document.getElementById('task-slider');
+        const slides = document.querySelectorAll('.task-slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        const prevBtn = document.getElementById('prev-slide');
+        const nextBtn = document.getElementById('next-slide');
+        const previewBtn = document.getElementById('preview-current-task');
+        const completeBtn = document.getElementById('complete-current-task');
+        const toggleBtn = document.getElementById('toggle-task-view');
+        const taskList = document.getElementById('task-list');
+        const toggleText = document.getElementById('toggle-text');
+        
+        let currentSlide = 0;
+        
+        if (slides.length === 0) return; // Exit if no slides
+        
+        // Initialize slider
+        updateSlider();
+        
+        // Auto-advance slider every 5 seconds
+        setInterval(() => {
+          nextSlide();
+        }, 5000);
+        
+        function updateSlider() {
+          // Update slides
+          slides.forEach((slide, index) => {
+            slide.style.opacity = index === currentSlide ? '1' : '0';
+            slide.style.zIndex = index === currentSlide ? '10' : '1';
+          });
+          
+          // Update dots
+          dots.forEach((dot, index) => {
+            dot.classList.toggle('bg-white', index === currentSlide);
+            dot.classList.toggle('bg-white/30', index !== currentSlide);
+          });
+          
+          // Update action buttons
+          const currentTask = <%= raw @available_tasks.map { |t| { id: t.id, name: t.name, description: t.description, url: t.url, image: t.has_image? ? t.display_image_url : nil } }.to_json %>;
+          
+          if (currentTask[currentSlide]) {
+            const task = currentTask[currentSlide];
+            
+            if (previewBtn) {
+              previewBtn.onclick = function() {
+                openPreviewModal(task);
+              };
+            }
+            
+            if (completeBtn) {
+              completeBtn.onclick = function() {
+                window.location.href = '/social_task_proofs/new?task_id=' + task.id;
+              };
+            }
+          }
+        }
+        
+        function nextSlide() {
+          currentSlide = (currentSlide + 1) % slides.length;
+          updateSlider();
+        }
+        
+        function prevSlide() {
+          currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+          updateSlider();
+        }
+        
+        function goToSlide(index) {
+          currentSlide = index;
+          updateSlider();
+        }
+        
+        function openPreviewModal(task) {
+          // Store current task data
+          currentTaskUrl = task.url;
+          currentTaskImage = task.image;
+          currentTaskName = task.name;
+          
+          // Update modal content
+          document.getElementById('preview-task-name').textContent = task.name;
+          document.getElementById('preview-task-description').textContent = task.description;
+          document.getElementById('preview-task-url').href = task.url;
+          document.getElementById('preview-task-url').textContent = task.url;
+          
+          // Update image section
+          const imageContainer = document.getElementById('preview-image-container');
+          const imageStatus = document.getElementById('image-status');
+          const downloadBtn = document.getElementById('download-image-btn');
+          
+          if (task.image) {
+            imageContainer.innerHTML = `<img src="${task.image}" alt="${task.name}" class="w-full h-full object-cover">`;
+            imageStatus.textContent = 'Social media campaign image';
+            imageStatus.classList.remove('text-red-400');
+            imageStatus.classList.add('text-gray-300');
+            downloadBtn.disabled = false;
+            downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          } else {
+            imageContainer.innerHTML = `<div class="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500/20 to-purple-500/20"><i class="fas fa-bullhorn text-blue-400 text-4xl"></i></div>`;
+            imageStatus.textContent = 'No image available for this task';
+            imageStatus.classList.remove('text-gray-300');
+            imageStatus.classList.add('text-red-400');
+            downloadBtn.disabled = true;
+            downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          }
+          
+          // Set complete button link
+          document.getElementById('preview-complete-btn').onclick = function() {
+            window.location.href = '/social_task_proofs/new?task_id=' + task.id;
+          };
+          
+          // Show modal
+          document.getElementById('task-preview-modal').classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        }
+        
+        // Event Listeners for Slider
+        if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+        if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+        
+        dots.forEach((dot, index) => {
+          dot.addEventListener('click', () => goToSlide(index));
+        });
+        
+        // Toggle task view
+        if (toggleBtn) {
+          toggleBtn.addEventListener('click', function() {
+            const isHidden = taskList.classList.contains('hidden');
+            taskList.classList.toggle('hidden', !isHidden);
+            toggleText.textContent = isHidden ? 'Show Slider' : 'Show All Tasks';
+            
+            // Update icon
+            const icon = this.querySelector('i');
+            icon.className = isHidden ? 'fas fa-images' : 'fas fa-list';
+          });
+        }
+      }
+      
+      // Initialize slider after DOM is fully loaded
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeSlider);
+      } else {
+        initializeSlider();
+      }
+    });
+  </script>
 </body>

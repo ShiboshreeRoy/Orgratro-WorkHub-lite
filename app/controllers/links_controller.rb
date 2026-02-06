@@ -83,9 +83,20 @@ def create
 
       # Detect Excel extension
       extension = File.extname(uploaded_file.original_filename).delete('.').downcase
-
+      
       # Read spreadsheet directly from uploaded file
-      spreadsheet = Roo::Spreadsheet.open(uploaded_file.tempfile.path, extension: extension)
+      spreadsheet = begin
+        if extension.in?(['csv'])
+          Roo::CSV.new(uploaded_file.tempfile.path)
+        else
+          Roo::Spreadsheet.open(uploaded_file.tempfile.path, extension: extension)
+        end
+      rescue => e
+        Rails.logger.error "Error opening spreadsheet: #{e.message}"
+        redirect_to new_link_path, alert: "Error reading file: #{e.message}. Please ensure it's a valid Excel/CSV file with 'url' and 'title' columns."
+        return
+      end
+            
       header = spreadsheet.row(1)
 
       (2..spreadsheet.last_row).each do |i|
@@ -94,12 +105,10 @@ def create
         # Create a new link per row
         link = Link.new(
           url: row["url"],           # Excel column must be "url"
+          title: row["title"] || row["name"] || "Imported Link #{i}",
           user: current_user,
           learn_and_earn: @learn_and_earn
         )
-
-        # Attach the uploaded file to the link
-        link.files.attach(uploaded_file)
 
         created_links << link if link.save
       end
@@ -108,7 +117,7 @@ def create
     if created_links.any?
       redirect_to links_path, notice: "#{created_links.count} link(s) created from Excel file(s)."
     else
-      redirect_to links_path, alert: "No valid links found in the uploaded file(s)."
+      redirect_to new_link_path, alert: "No valid links found in the uploaded file(s)."
     end
 
   else
@@ -142,8 +151,19 @@ end
     else
       Click.create!(user: current_user, link: @link)
       @link.increment!(:total_clicks)
-      current_user.increment!(:balance, 0.000333333333)
-      redirect_to links_path, notice: "Click recorded. You earned $0.0.000333333333!"
+      # Calculate earnings based on a consistent rate
+      earnings = calculate_click_earnings(@link)
+      
+      current_user.with_lock do
+        current_user.increment!(:balance, earnings)
+        # Create transaction record for audit trail
+        current_user.transactions.create!(
+          amount: earnings,
+          transaction_type: 'credit',
+          description: "Earnings from clicking link: #{@link.url.truncate(50)}"
+        )
+      end
+      redirect_to links_path, notice: "Click recorded. You earned $#{earnings}!"
     end
   end
 
@@ -183,6 +203,6 @@ end
 
     # Only allow a list of trusted parameters through.
     def link_params
-      params.require(:link).permit(:url, :total_clicks, :file, :user_id, :learn_and_earn_id)
+      params.require(:link).permit(:url, :title, :total_clicks, :file, :user_id, :learn_and_earn_id)
     end
 end

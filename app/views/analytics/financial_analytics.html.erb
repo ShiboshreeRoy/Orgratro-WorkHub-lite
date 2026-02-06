@@ -1,0 +1,101 @@
+<div class="container mx-auto px-4 py-8">
+  <h1 class="text-4xl font-bold text-green-400 mb-8">💰 Financial Analytics</h1>
+
+  <!-- Financial Stats Cards -->
+  <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Total Revenue</p>
+      <p class="text-4xl font-extrabold text-green-100">$<%= number_with_precision(@total_revenue, precision: 2) %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Pending Payouts</p>
+      <p class="text-4xl font-extrabold text-green-100">$<%= number_with_precision(@pending_payouts, precision: 2) %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Completed Payouts</p>
+      <p class="text-4xl font-extrabold text-green-100">$<%= number_with_precision(@completed_payouts, precision: 2) %></p>
+    </div>
+    
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700 text-center hover:shadow-green-500/70 transition">
+      <p class="text-green-300 text-sm uppercase mb-2 tracking-wider font-semibold">Withdrawal Requests</p>
+      <p class="text-4xl font-extrabold text-green-100"><%= @withdrawal_stats[:total_requests] %></p>
+    </div>
+  </section>
+
+  <!-- Withdrawal Status Distribution -->
+  <section class="mb-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">📊 Withdrawal Status Distribution</h2>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="text-center">
+          <p class="text-2xl font-bold text-yellow-400"><%= @withdrawal_stats[:pending] %></p>
+          <p class="text-green-300">Pending</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-green-400"><%= @withdrawal_stats[:approved] %></p>
+          <p class="text-green-300">Approved</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-red-400"><%= @withdrawal_stats[:rejected] %></p>
+          <p class="text-green-300">Rejected</p>
+        </div>
+        <div class="text-center">
+          <p class="text-2xl font-bold text-blue-400"><%= @withdrawal_stats[:total_requests] %></p>
+          <p class="text-green-300">Total</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Daily Earnings Chart -->
+  <section class="mb-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">📈 Daily Earnings</h2>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800 text-sm">
+          <thead class="bg-black text-green-100 uppercase tracking-wider">
+            <tr>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Date</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Earnings</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800 text-green-300">
+            <% @daily_earnings.each do |date, earnings| %>
+              <tr class="hover:bg-green-900 transition-colors">
+                <td class="px-6 py-3"><%= Date.parse(date).strftime("%b %d, %Y") if date.is_a?(String) %></td>
+                <td class="px-6 py-3">$<%= number_with_precision(earnings, precision: 2) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Monthly Earnings Chart -->
+  <section class="mb-8">
+    <h2 class="text-3xl font-semibold text-green-400 mb-4">📅 Monthly Earnings</h2>
+    <div class="bg-gray-900 p-6 rounded-xl shadow-lg border border-green-700">
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800 text-sm">
+          <thead class="bg-black text-green-100 uppercase tracking-wider">
+            <tr>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Month</th>
+              <th class="bg-black text-green-100 px-6 py-3 text-left">Earnings</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800 text-green-300">
+            <% @monthly_earnings.each do |month, earnings| %>
+              <tr class="hover:bg-green-900 transition-colors">
+                <td class="px-6 py-3"><%= Date.parse(month.to_s).strftime("%B %Y") if month.is_a?(String) %></td>
+                <td class="px-6 py-3">$<%= number_with_precision(earnings, precision: 2) %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</div>

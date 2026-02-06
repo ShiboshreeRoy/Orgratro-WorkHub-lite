@@ -1,0 +1,209 @@
+<%= form_with model: [:admin, @social_task], local: true, class: "space-y-6" do |f| %>
+  <% if @social_task.errors.any? %>
+    <div class="bg-red-900/30 border border-red-700 rounded-xl p-4 mb-6">
+      <div class="flex items-center gap-2 mb-2">
+        <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+        <h4 class="text-red-300 font-semibold"><%= pluralize(@social_task.errors.count, "error") %> prohibited this campaign from being saved:</h4>
+      </div>
+      <ul class="list-disc list-inside text-red-200 text-sm space-y-1">
+        <% @social_task.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <!-- File Upload Section -->
+  <div class="bg-gray-800/30 rounded-xl p-4 border border-gray-700/50 mb-6">
+    <h3 class="text-sm font-semibold text-blue-300 mb-3 flex items-center gap-2">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+      </svg>
+      Bulk Import Campaigns
+    </h3>
+    <div class="flex flex-col sm:flex-row gap-3 items-start">
+      <%= f.file_field :file, 
+          class: "flex-1 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600",
+          accept: ".csv,.xlsx,.xls" %>
+      <%= link_to "Download Template", sample_template_admin_social_tasks_path, 
+          class: "px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg text-sm font-medium transition-colors" %>
+    </div>
+    <p class="mt-2 text-xs text-gray-400">Upload CSV or Excel file with campaign data. Download template for proper format.</p>
+  </div>
+
+  <!-- Campaign Name -->
+  <div>
+    <%= f.label :name, class: "block text-sm font-semibold text-blue-200 mb-2 flex items-center gap-2" %>
+    <div class="relative">
+      <%= f.text_field :name, 
+          class: "w-full rounded-xl border border-gray-700 bg-gray-900/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200",
+          placeholder: "e.g., Summer Sale Social Campaign" %>
+    </div>
+    <p class="mt-1 text-xs text-blue-400/80">Create compelling, action-oriented campaign names</p>
+  </div>
+
+  <!-- Campaign URL -->
+  <div>
+    <%= f.label :url, class: "block text-sm font-semibold text-blue-200 mb-2 flex items-center gap-2" %>
+    <div class="relative">
+      <%= f.url_field :url, 
+          class: "w-full rounded-xl border border-gray-700 bg-gray-900/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200",
+          placeholder: "https://example.com/campaign-page" %>
+    </div>
+    <p class="mt-1 text-xs text-blue-400/80">Landing page or product URL for this campaign</p>
+  </div>
+
+  <!-- Campaign Description -->
+  <div>
+    <%= f.label :description, class: "block text-sm font-semibold text-blue-200 mb-2 flex items-center gap-2" %>
+    <%= f.text_area :description, 
+        rows: 4,
+        class: "w-full rounded-xl border border-gray-700 bg-gray-900/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200",
+        placeholder: "Describe what users should do for this social campaign..." %>
+    <p class="mt-1 text-xs text-blue-400/80">Clear instructions for users (10-500 characters)</p>
+  </div>
+
+  <!-- Campaign Image Section -->
+  <div>
+    <div class="flex items-center justify-between mb-2">
+      <%= f.label :image, class: "block text-sm font-semibold text-blue-200 flex items-center gap-2" %>
+      <span class="text-xs text-gray-400">Choose one: Upload file OR enter URL</span>
+    </div>
+    
+    <!-- Image Upload Option -->
+    <div class="bg-gray-800/30 rounded-xl p-4 border border-gray-700/50 mb-4">
+      <h4 class="text-sm font-semibold text-blue-300 mb-2 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+        </svg>
+        Upload Image File
+      </h4>
+      <%= f.file_field :campaign_image, 
+          class: "w-full file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600",
+          accept: "image/*",
+          data: { preview_target: "upload" } %>
+      <p class="mt-2 text-xs text-gray-400">Supported formats: JPG, PNG, GIF (max 5MB)</p>
+      
+      <!-- Image Preview for Upload -->
+      <div id="upload-preview" class="mt-4 hidden">
+        <p class="text-xs text-green-400 mb-2 flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Preview:
+        </p>
+        <img id="upload-preview-image" src="" alt="Upload preview" class="max-h-32 rounded-lg border border-gray-600">
+      </div>
+      
+      <% if @social_task.campaign_image.attached? %>
+        <div class="mt-3 p-3 bg-gray-900/50 rounded-lg">
+          <p class="text-xs text-green-400 mb-2">✓ Current image uploaded</p>
+          <img src="<%= url_for(@social_task.campaign_image) %>" alt="Current campaign image" class="h-16 w-16 object-cover rounded-lg">
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Image URL Option -->
+    <div class="bg-gray-800/30 rounded-xl p-4 border border-gray-700/50">
+      <h4 class="text-sm font-semibold text-blue-300 mb-2 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+        </svg>
+        Or Enter Image URL
+      </h4>
+      <%= f.url_field :image, 
+          class: "w-full rounded-xl border border-gray-700 bg-gray-900/50 px-4 py-3 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200",
+          placeholder: "https://example.com/images/campaign.jpg",
+          data: { preview_target: "url" } %>
+      <p class="mt-2 text-xs text-gray-400">External image URL (optional if file uploaded)</p>
+      
+      <!-- Image Preview for URL -->
+      <div id="url-preview" class="mt-4 hidden">
+        <p class="text-xs text-green-400 mb-2 flex items-center gap-1">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Preview:
+        </p>
+        <img id="url-preview-image" src="" alt="URL preview" class="max-h-32 rounded-lg border border-gray-600">
+      </div>
+      
+      <% if @social_task.image.present? %>
+        <div class="mt-3 p-3 bg-gray-900/50 rounded-lg">
+          <p class="text-xs text-green-400 mb-2">✓ Current image URL</p>
+          <img src="<%= @social_task.image %>" alt="Current campaign image" class="h-16 w-16 object-cover rounded-lg">
+        </div>
+      <% end %>
+    </div>
+    
+    <p class="mt-3 text-xs text-blue-400/80 flex items-center gap-1">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      You can use either method - file upload takes precedence over URL
+    </p>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-gray-700/50">
+    <%= link_to admin_social_tasks_path, 
+        class: "flex items-center gap-2 text-gray-400 hover:text-gray-300 font-medium px-4 py-2 rounded-lg hover:bg-gray-800/50 transition-colors" do %>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+      </svg>
+      Cancel
+    <% end %>
+    
+    <%= f.submit @social_task.persisted? ? "Update Campaign" : "Launch Campaign",
+        class: "w-full sm:w-auto bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition-all duration-300 transform hover:-translate-y-0.5" %>
+  </div>
+<% end %>
+
+<script>
+  // Handle file upload preview
+  document.addEventListener('DOMContentLoaded', function() {
+    const uploadInput = document.querySelector('[data-preview-target="upload"]');
+    const urlInput = document.querySelector('[data-preview-target="url"]');
+    
+    if (uploadInput) {
+      uploadInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const preview = document.getElementById('upload-preview');
+        const previewImage = document.getElementById('upload-preview-image');
+        
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            preview.classList.remove('hidden');
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.classList.add('hidden');
+        }
+      });
+    }
+    
+    if (urlInput) {
+      urlInput.addEventListener('input', function(e) {
+        const url = e.target.value;
+        const preview = document.getElementById('url-preview');
+        const previewImage = document.getElementById('url-preview-image');
+        
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+          previewImage.src = url;
+          preview.classList.remove('hidden');
+          
+          // Handle image loading errors
+          previewImage.onerror = function() {
+            preview.classList.add('hidden');
+          };
+        } else {
+          preview.classList.add('hidden');
+        }
+      });
+    }
+  });
+</script>

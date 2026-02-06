@@ -1,0 +1,82 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">🏆 Achievements Management</h1>
+    
+    <!-- Create New Achievement Form -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Create New Achievement</h2>
+      <%= form_with model: @achievement, url: marketing_create_achievement_path, local: true, class: "space-y-4" do |f| %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= f.label :name, "Name", class: "block text-green-300 mb-1" %>
+            <%= f.text_field :name, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :achievement_type, "Type", class: "block text-green-300 mb-1" %>
+            <%= f.select :achievement_type, options_for_select(Achievement::ACHIEVEMENT_TYPES, @achievement.achievement_type), {}, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div class="md:col-span-2">
+            <%= f.label :description, "Description", class: "block text-green-300 mb-1" %>
+            <%= f.text_area :description, rows: 3, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :points, "Points", class: "block text-green-300 mb-1" %>
+            <%= f.number_field :points, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :badge_image, "Badge Image", class: "block text-green-300 mb-1" %>
+            <%= f.text_field :badge_image, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :is_active, "Active", class: "block text-green-300 mb-1" %>
+            <%= f.check_box :is_active, class: "rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+        </div>
+        
+        <%= f.submit "Create Achievement", class: "mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+      <% end %>
+    </div>
+    
+    <!-- Achievements Table -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+      <h2 class="text-2xl font-semibold mb-4">All Achievements</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left">Name</th>
+              <th class="px-6 py-3 text-left">Type</th>
+              <th class="px-6 py-3 text-left">Description</th>
+              <th class="px-6 py-3 text-center">Points</th>
+              <th class="px-6 py-3 text-center">Unlocked</th>
+              <th class="px-6 py-3 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800">
+            <% @achievements.each do |achievement| %>
+              <tr>
+                <td class="px-6 py-4 font-semibold"><%= achievement.name %></td>
+                <td class="px-6 py-4 capitalize"><%= achievement.achievement_type %></td>
+                <td class="px-6 py-4"><%= achievement.description %></td>
+                <td class="px-6 py-4 text-center"><%= achievement.points %></td>
+                <td class="px-6 py-4 text-center"><%= achievement.user_achievements.where(unlocked: true).count %></td>
+                <td class="px-6 py-4 text-center">
+                  <% if achievement.is_active? %>
+                    <span class="bg-green-900 text-green-300 px-2 py-1 rounded">Active</span>
+                  <% else %>
+                    <span class="bg-red-900 text-red-300 px-2 py-1 rounded">Inactive</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

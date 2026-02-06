@@ -1,0 +1,133 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">🏷️ Promotional Codes</h1>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Codes</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @promotional_codes.total_count rescue @promotional_codes.count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Codes</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @promotional_codes.select(&:is_active).count rescue @promotional_codes.where(is_active: true).count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Used Codes</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @promotional_codes.sum { |pc| pc.user_promotional_codes.count } rescue UserPromotionalCode.count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Avg Discount</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @promotional_codes.average(:discount_percent).present? ? "#{@promotional_codes.average(:discount_percent).round(2)}%" : (@promotional_codes.average(:discount_fixed_amount).present? ? number_to_currency(@promotional_codes.average(:discount_fixed_amount)) : "N/A") rescue "N/A" %></p>
+      </div>
+    </div>
+    
+    <!-- Create New Code Form -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Create New Promotional Code</h2>
+      <%= form_with(model: @promotional_code, url: marketing_create_promotional_code_path, local: true, class: "space-y-4") do |form| %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= form.label :code, class: "block text-sm font-medium mb-1" %>
+            <%= form.text_field :code, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div>
+            <%= form.label :discount_percent, "Discount Percent (%)", class: "block text-sm font-medium mb-1" %>
+            <%= form.number_field :discount_percent, step: 0.01, min: 0, max: 100, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div>
+            <%= form.label :discount_fixed_amount, "Fixed Discount Amount", class: "block text-sm font-medium mb-1" %>
+            <%= form.number_field :discount_fixed_amount, step: 0.01, min: 0, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div>
+            <%= form.label :usage_limit, "Usage Limit", class: "block text-sm font-medium mb-1" %>
+            <%= form.number_field :usage_limit, min: 0, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div class="md:col-span-2">
+            <%= form.label :description, class: "block text-sm font-medium mb-1" %>
+            <%= form.text_area :description, rows: 2, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div>
+            <%= form.label :expires_at, "Expiration Date", class: "block text-sm font-medium mb-1" %>
+            <%= form.datetime_field :expires_at, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div>
+            <%= form.check_box :is_active, class: "mr-2 text-green-500" %>
+            <%= form.label :is_active, "Active", class: "inline" %>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <%= form.submit "Create Code", class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Promotional Codes Table -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold">Existing Promotional Codes</h2>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left">Code</th>
+              <th class="px-6 py-3 text-left">Description</th>
+              <th class="px-6 py-3 text-left">Discount</th>
+              <th class="px-6 py-3 text-left">Uses</th>
+              <th class="px-6 py-3 text-left">Limit</th>
+              <th class="px-6 py-3 text-left">Expires</th>
+              <th class="px-6 py-3 text-left">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800">
+            <% @promotional_codes.each do |code| %>
+              <tr>
+                <td class="px-6 py-4 font-mono font-bold"><%= code.code %></td>
+                <td class="px-6 py-4 max-w-xs truncate"><%= code.description %></td>
+                <td class="px-6 py-4">
+                  <% if code.discount_percent.present? %>
+                    <%= code.discount_percent %>% off
+                  <% elsif code.discount_fixed_amount.present? %>
+                    <%= number_to_currency(code.discount_fixed_amount) %> off
+                  <% else %>
+                    N/A
+                  <% end %>
+                </td>
+                <td class="px-6 py-4"><%= code.user_promotional_codes.count rescue 0 %></td>
+                <td class="px-6 py-4"><%= code.usage_limit.present? ? code.usage_limit : "Unlimited" %></td>
+                <td class="px-6 py-4"><%= code.expires_at&.strftime("%Y-%m-%d %H:%M") || "Never" %></td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 rounded-full text-xs <%= code.is_active? && (!code.expires_at || code.expires_at > Time.current) ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300' %>">
+                    <%= code.is_active? && (!code.expires_at || code.expires_at > Time.current) ? 'Active' : 'Inactive' %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="mt-4">
+        <%= paginate @promotional_codes %>
+      </div>
+    </div>
+    
+    <!-- Back to Dashboard -->
+    <div class="mt-8 text-center">
+      <%= link_to "← Back to Marketing Dashboard", marketing_dashboard_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+    </div>
+  </div>
+</div>

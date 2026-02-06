@@ -1,0 +1,71 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-4xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">💳 Subscription Management</h1>
+    
+    <!-- Current Subscription Info -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Current Subscription</h2>
+      <% if @current_subscription %>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <h3 class="text-lg font-semibold text-green-300">Plan Name</h3>
+            <p class="text-xl"><%= @current_subscription.name %></p>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-green-300">Status</h3>
+            <% if @user.is_subscribed? && @user.subscription_end_date && @user.subscription_end_date > Time.current %>
+              <p class="text-xl text-green-400">Active</p>
+            <% else %>
+              <p class="text-xl text-red-400">Expired/Inactive</p>
+            <% end %>
+          </div>
+          <div>
+            <h3 class="text-lg font-semibold text-green-300">End Date</h3>
+            <p class="text-xl"><%= @user.subscription_end_date&.strftime("%Y-%m-%d %H:%M") || "N/A" %></p>
+          </div>
+        </div>
+        
+        <% if @user.is_subscribed? && @user.subscription_end_date && @user.subscription_end_date > Time.current %>
+          <%= button_to "Cancel Subscription", payment_cancel_subscription_path, method: :post, 
+              class: "mt-4 bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded shadow-md transition",
+              confirm: "Are you sure you want to cancel your subscription?" %>
+        <% end %>
+      <% else %>
+        <p class="text-lg">No active subscription</p>
+      <% end %>
+    </div>
+    
+    <!-- Available Subscription Plans -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+      <h2 class="text-2xl font-semibold mb-4">Available Subscription Plans</h2>
+      <div class="space-y-4">
+        <% @subscription_plans.each do |plan| %>
+          <div class="border border-green-700 rounded-lg p-4">
+            <div class="flex justify-between items-center">
+              <div>
+                <h3 class="text-xl font-bold"><%= plan.name %></h3>
+                <p class="text-green-300"><%= plan.description %></p>
+                <div class="mt-2">
+                  <span class="text-2xl font-bold">$<%= plan.price %></span>
+                  <span class="text-green-300"> for <%= plan.duration_days %> days</span>
+                </div>
+                
+                <% if plan.features.present? %>
+                  <div class="mt-2">
+                    <strong>Features:</strong>
+                    <% plan.features.split(',').each do |feature| %>
+                      <span class="bg-gray-800 text-green-300 px-2 py-1 rounded text-sm mr-1"><%= feature.strip %></span>
+                    <% end %>
+                  </div>
+                <% end %>
+              </div>
+              
+              <%= button_to "Subscribe Now", payment_subscribe_path(plan_id: plan.id), method: :post,
+                  class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

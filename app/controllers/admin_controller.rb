@@ -59,6 +59,12 @@ class AdminController < ApplicationController
   end
 
  def destroy
+  # Ensure we don't delete the current admin user
+  if @user == current_user
+    redirect_to admin_index_path, alert: "You cannot delete your own account."
+    return
+  end
+  
   if @user.destroy
     redirect_to admin_index_path, notice: "User deleted successfully."
   else
@@ -66,6 +72,32 @@ class AdminController < ApplicationController
   end
  end
 
+ # Update user balance
+ def update_balance
+  @user = User.find(params[:id])
+  new_balance = params[:user][:balance].to_d
+  old_balance = @user.balance
+  balance_difference = new_balance - old_balance
+  
+  if @user.update(balance: new_balance)
+    # Create a transaction record for the balance adjustment
+    if balance_difference != 0
+      transaction_type = balance_difference > 0 ? 'credit' : 'debit'
+      amount = balance_difference.abs
+      
+      @user.transactions.create!(
+        amount: amount,
+        transaction_type: transaction_type,
+        description: "Balance manually adjusted by admin from #{old_balance} to #{new_balance}"
+      )
+    end
+    # Touch the user to update the updated_at timestamp which may help with session refresh
+    @user.touch
+    redirect_to admin_index_path, notice: "User balance updated successfully."
+  else
+    redirect_to admin_index_path, alert: "Failed to update user balance."
+  end
+ end
 
   private
 
@@ -88,8 +120,5 @@ class AdminController < ApplicationController
     @user = User.find(params[:id])
   end
 
-  # Only allow admins
-  def ensure_admin!
-    redirect_to root_path, alert: "Access denied" unless current_user.admin?
-  end
+  
 end

@@ -1,0 +1,77 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">✅ Task Analytics</h1>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Tasks</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @total_tasks %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Completed Tasks</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @completed_tasks %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Pending Tasks</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @pending_tasks %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Completion Rate</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @task_completion_rate %>%</p>
+      </div>
+    </div>
+    
+    <!-- Task Completions by Day -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Task Completions by Day</h2>
+      <div class="h-64 flex items-center justify-center text-gray-500">
+        <!-- Chart would be rendered here with JavaScript library -->
+        <p>Task completions chart would appear here (using Chart.js or similar)</p>
+      </div>
+    </div>
+    
+    <!-- Task Types Distribution -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h2 class="text-2xl font-semibold mb-4">Task Types</h2>
+        <% if @task_types.present? %>
+          <ul class="space-y-2">
+            <% @task_types.each do |type, count| %>
+              <li class="flex justify-between">
+                <span><%= type.titleize %>:</span>
+                <span class="font-bold"><%= count %></span>
+              </li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p>No task types available</p>
+        <% end %>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h2 class="text-2xl font-semibold mb-4">Top Performers</h2>
+        <% if @top_performers.present? %>
+          <ol class="list-decimal pl-5 space-y-2">
+            <% @top_performers.each_with_index do |(user, count), index| %>
+              <li class="flex justify-between">
+                <span><%= user&.email || 'Unknown' %>:</span>
+                <span class="font-bold"><%= count %></span>
+              </li>
+            <% end %>
+          </ol>
+        <% else %>
+          <p>No top performers available</p>
+        <% end %>
+      </div>
+    </div>
+    
+    <!-- Back to Dashboard -->
+    <div class="mt-8 text-center">
+      <%= link_to "← Back to Dashboard", analytics_dashboard_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+    </div>
+  </div>
+</div>

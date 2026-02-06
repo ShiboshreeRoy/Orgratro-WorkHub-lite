@@ -4,9 +4,11 @@ class UserTasksController < ApplicationController
 
   def index
     if current_user.admin?
-      @user_tasks = UserTask.includes(:user, :task).order(created_at: :desc)
+      # Show all user tasks to admins, sorted by submission time
+      @user_tasks = UserTask.includes(:user, :task).order(created_at: :desc).page(params[:page]).per(10)
     else
-      @user_tasks = current_user.user_tasks.includes(:task).order(created_at: :desc)
+      # Show only pending tasks to regular users
+      @user_tasks = current_user.user_tasks.pending.includes(:task).order(created_at: :desc).page(params[:page]).per(10)
     end
   end
 
@@ -52,6 +54,6 @@ class UserTasksController < ApplicationController
   end
 
   def user_task_params
-    params.require(:user_task).permit(:proof)
+    params.require(:user_task).permit(:proof, :image)
   end
 end

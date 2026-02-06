@@ -1,0 +1,107 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">📊 Analytics Dashboard</h1>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Users</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @total_users %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Today</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @active_users_today %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Pending Withdrawals</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @pending_withdrawals %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Earnings</h3>
+        <p class="text-3xl font-bold text-green-400"><%= number_to_currency(@total_earnings, unit: "$", precision: 8) %></p>
+      </div>
+    </div>
+    
+    <!-- Additional Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Task Completion Rate</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @task_completion_rate %>%</p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Referrals</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @total_referrals %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Successful Referrals</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @successful_referrals %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Referral Conversion</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @referral_conversion_rate %>%</p>
+      </div>
+    </div>
+    
+    <!-- Recent Activities -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Recent Activities</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left">User</th>
+              <th class="px-6 py-3 text-left">Action</th>
+              <th class="px-6 py-3 text-left">Timestamp</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800">
+            <% @recent_activities.each do |activity| %>
+              <tr>
+                <td class="px-6 py-4"><%= activity.user&.email || 'Unknown' %></td>
+                <td class="px-6 py-4 capitalize"><%= activity.action %></td>
+                <td class="px-6 py-4"><%= activity.timestamp.strftime("%Y-%m-%d %H:%M") %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Top Active Users -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Top Active Users</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left">User</th>
+              <th class="px-6 py-3 text-left">Activity Count</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800">
+            <% @top_active_users.each do |user_info| %>
+              <tr>
+                <td class="px-6 py-4"><%= user_info[:user]&.email || 'Unknown' %></td>
+                <td class="px-6 py-4"><%= user_info[:count] %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Quick Navigation -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <%= link_to "👤 User Analytics", analytics_user_analytics_path, class: "bg-blue-700 hover:bg-blue-600 text-white p-4 rounded-lg text-center transition" %>
+      <%= link_to "💰 Financial Analytics", analytics_financial_analytics_path, class: "bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-lg text-center transition" %>
+      <%= link_to "✅ Task Analytics", analytics_task_analytics_path, class: "bg-yellow-700 hover:bg-yellow-600 text-white p-4 rounded-lg text-center transition" %>
+      <%= link_to "🔗 Referral Analytics", analytics_referral_analytics_path, class: "bg-pink-700 hover:bg-pink-600 text-white p-4 rounded-lg text-center transition" %>
+    </div>
+  </div>
+</div>

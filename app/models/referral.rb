@@ -16,7 +16,7 @@ class Referral < ApplicationRecord
 
     transaction do
       update!(claimed: true, referred_user: user)
-      referrer.credit_referral(reward_amount)
+      referrer&.credit_referral(reward_amount)
     end
   end
 

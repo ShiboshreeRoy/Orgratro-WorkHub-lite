@@ -10,7 +10,11 @@ class UserDashbordController < ApplicationController
 
     @total_proofs = current_user.social_task_proofs.count
     @approved_proofs = current_user.social_task_proofs.where(status: 'approved').count
-     @total_referrals = current_user.sent_referrals.count
+     @total_referrals = current_user.referrals_made.where(claimed: true).count
+    
+    # Social tasks data
+    @available_tasks = SocialTask.all
+    @user_proofs = current_user.social_task_proofs.order(created_at: :desc).limit(5)
     
   end
 end

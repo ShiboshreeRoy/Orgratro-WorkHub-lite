@@ -1,11 +1,13 @@
 <% content_for :title, "New Link" %>
 
-<div class="w-full max-w-2xl mx-auto bg-black rounded-2xl shadow-xl p-8 mt-12">
-  <h1 class="text-4xl font-extrabold text-center text-blue-800 mb-6">Create a New Link</h1>
-
+<div class="w-full max-w-4xl mx-auto bg-black rounded-2xl shadow-xl p-8 mt-12 border border-blue-900">
+  <h1 class="text-4xl font-extrabold text-center text-blue-400 mb-6">🔗 Create a New Link</h1>
+  
+  <p class="text-center text-gray-400 mb-8">Submit individual links or bulk upload via Excel file</p>
+  
   <%= render "form", link: @link %>
 
-  <div class="mt-6 flex justify-center">
-    <%= link_to "← Back to Links", links_path, class: "inline-block bg-green-500 text-white  font-medium px-5 py-2.5 rounded-lg transition duration-200" %>
+  <div class="mt-8 flex justify-center">
+    <%= link_to "← Back to Links", links_path, class: "inline-block bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold px-6 py-3 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105" %>
   </div>
 </div>

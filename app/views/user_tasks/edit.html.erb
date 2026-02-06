@@ -1,12 +1,65 @@
 <body class="bg-black text-white">
-<%= form_with(model: @user_task, local: true, class: "bg-gray-900 mt-5 mb-4 p-6 rounded-xl shadow-lg max-w-lg mx-auto") do |f| %>
-  <div class="mb-4">
-    <%= f.label :proof, "Proof", class: "block text-white font-semibold mb-2" %>
-    <%= f.text_area :proof, rows: 5, class: "w-full p-3 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+<div class="max-w-2xl mx-auto mt-8">
+  <h1 class="text-3xl font-bold text-center text-blue-400 mb-8">📤 Submit Task Proof</h1>
+  
+  <div class="bg-gray-900 rounded-2xl shadow-2xl p-8">
+    <div class="mb-6 p-4 bg-gray-800 rounded-lg">
+      <h2 class="text-xl font-bold text-blue-300 mb-3">📝 Task Details</h2>
+      <p class="text-blue-200"><strong>Task:</strong> <%= @user_task.task.name %></p>
+      <p class="text-blue-200"><strong>Type:</strong> <%= @user_task.task.task_type %></p>
+      <% if @user_task.task.link.present? %>
+        <p class="text-blue-200"><strong>Link:</strong> 
+          <%= link_to @user_task.task.link, @user_task.task.link, target: "_blank", class: "text-blue-400 hover:text-blue-300 underline" %>
+        </p>
+      <% end %>
+      <p class="text-blue-200 mt-2"><strong>Description:</strong> <%= @user_task.task.description %></p>
+    </div>
+    
+    <%= form_with(model: @user_task, local: true, multipart: true, class: "space-y-6") do |f| %>
+      <div class="bg-gray-800 p-6 rounded-xl">
+        <h3 class="text-lg font-bold text-blue-300 mb-4">📋 Submit Your Proof</h3>
+        <p class="text-gray-400 text-sm mb-4">You can submit either a link or upload an image as proof</p>
+        
+        <!-- Text Proof -->
+        <div class="mb-6">
+          <%= f.label :proof, "🔗 Link Proof (URL)", class: "block text-blue-300 font-medium mb-2" %>
+          <%= f.text_field :proof, placeholder: "https://example.com/proof", 
+              class: "w-full p-3 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-600" %>
+          <p class="text-gray-400 text-xs mt-1">Enter a link that proves you completed the task</p>
+        </div>
+        
+        <!-- Divider -->
+        <div class="relative flex items-center my-6">
+          <div class="flex-grow border-t border-gray-600"></div>
+          <span class="flex-shrink mx-4 text-gray-500 text-sm">OR</span>
+          <div class="flex-grow border-t border-gray-600"></div>
+        </div>
+        
+        <!-- Image Proof -->
+        <div>
+          <%= f.label :image, "📸 Image Proof", class: "block text-blue-300 font-medium mb-2" %>
+          <div class="flex items-center justify-center w-full">
+            <label class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-gray-700 border-gray-600 hover:border-blue-500 hover:bg-gray-600 transition">
+              <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                <svg class="w-12 h-12 mb-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                <p class="text-sm mb-1 text-blue-300">Click to upload or drag and drop</p>
+                <p class="text-xs text-gray-400">PNG, JPG, GIF up to 10MB</p>
+              </div>
+              <%= f.file_field :image, accept: "image/*", class: "hidden" %>
+            </label>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Submit Button -->
+      <div class="flex justify-between items-center pt-4">
+        <%= link_to "← Back", user_tasks_path, class: "px-4 py-2 text-gray-400 hover:text-white transition" %>
+        <%= f.submit "📤 Submit Proof", 
+            class: "px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition shadow-lg hover:shadow-xl" %>
+      </div>
+    <% end %>
   </div>
-
-  <div class="text-right">
-    <%= f.submit "Submit Proof", class: "px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition" %>
-  </div>
-<% end %>
+</div>
 </body>

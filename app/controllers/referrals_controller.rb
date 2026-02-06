@@ -3,7 +3,7 @@ class ReferralsController < ApplicationController
 
 
     def index
-        @referrals = current_user.sent_referrals.order(created_at: :desc)
+        @referrals = current_user.referrals_made.order(created_at: :desc)
     end
 
 

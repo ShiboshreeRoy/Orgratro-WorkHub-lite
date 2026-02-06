@@ -1,0 +1,79 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">📈 Marketing Dashboard</h1>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Campaigns</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:total_campaigns] || 0 %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Campaigns</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:active_campaigns] || 0 %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Affiliate Programs</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:affiliate_programs] || 0 %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Promo Codes Active</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:active_promo_codes] || 0 %></p>
+      </div>
+    </div>
+    
+    <!-- Additional Marketing Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Achievements</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:total_achievements] || 0 %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Achievements</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:active_achievements] || 0 %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Achievement Awards</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:achievement_awards] || 0 %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Avg Engagement</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @marketing_analytics[:avg_engagement_rate] ? "#{@marketing_analytics[:avg_engagement_rate].round(2)}%" : "N/A" %></p>
+      </div>
+    </div>
+    
+    <!-- Charts Section -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h2 class="text-2xl font-semibold mb-4">Campaign Performance</h2>
+        <div class="h-64 flex items-center justify-center text-gray-500">
+          <!-- Chart would be rendered here with JavaScript library -->
+          <p>Campaign performance chart would appear here (using Chart.js or similar)</p>
+        </div>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h2 class="text-2xl font-semibold mb-4">User Engagement</h2>
+        <div class="h-64 flex items-center justify-center text-gray-500">
+          <!-- Chart would be rendered here with JavaScript library -->
+          <p>User engagement chart would appear here (using Chart.js or similar)</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Navigation -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <%= link_to "🏷️ Promo Codes", marketing_promotional_codes_path, class: "bg-blue-700 hover:bg-blue-600 text-white p-4 rounded-lg text-center transition" %>
+      <%= link_to "🏆 Achievements", marketing_achievements_path, class: "bg-purple-700 hover:bg-purple-600 text-white p-4 rounded-lg text-center transition" %>
+      <%= link_to "📧 Email Campaigns", marketing_email_campaigns_path, class: "bg-yellow-700 hover:bg-yellow-600 text-white p-4 rounded-lg text-center transition" %>
+      <%= link_to "🌐 Affiliates", marketing_affiliate_programs_path, class: "bg-pink-700 hover:bg-pink-600 text-white p-4 rounded-lg text-center transition" %>
+      <%= link_to "📊 Reports", marketing_reports_path, class: "bg-indigo-700 hover:bg-indigo-600 text-white p-4 rounded-lg text-center transition" %>
+    </div>
+  </div>
+</div>

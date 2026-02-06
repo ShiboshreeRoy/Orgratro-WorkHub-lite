@@ -1,40 +1,122 @@
 <body class="bg-black text-white">
 
-<div class="max-w-lg mx-auto mt-10 p-6 bg-gray-900 rounded-2xl shadow-2xl text-blue-400">
-  <h1 class="text-2xl font-bold mb-6 text-center">Submit Link or Upload Excel</h1>
-
-  <%= form_with(model: link, multipart: true, local: true, class: "space-y-6") do |form| %>
-
-    <!-- Single URL -->
-    <div>
-      <%= form.label :url, "Enter URL (optional if uploading Excel)", class: "block text-sm font-medium mb-1" %>
-      <%= form.text_field :url, placeholder: "Enter URL here",
-            class: "w-full rounded-lg border px-4 py-2 bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all #{link.errors[:url].any? ? 'border-red-500' : 'border-gray-600'}",
-            'aria-invalid': link.errors[:url].any? %>
+<div class="max-w-2xl mx-auto mt-10 p-8 bg-gray-900 rounded-2xl shadow-2xl border border-blue-800">
+  <h1 class="text-3xl font-bold mb-8 text-center text-blue-400">🔗 Submit Your Link</h1>
+  
+  <!-- Error Messages -->
+  <% if link.errors.any? %>
+    <div class="bg-red-900 border border-red-700 text-red-200 p-4 rounded-lg mb-6">
+      <h3 class="font-bold text-lg mb-2">⚠️ Please correct the following errors:</h3>
+      <ul class="list-disc pl-5 space-y-1">
+        <% link.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
     </div>
-
-    <!-- Multiple Excel Upload -->
-    <div>
-      <%= form.label :files, "Upload Excel File(s)", class: "block text-sm font-medium mb-1" %>
-      <div class="flex items-center justify-center w-full">
-        <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-800 border-gray-600 hover:border-blue-500 hover:bg-gray-700 transition-all">
-          <div class="flex flex-col items-center justify-center pt-5 pb-6">
-            <svg class="w-10 h-10 mb-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
-            </svg>
-            <p class="text-sm mb-1 text-blue-300">Click to upload or drag and drop</p>
-            <p class="text-xs text-gray-400">Only Excel files (.xlsx, .xls). Multiple allowed.</p>
-          </div>
-          <%= form.file_field :files, multiple: true, accept: ".xlsx,.xls", class: "hidden" %>
-        </label>
+  <% end %>
+  
+  <%= form_with(model: link, multipart: true, local: true, class: "space-y-8") do |form| %>
+    
+    <!-- Single URL Section -->
+    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+      <h2 class="text-xl font-bold mb-4 text-blue-300 flex items-center gap-2">
+        <i class="fas fa-link"></i> Manual Link Submission
+      </h2>
+      
+      <div class="mb-5">
+        <%= form.label :title, "Title", class: "block text-sm font-medium text-blue-200 mb-2" %>
+        <%= form.text_field :title, placeholder: "Enter a descriptive title for your link",
+              class: "w-full rounded-lg border px-4 py-3 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all #{link.errors[:title].any? ? 'border-red-500' : 'border-gray-600'}",
+              'aria-invalid': link.errors[:title].any? %>
+        <p class="text-xs text-gray-400 mt-1">Provide a clear title for your link</p>
+      </div>
+      
+      <div class="mb-5">
+        <%= form.label :url, "URL", class: "block text-sm font-medium text-blue-200 mb-2" %>
+        <%= form.text_field :url, placeholder: "https://example.com",
+              class: "w-full rounded-lg border px-4 py-3 bg-gray-700 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all #{link.errors[:url].any? ? 'border-red-500' : 'border-gray-600'}",
+              'aria-invalid': link.errors[:url].any? %>
+        <% if link.errors[:url].any? %>
+          <p class="text-red-400 text-sm mt-1">⚠️ <%= link.errors[:url].first %></p>
+        <% end %>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="text-xs text-gray-400">Examples:</span>
+          <%= link_to "Demo Link 1", "#", class: "text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded cursor-pointer", onclick: "fillDemoUrl('https://example.com/demo1'); return false;" %>
+          <%= link_to "Demo Link 2", "#", class: "text-xs bg-blue-600 hover:bg-blue-700 text-white px-2 py-1 rounded cursor-pointer", onclick: "fillDemoUrl('https://demo.example.com'); return false;" %>
+          <p class="text-xs text-gray-400 mt-1">Enter the complete URL including https://</p>
+        </div>
+      </div>
+      
+      <div>
+        <%= form.label :file, "Upload Supporting Document", class: "block text-sm font-medium text-blue-200 mb-2" %>
+        <div class="flex items-center justify-center w-full">
+          <label class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-gray-800 border-gray-600 hover:border-blue-500 hover:bg-gray-700 transition-all">
+            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg class="w-10 h-10 mb-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16l-4-4m0 0l4-4m-4 4h18"></path>
+              </svg>
+              <p class="text-sm mb-1 text-blue-300">Click to upload or drag and drop</p>
+              <p class="text-xs text-gray-400">PDF, DOC, IMG files (Max 10MB)</p>
+            </div>
+            <%= form.file_field :file, accept: ".pdf,.doc,.docx,.jpg,.jpeg,.png", class: "hidden" %>
+          </label>
+        </div>
+        <div class="mt-2 flex flex-wrap gap-2">
+          <span class="text-xs text-gray-400">Demo Files:</span>
+          <%= link_to "Sample Doc", "/demo/sample.txt", class: "text-xs bg-green-600 hover:bg-green-700 text-white px-2 py-1 rounded" %>
+        </div>
       </div>
     </div>
-
-    <!-- Submit -->
-    <div class="flex justify-end">
-      <%= form.submit "Submit", class: "w-full sm:w-auto bg-blue-600 hover:bg-blue-500 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-200 shadow-md" %>
+    
+    <!-- Divider -->
+    <div class="relative flex items-center my-8">
+      <div class="flex-grow border-t border-gray-600"></div>
+      <span class="flex-shrink mx-4 text-gray-500 text-sm">OR</span>
+      <div class="flex-grow border-t border-gray-600"></div>
     </div>
-
+    
+    <!-- Excel Upload Section -->
+    <div class="bg-gray-800 p-6 rounded-xl border border-gray-700">
+      <h2 class="text-xl font-bold mb-4 text-blue-300 flex items-center gap-2">
+        <i class="fas fa-file-excel"></i> Bulk Upload via Excel
+      </h2>
+      
+      <div>
+        <%= form.label :files, "Upload Excel File(s)", class: "block text-sm font-medium text-blue-200 mb-2" %>
+        <div class="flex items-center justify-center w-full">
+          <label class="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-lg cursor-pointer bg-gray-800 border-gray-600 hover:border-blue-500 hover:bg-gray-700 transition-all">
+            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+              <svg class="w-12 h-12 mb-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+              </svg>
+              <p class="text-sm mb-1 text-blue-300">Click to upload Excel files</p>
+              <p class="text-xs text-gray-400">.xlsx, .xls files only. Multiple files allowed.</p>
+              <p class="text-xs text-gray-500 mt-2">Format: Columns should be titled "url", "title"</p>
+            </div>
+            <%= form.file_field :files, multiple: true, accept: ".xlsx,.xls", class: "hidden" %>
+          </label>
+        </div>
+        
+        <div class="mt-4 flex flex-wrap justify-center gap-3">
+          <%= link_to "📄 Download Excel Template", "/templates/links_template.xlsx", class: "inline-block text-sm bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg" %>
+          <%= link_to "📄 Download CSV Template", "/templates/links_template.csv", class: "inline-block text-sm bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg" %>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Submit Button -->
+    <div class="pt-6">
+      <%= form.submit "🚀 Submit Link", class: "w-full sm:w-auto bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105" %>
+    </div>
   <% end %>
+  
+  <script>
+    function fillDemoUrl(url) {
+      const urlField = document.getElementById('link_url');
+      if (urlField) {
+        urlField.value = url;
+      }
+    }
+  </script>
 </div>
 </body>

@@ -57,9 +57,20 @@ class ClicksController < ApplicationController
     )
 
     @link.increment!(:total_clicks)
-    current_user.increment!(:balance, 0.0000000001)
+    # Calculate earnings based on a consistent rate
+    earnings = calculate_click_earnings(@link)
+    
+    current_user.with_lock do
+      current_user.increment!(:balance, earnings)
+      # Create transaction record for audit trail
+      current_user.transactions.create!(
+        amount: earnings,
+        transaction_type: 'credit',
+        description: "Earnings from clicking link: #{@link.url.truncate(50)}"
+      )
+    end
 
-    redirect_to links_path, notice: "Click recorded. You earned $0.0000000001!"
+    redirect_to links_path, notice: "Click recorded. You earned $#{earnings}!"
   end
 end
 

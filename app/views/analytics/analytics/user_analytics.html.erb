@@ -1,0 +1,73 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">👥 User Analytics</h1>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Users</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @users.count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Today</h3>
+        <p class="text-3xl font-bold text-green-400"><%= User.where("last_active_at >= ?", Date.current.beginning_of_day).count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">New This Week</h3>
+        <p class="text-3xl font-bold text-green-400"><%= User.where("created_at >= ?", 7.days.ago).count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Suspended Users</h3>
+        <p class="text-3xl font-bold text-green-400"><%= User.where(suspended: true).count %></p>
+      </div>
+    </div>
+    
+    <!-- Users Table -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold">All Users</h2>
+        <%= link_to "Export CSV", analytics_user_analytics_path(format: :csv), class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left">Email</th>
+              <th class="px-6 py-3 text-left">Role</th>
+              <th class="px-6 py-3 text-left">Balance</th>
+              <th class="px-6 py-3 text-left">Referral Balance</th>
+              <th class="px-6 py-3 text-left">Created</th>
+              <th class="px-6 py-3 text-left">Last Active</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800">
+            <% @users.each do |user| %>
+              <tr>
+                <td class="px-6 py-4"><%= user.email %></td>
+                <td class="px-6 py-4 capitalize"><%= user.role %></td>
+                <td class="px-6 py-4"><%= number_to_currency(user.balance, unit: "$", precision: 8) %></td>
+                <td class="px-6 py-4"><%= number_to_currency(user.referral_balance, unit: "$", precision: 8) %></td>
+                <td class="px-6 py-4"><%= user.created_at.strftime("%Y-%m-%d") %></td>
+                <td class="px-6 py-4"><%= user.last_active_at&.strftime("%Y-%m-%d %H:%M") || "Never" %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="mt-4">
+        <%= paginate @users %>
+      </div>
+    </div>
+    
+    <!-- Back to Dashboard -->
+    <div class="mt-8 text-center">
+      <%= link_to "← Back to Dashboard", analytics_dashboard_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+    </div>
+  </div>
+</div>

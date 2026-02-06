@@ -1,12 +1,112 @@
-<h1 class="text-2xl font-bold mb-6">Request Withdrawal</h1>
-
-<%= form_with model: @withdrawal, class: "space-y-4", local: true do |form| %>
-  <div>
-    <%= form.label :amount, "Amount to Withdraw", class: "block text-sm font-medium text-gray-700" %>
-    <%= form.number_field :amount, step: 1.2, min: 0, max: current_user.balance, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm" %>
+<div class="bg-white shadow-md rounded-lg p-6">
+  <h2 class="text-xl font-bold mb-4 text-gray-800">Withdrawal Details</h2>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+    <div class="border-b pb-2">
+      <strong class="text-gray-600">Amount:</strong>
+      <span class="ml-2 font-medium">$<%= number_with_precision(@withdrawal.amount, precision: 2) %></span>
+    </div>
+    
+    <div class="border-b pb-2">
+      <strong class="text-gray-600">Status:</strong>
+      <span class="ml-2 font-medium">
+        <% case @withdrawal.status %>
+        <% when 'pending' %>
+          <span class="text-yellow-600 bg-yellow-100 px-2 py-1 rounded">Pending</span>
+        <% when 'approved' %>
+          <span class="text-green-600 bg-green-100 px-2 py-1 rounded">Approved</span>
+        <% when 'rejected' %>
+          <span class="text-red-600 bg-red-100 px-2 py-1 rounded">Rejected</span>
+        <% else %>
+          <span class="text-gray-600 bg-gray-100 px-2 py-1 rounded"><%= @withdrawal.status.capitalize %></span>
+        <% end %>
+      </span>
+    </div>
+    
+    <div class="border-b pb-2">
+      <strong class="text-gray-600">Payment Method:</strong>
+      <span class="ml-2 font-medium">
+        <% case @withdrawal.payment_method %>
+        <% when 'bank_transfer' %>
+          🏦 Bank Transfer
+        <% when 'bkash' %>
+          📱 Bkash
+        <% when 'nagad' %>
+          📱 Nagad
+        <% when 'rocket' %>
+          📱 Rocket
+        <% when 'paypal' %>
+          💳 PayPal
+        <% when 'mastercard' %>
+          💳 Mastercard
+        <% when 'visa' %>
+          💳 Visa
+        <% when 'usdt_trc20' %>
+          🪙 USDT TRC20
+        <% when 'usdt_erc20' %>
+          🪙 USDT ERC20
+        <% when 'bitcoin' %>
+          ₿ Bitcoin
+        <% when 'ethereum' %>
+          ⧫ Ethereum
+        <% else %>
+          <%= @withdrawal.payment_method&.humanize || 'N/A' %>
+        <% end %>
+      </span>
+    </div>
+    
+    <div class="border-b pb-2">
+      <strong class="text-gray-600">Requested At:</strong>
+      <span class="ml-2 font-medium"><%= @withdrawal.created_at.strftime('%B %d, %Y at %I:%M %p') %></span>
+    </div>
   </div>
-
-  <div>
-    <%= form.submit "Request Withdrawal", class: "bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700" %>
+  
+  <div class="border-t pt-4">
+    <strong class="text-gray-600">Payment Details:</strong>
+    <div class="mt-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
+      <div class="flex items-start">
+        <span class="mr-2 text-lg">
+          <% case @withdrawal.payment_method %>
+          <% when 'paypal' %>
+            💬
+          <% when 'bkash', 'nagad', 'rocket' %>
+            📞
+          <% when 'mastercard', 'visa' %>
+            💳
+          <% when 'bitcoin', 'ethereum', 'usdt_trc20', 'usdt_erc20' %>
+            🪙
+          <% when 'bank_transfer' %>
+            🏦
+          <% else %>
+            💰
+          <% end %>
+        </span>
+        <div>
+          <% if @withdrawal.payment_details.present? %>
+            <p class="text-gray-800 font-medium break-words">
+              <%= @withdrawal.payment_details %>
+            </p>
+            <p class="text-sm text-gray-500 mt-1">
+              <% case @withdrawal.payment_method %>
+              <% when 'paypal' %>
+                PayPal email address
+              <% when 'bkash', 'nagad', 'rocket' %>
+                Mobile financial service number
+              <% when 'mastercard', 'visa' %>
+                Credit/Debit card information
+              <% when 'bitcoin', 'ethereum', 'usdt_trc20', 'usdt_erc20' %>
+                Cryptocurrency wallet address
+              <% when 'bank_transfer' %>
+                Bank account information
+              <% else %>
+                Payment account details
+              <% end %>
+            </p>
+          <% else %>
+            <em class="text-gray-500">No payment details provided</em>
+          <% end %>
+        </div>
+      </div>
+    </div>
   </div>
-<% end %>
+</div>

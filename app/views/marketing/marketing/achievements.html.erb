@@ -1,0 +1,119 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">🏆 Achievements</h1>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Total Achievements</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @achievements.total_count rescue @achievements.count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Active Achievements</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @achievements.select(&:is_active).count rescue @achievements.where(is_active: true).count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Awarded Times</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @achievements.sum { |a| a.user_achievements.count } rescue UserAchievement.count %></p>
+      </div>
+      
+      <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+        <h3 class="text-lg font-semibold mb-2">Avg Points</h3>
+        <p class="text-3xl font-bold text-green-400"><%= @achievements.average(:points).present? ? @achievements.average(:points).round(0) : "N/A" rescue "N/A" %></p>
+      </div>
+    </div>
+    
+    <!-- Create New Achievement Form -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Create New Achievement</h2>
+      <%= form_with(model: @achievement, url: marketing_create_achievement_path, local: true, class: "space-y-4") do |form| %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= form.label :name, class: "block text-sm font-medium mb-1" %>
+            <%= form.text_field :name, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div>
+            <%= form.label :points, class: "block text-sm font-medium mb-1" %>
+            <%= form.number_field :points, min: 0, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div class="md:col-span-2">
+            <%= form.label :description, class: "block text-sm font-medium mb-1" %>
+            <%= form.text_area :description, rows: 3, class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" %>
+          </div>
+          
+          <div>
+            <%= form.label :achievement_type, "Type", class: "block text-sm font-medium mb-1" %>
+            <%= form.select :achievement_type, options_for_select([
+              ['Task Completion', 'task_completion'],
+              ['Referral', 'referral'],
+              ['Engagement', 'engagement'],
+              ['Financial', 'financial'],
+              ['Social', 'social']
+            ], @achievement.achievement_type), { prompt: 'Select Type' }, { class: "w-full p-2 bg-gray-800 border border-green-700 rounded text-green-400" } %>
+          </div>
+          
+          <div>
+            <%= form.check_box :is_active, class: "mr-2 text-green-500" %>
+            <%= form.label :is_active, "Active", class: "inline" %>
+          </div>
+        </div>
+        
+        <div class="mt-4">
+          <%= form.submit "Create Achievement", class: "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+        </div>
+      <% end %>
+    </div>
+    
+    <!-- Achievements Table -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-semibold">Existing Achievements</h2>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left">Name</th>
+              <th class="px-6 py-3 text-left">Description</th>
+              <th class="px-6 py-3 text-left">Points</th>
+              <th class="px-6 py-3 text-left">Type</th>
+              <th class="px-6 py-3 text-left">Awarded</th>
+              <th class="px-6 py-3 text-left">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800">
+            <% @achievements.each do |achievement| %>
+              <tr>
+                <td class="px-6 py-4 font-medium"><%= achievement.name %></td>
+                <td class="px-6 py-4 max-w-xs truncate"><%= achievement.description %></td>
+                <td class="px-6 py-4"><%= achievement.points %></td>
+                <td class="px-6 py-4 capitalize"><%= achievement.achievement_type&.gsub('_', ' ') || 'General' %></td>
+                <td class="px-6 py-4"><%= achievement.user_achievements.count rescue 0 %></td>
+                <td class="px-6 py-4">
+                  <span class="px-2 py-1 rounded-full text-xs <%= achievement.is_active? ? 'bg-green-900 text-green-300' : 'bg-red-900 text-red-300' %>">
+                    <%= achievement.is_active? ? 'Active' : 'Inactive' %>
+                  </span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Pagination -->
+      <div class="mt-4">
+        <%= paginate @achievements %>
+      </div>
+    </div>
+    
+    <!-- Back to Dashboard -->
+    <div class="mt-8 text-center">
+      <%= link_to "← Back to Marketing Dashboard", marketing_dashboard_path, class: "bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+    </div>
+  </div>
+</div>

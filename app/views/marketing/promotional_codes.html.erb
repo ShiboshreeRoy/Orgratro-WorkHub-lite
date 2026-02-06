@@ -1,0 +1,94 @@
+<div class="min-h-screen bg-black text-green-400 p-6 sm:p-10">
+  <div class="max-w-7xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8 text-center">🏷️ Promotional Codes Management</h1>
+    
+    <!-- Create New Promotional Code Form -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700 mb-8">
+      <h2 class="text-2xl font-semibold mb-4">Create New Promotional Code</h2>
+      <%= form_with model: @promotional_code, url: marketing_create_promotional_code_path, local: true, class: "space-y-4" do |f| %>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <%= f.label :code, "Code", class: "block text-green-300 mb-1" %>
+            <%= f.text_field :code, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :description, "Description", class: "block text-green-300 mb-1" %>
+            <%= f.text_area :description, rows: 2, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :discount_percent, "Discount Percentage", class: "block text-green-300 mb-1" %>
+            <%= f.number_field :discount_percent, step: 0.01, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :discount_fixed_amount, "Fixed Discount Amount", class: "block text-green-300 mb-1" %>
+            <%= f.number_field :discount_fixed_amount, step: 0.01, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :usage_limit, "Usage Limit", class: "block text-green-300 mb-1" %>
+            <%= f.number_field :usage_limit, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :expires_at, "Expiration Date", class: "block text-green-300 mb-1" %>
+            <%= f.datetime_field :expires_at, class: "w-full p-2 rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+          
+          <div>
+            <%= f.label :is_active, "Active", class: "block text-green-300 mb-1" %>
+            <%= f.check_box :is_active, class: "rounded bg-gray-800 text-green-100 border border-green-600 focus:outline-none focus:ring-2 focus:ring-green-400" %>
+          </div>
+        </div>
+        
+        <%= f.submit "Create Promotional Code", class: "mt-4 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded shadow-md transition" %>
+      <% end %>
+    </div>
+    
+    <!-- Promotional Codes Table -->
+    <div class="bg-gray-900 p-6 rounded-xl border border-green-700">
+      <h2 class="text-2xl font-semibold mb-4">All Promotional Codes</h2>
+      <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-green-800">
+          <thead>
+            <tr>
+              <th class="px-6 py-3 text-left">Code</th>
+              <th class="px-6 py-3 text-left">Description</th>
+              <th class="px-6 py-3 text-center">Discount</th>
+              <th class="px-6 py-3 text-center">Usage</th>
+              <th class="px-6 py-3 text-center">Expires</th>
+              <th class="px-6 py-3 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-green-800">
+            <% @promotional_codes.each do |code| %>
+              <tr>
+                <td class="px-6 py-4 font-mono"><%= code.code %></td>
+                <td class="px-6 py-4"><%= code.description %></td>
+                <td class="px-6 py-4 text-center">
+                  <% if code.discount_percent.present? %>
+                    <%= code.discount_percent %>% off
+                  <% end %>
+                  <% if code.discount_fixed_amount.present? %>
+                    $<%= code.discount_fixed_amount %> off
+                  <% end %>
+                </td>
+                <td class="px-6 py-4 text-center"><%= code.times_used %>/<%= code.usage_limit %></td>
+                <td class="px-6 py-4 text-center"><%= code.expires_at&.strftime("%Y-%m-%d %H:%M") %></td>
+                <td class="px-6 py-4 text-center">
+                  <% if code.is_active? && !code.expired? && !code.usage_limit_reached? %>
+                    <span class="bg-green-900 text-green-300 px-2 py-1 rounded">Active</span>
+                  <% else %>
+                    <span class="bg-red-900 text-red-300 px-2 py-1 rounded">Inactive</span>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
