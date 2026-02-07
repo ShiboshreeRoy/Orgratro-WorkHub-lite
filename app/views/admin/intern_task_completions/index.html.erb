@@ -74,6 +74,19 @@
 
     <!-- Task Completions Table -->
     <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700 overflow-x-auto">
+      
+      <!-- Pagination Info -->
+      <div class="mb-4 flex justify-between items-center">
+        <div class="text-gray-400">
+          Showing <%= @filtered_completions.offset_value + 1 %> to <%= [@filtered_completions.offset_value + @filtered_completions.limit_value, @filtered_completions.total_count].min %> of <%= @filtered_completions.total_count %> entries
+          <% if params[:status].present? %>
+            (filtered by <%= params[:status].humanize %>)
+          <% end %>
+        </div>
+        <div class="text-sm text-gray-500">
+          Page <%= @filtered_completions.current_page %> of <%= @filtered_completions.total_pages %>
+        </div>
+      </div>
       <table class="w-full">
         <thead>
           <tr class="border-b border-gray-700">
@@ -138,7 +151,7 @@
       
       <!-- Pagination -->
       <div class="mt-6 flex justify-center">
-        <%= paginate @filtered_completions, theme: 'twitter_bootstrap_4' %>
+        <%= paginate @filtered_completions %>
       </div>
     </div>
 
