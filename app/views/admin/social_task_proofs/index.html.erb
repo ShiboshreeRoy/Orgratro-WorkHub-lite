@@ -17,7 +17,7 @@
             <% if proof.proof_image.attached? %>
               <div class="mt-2">
                 <div class="relative inline-block">
-                  <%= image_tag proof.proof_image.variant(resize_to_limit: [100, 100]), 
+                  <%= image_tag proof.proof_image, 
                       class: "w-16 h-16 rounded-lg object-cover border border-gray-600", 
                       alt: "Proof thumbnail" %>
                   <div class="absolute bottom-0 right-0 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center border-2 border-gray-900">

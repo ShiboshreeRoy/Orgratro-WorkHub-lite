@@ -1,0 +1,50 @@
+<div class="container mx-auto p-8">
+  <h1 class="text-3xl font-bold mb-6">Social Task Proof Image Test</h1>
+  
+  <% proof = SocialTaskProof.find(12794) %>
+  
+  <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <h2 class="text-xl font-semibold mb-4">Proof Details</h2>
+    <p><strong>ID:</strong> <%= proof.id %></p>
+    <p><strong>User ID:</strong> <%= proof.user_id %></p>
+    <p><strong>Post URL:</strong> <%= proof.post_url %></p>
+    <p><strong>Status:</strong> <%= proof.status %></p>
+    <p><strong>Image Attached:</strong> <%= proof.proof_image.attached? %></p>
+    <% if proof.proof_image.attached? %>
+      <p><strong>Content Type:</strong> <%= proof.proof_image.content_type %></p>
+      <p><strong>File Size:</strong> <%= number_to_human_size(proof.proof_image.byte_size) %></p>
+      <p><strong>Variable?:</strong> <%= proof.proof_image.variable? %></p>
+      <p><strong>Image?:</strong> <%= proof.proof_image.image? %></p>
+    <% end %>
+  </div>
+  
+  <% if proof.proof_image.attached? %>
+    <div class="bg-white rounded-lg shadow-lg p-6">
+      <h2 class="text-xl font-semibold mb-4">Image Tests</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Direct Image -->
+        <div>
+          <h3 class="text-lg font-medium mb-2">Direct Image</h3>
+          <%= image_tag proof.proof_image, class: "max-w-full h-auto border rounded", alt: "Direct image" %>
+        </div>
+        
+        <!-- Processed Variant -->
+        <div>
+          <h3 class="text-lg font-medium mb-2">Processed Variant (100x100)</h3>
+          <%= image_tag proof.proof_image.variant(resize_to_limit: [100, 100]), class: "border rounded", alt: "Processed variant" %>
+        </div>
+      </div>
+      
+      <div class="mt-6">
+        <h3 class="text-lg font-medium mb-2">Download Links</h3>
+        <div class="space-y-2">
+          <%= link_to "Download Original", rails_blob_path(proof.proof_image, disposition: "attachment"), class: "inline-block px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700" %>
+          <% if proof.proof_image.variable? %>
+            <%= link_to "Download Variant", rails_representation_path(proof.proof_image.variant(resize_to_limit: [100, 100]), disposition: "attachment"), class: "inline-block px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700" %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
