@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_07_014036) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_07_015002) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -148,6 +148,17 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_07_014036) do
     t.index ["scheduled_at"], name: "index_email_campaigns_on_scheduled_at"
     t.index ["sent_at"], name: "index_email_campaigns_on_sent_at"
     t.index ["status"], name: "index_email_campaigns_on_status"
+  end
+
+  create_table "intern_task_completions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "intern_task_id", null: false
+    t.string "status"
+    t.text "proof"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["intern_task_id"], name: "index_intern_task_completions_on_intern_task_id"
+    t.index ["user_id"], name: "index_intern_task_completions_on_user_id"
   end
 
   create_table "intern_tasks", force: :cascade do |t|
@@ -434,6 +445,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_07_014036) do
   add_foreign_key "clicks", "links"
   add_foreign_key "clicks", "users"
   add_foreign_key "contact_messages", "users"
+  add_foreign_key "intern_task_completions", "intern_tasks"
+  add_foreign_key "intern_task_completions", "users"
   add_foreign_key "learn_and_earns", "links"
   add_foreign_key "learn_and_earns", "users"
   add_foreign_key "links", "learn_and_earns"

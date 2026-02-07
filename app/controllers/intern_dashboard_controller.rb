@@ -6,16 +6,21 @@ class InternDashboardController < ApplicationController
     @user = current_user
 
     # Fetch available tasks for intern - tasks table doesn't have is_active column
-    @available_tasks = Task.limit(10)
-    @user_tasks = current_user.user_tasks.includes(:task).order(created_at: :desc).limit(10)
+    @available_tasks = Task.page(params[:tasks_page]).per(10)
+    @user_tasks = current_user.user_tasks.includes(:task).order(created_at: :desc).page(params[:user_tasks_page]).per(10)
 
     # Fetch click and earn links - links table doesn't have is_active column
-    @available_links = Link.limit(10)
-    @user_clicks = current_user.clicks.includes(:link).order(created_at: :desc).limit(5)
+    @available_links = Link.page(params[:links_page]).per(10)
+    @user_clicks = current_user.clicks.includes(:link).order(created_at: :desc).page(params[:clicks_page]).per(5)
 
     # Fetch learn and earn courses - LearnAndEarn doesn't have is_active column
-    @learn_courses = LearnAndEarn.where(status: "approved").limit(5)
-    @user_courses = current_user.learn_and_earns.order(created_at: :desc).limit(5)
+    @learn_courses = LearnAndEarn.where(status: "approved").page(params[:courses_page]).per(5)
+    @user_courses = current_user.learn_and_earns.order(created_at: :desc).page(params[:user_courses_page]).per(5)
+
+    # Fetch intern-specific tasks - exclude completed tasks
+    completed_task_ids = current_user.intern_task_completions.where(status: "approved").pluck(:intern_task_id)
+    @available_intern_tasks = InternTask.active.by_priority.where.not(id: completed_task_ids).page(params[:page]).per(10)
+    @user_intern_completions = current_user.intern_task_completions.includes(:intern_task).order(created_at: :desc).page(params[:completions_page]).per(10)
 
     # Calculate statistics
     @total_earned = current_user.balance || 0

@@ -1,0 +1,202 @@
+<% content_for :title, @intern_task.title %>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+        📖 <%= @intern_task.title %>
+      </h1>
+      <p class="text-gray-300 mt-2">Task details and management</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Main Task Info -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Task Details Card -->
+        <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <p class="text-gray-400 text-sm">Task Type</p>
+              <p class="text-xl font-semibold text-white">
+                <% task_type_class = case @intern_task.task_type
+                     when 'assignment' then 'bg-purple-500/20 text-purple-400'
+                     when 'tutorial' then 'bg-blue-500/20 text-blue-400'
+                     when 'project' then 'bg-green-500/20 text-green-400'
+                     when 'quiz' then 'bg-yellow-500/20 text-yellow-400'
+                     when 'video_learning' then 'bg-red-500/20 text-red-400'
+                     else 'bg-gray-500/20 text-gray-400'
+                   end %>
+                <span class="px-3 py-1 rounded-full <%= task_type_class %>">
+                  <%= @intern_task.task_type.humanize %>
+                </span>
+              </p>
+            </div>
+            <div>
+              <p class="text-gray-400 text-sm">Status</p>
+              <p class="text-xl font-semibold text-white">
+                <% status_class = case @intern_task.status
+                     when 'pending' then 'bg-gray-500/20 text-gray-400'
+                     when 'active' then 'bg-green-500/20 text-green-400'
+                     when 'completed' then 'bg-blue-500/20 text-blue-400'
+                     when 'archived' then 'bg-purple-500/20 text-purple-400'
+                     else 'bg-gray-500/20 text-gray-400'
+                   end %>
+                <span class="px-3 py-1 rounded-full <%= status_class %>">
+                  <%= @intern_task.status.humanize %>
+                </span>
+              </p>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <p class="text-gray-400 text-sm mb-2">Description</p>
+            <div class="bg-gray-700/30 p-4 rounded-xl border border-gray-600">
+              <p class="text-white whitespace-pre-line"><%= simple_format(@intern_task.description) %></p>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <p class="text-gray-400 text-sm mb-2">Priority</p>
+            <div class="flex items-center">
+              <% (1..@intern_task.priority.to_i).each do %>
+                <i class="fas fa-star text-yellow-400 mr-1"></i>
+              <% end %>
+              <% (@intern_task.priority.to_i + 1..5).each do %>
+                <i class="fas fa-star text-gray-600 mr-1"></i>
+              <% end %>
+              <% priority_text = case @intern_task.priority.to_i
+                   when 0 then 'Low Priority'
+                   when 1 then 'Medium Priority'
+                   when 2 then 'High Priority'
+                   when 3 then 'Very High Priority'
+                   when 4 then 'Critical Priority'
+                   when 5 then 'Urgent Priority'
+                   else 'Unknown Priority'
+                 end %>
+              <span class="ml-2 text-white">
+                <%= priority_text %>
+              </span>
+            </div>
+          </div>
+
+          <!-- Video Content -->
+          <% if @intern_task.video_url.present? || @intern_task.video_file.attached? %>
+            <div class="mb-6">
+              <p class="text-gray-400 text-sm mb-2">Video Content</p>
+              <div class="bg-gray-700/30 p-4 rounded-xl border border-gray-600">
+                <% if @intern_task.video_url.present? %>
+                  <% embed_url = @intern_task.youtube_embed_url %>
+                  <% if embed_url %>
+                    <div class="aspect-w-16 aspect-h-9 mb-4">
+                      <iframe 
+                        src="<%= embed_url %>"
+                        frameborder="0"
+                        allowfullscreen
+                        class="w-full h-64 rounded-lg">
+                      </iframe>
+                    </div>
+                    <p class="text-gray-300 text-sm">YouTube Video: <%= @intern_task.video_url %></p>
+                  <% else %>
+                    <p class="text-gray-300 text-sm">Video URL: <%= link_to @intern_task.video_url, @intern_task.video_url, target: "_blank", class: "text-blue-400 hover:text-blue-300" %></p>
+                  <% end %>
+                <% end %>
+                
+                <% if @intern_task.video_file.attached? %>
+                  <div class="mt-4">
+                    <p class="text-gray-300 text-sm">Uploaded Video File:</p>
+                    <div class="flex items-center space-x-2 mt-2">
+                      <i class="fas fa-file-video text-blue-400"></i>
+                      <span class="text-gray-300"><%= @intern_task.video_file.filename %></span>
+                      <span class="text-gray-500 text-xs">(<%= number_to_human_size(@intern_task.video_file.byte_size) %>)</span>
+                      <%= link_to "Download", rails_blob_path(@intern_task.video_file, disposition: "attachment"), class: "ml-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg" %>
+                    </div>
+                    
+                    <!-- Video player for uploaded file -->
+                    <div class="mt-4">
+                      <video controls class="w-full max-w-lg rounded-lg">
+                        <source src="<%= url_for(@intern_task.video_file) %>" type="video/mp4">
+                        Your browser does not support the video tag.
+                      </video>
+                    </div>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex space-x-4">
+          <%= link_to "Edit Task", edit_admin_intern_task_path(@intern_task), class: "px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 rounded-xl hover:from-blue-700 hover:to-cyan-700 transition font-semibold" %>
+          <%= link_to "Delete Task", admin_intern_task_path(@intern_task), 
+              method: :delete,
+              data: { turbo_confirm: "Are you sure you want to delete this task?" },
+              class: "px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 rounded-xl hover:from-red-700 hover:to-red-800 transition font-semibold" %>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="space-y-6">
+        <!-- Task Info Card -->
+        <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700">
+          <h3 class="text-xl font-bold mb-4 text-white">Task Information</h3>
+          <div class="space-y-4">
+            <div>
+              <p class="text-gray-400 text-sm">Created By</p>
+              <p class="text-white"><%= @intern_task.admin.name.presence || @intern_task.admin.email %></p>
+            </div>
+            <div>
+              <p class="text-gray-400 text-sm">Created At</p>
+              <p class="text-white"><%= @intern_task.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+            </div>
+            <div>
+              <p class="text-gray-400 text-sm">Updated At</p>
+              <p class="text-white"><%= @intern_task.updated_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Task Completions -->
+        <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700">
+          <h3 class="text-xl font-bold mb-4 text-white">Task Completions</h3>
+          <div class="space-y-3">
+            <% @submissions.each do |completion| %>
+              <div class="bg-gray-700/30 p-3 rounded-lg border border-gray-600">
+                <div class="flex justify-between items-center">
+                  <div>
+                    <p class="text-sm font-medium text-white"><%= completion.user.name.presence || completion.user.email %></p>
+                    <p class="text-xs text-gray-400">
+                      <span class="px-2 py-1 rounded-full text-xs font-semibold
+                        <%= case completion.status
+                             when 'submitted' then 'bg-yellow-500/20 text-yellow-400'
+                             when 'approved' then 'bg-green-500/20 text-green-400'
+                             when 'rejected' then 'bg-red-500/20 text-red-400'
+                             when 'pending' then 'bg-gray-500/20 text-gray-400'
+                             else 'bg-gray-500/20 text-gray-400'
+                           end %>">
+                        <%= completion.status.humanize %>
+                      </span>
+                    </p>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <span class="text-xs text-gray-500"><%= time_ago_in_words(completion.created_at) %> ago</span>
+                    <%= link_to "View", admin_intern_task_completion_path(completion), class: "text-xs bg-blue-600 hover:bg-blue-700 px-2 py-1 rounded" %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+            
+            <% if @submissions.empty? %>
+              <p class="text-gray-400 text-sm">No completions yet.</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 text-center">
+      <%= link_to "← Back to Tasks", admin_intern_tasks_path, class: "text-blue-400 hover:text-blue-300" %>
+    </div>
+  </div>
+</div>

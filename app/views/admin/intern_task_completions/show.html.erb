@@ -1,0 +1,285 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center">
+        <div>
+          <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+            📝 Task Completion Review
+          </h1>
+          <p class="text-gray-300 mt-2">Review details of submitted intern task completion</p>
+        </div>
+        <%= link_to "← Back to All Submissions", admin_intern_task_completions_path, class: "px-6 py-3 bg-gray-700 hover:bg-gray-600 rounded-xl font-semibold transition" %>
+      </div>
+    </div>
+
+    <!-- User and Task Info -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+      <!-- User Info Card -->
+      <div class="lg:col-span-1 bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700">
+        <h3 class="text-2xl font-bold mb-4 text-cyan-400">User Information</h3>
+        <div class="space-y-4">
+          <div>
+            <p class="text-gray-400 text-sm">Name</p>
+            <p class="text-white font-semibold"><%= @intern_task_completion.user.name.presence || @intern_task_completion.user.email %></p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Email</p>
+            <p class="text-blue-300"><%= @intern_task_completion.user.email %></p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">User ID</p>
+            <p class="text-white">#<%= @intern_task_completion.user.id %></p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Role</p>
+            <p class="text-white"><%= @intern_task_completion.user.role.titleize %></p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Joined</p>
+            <p class="text-white"><%= @intern_task_completion.user.created_at.strftime("%B %d, %Y") %></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task Info Card -->
+      <div class="lg:col-span-1 bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700">
+        <h3 class="text-2xl font-bold mb-4 text-cyan-400">Task Information</h3>
+        <div class="space-y-4">
+          <div>
+            <p class="text-gray-400 text-sm">Title</p>
+            <p class="text-white font-semibold"><%= @intern_task_completion.intern_task.title %></p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Task Type</p>
+            <span class="px-3 py-1 rounded-full text-sm font-semibold
+              <%= case @intern_task_completion.intern_task.task_type
+                   when 'assignment' then 'bg-purple-500/20 text-purple-400'
+                   when 'tutorial' then 'bg-blue-500/20 text-blue-400'
+                   when 'project' then 'bg-green-500/20 text-green-400'
+                   when 'quiz' then 'bg-yellow-500/20 text-yellow-400'
+                   when 'video_learning' then 'bg-red-500/20 text-red-400'
+                   else 'bg-gray-500/20 text-gray-400'
+                 end %>">
+              <%= @intern_task_completion.intern_task.task_type.humanize %>
+            </span>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Status</p>
+            <span class="px-3 py-1 rounded-full text-sm font-semibold
+              <%= case @intern_task_completion.intern_task.status
+                   when 'pending' then 'bg-gray-500/20 text-gray-400'
+                   when 'active' then 'bg-green-500/20 text-green-400'
+                   when 'completed' then 'bg-blue-500/20 text-blue-400'
+                   when 'archived' then 'bg-purple-500/20 text-purple-400'
+                   else 'bg-gray-500/20 text-gray-400'
+                 end %>">
+              <%= @intern_task_completion.intern_task.status.humanize %>
+            </span>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Priority</p>
+            <div class="flex items-center">
+              <% (1..@intern_task_completion.intern_task.priority.to_i).each do %>
+                <i class="fas fa-star text-yellow-400 mr-1"></i>
+              <% end %>
+              <% (@intern_task_completion.intern_task.priority.to_i + 1..5).each do %>
+                <i class="fas fa-star text-gray-600 mr-1"></i>
+              <% end %>
+              <% priority_text = case @intern_task_completion.intern_task.priority.to_i
+                   when 0 then 'Low Priority'
+                   when 1 then 'Medium Priority'
+                   when 2 then 'High Priority'
+                   when 3 then 'Very High Priority'
+                   when 4 then 'Critical Priority'
+                   when 5 then 'Urgent Priority'
+                   else 'Unknown Priority'
+                 end %>
+              <span class="ml-2 text-white">
+                <%= priority_text %>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submission Info Card -->
+      <div class="lg:col-span-1 bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700">
+        <h3 class="text-2xl font-bold mb-4 text-cyan-400">Submission Details</h3>
+        <div class="space-y-4">
+          <div>
+            <p class="text-gray-400 text-sm">Status</p>
+            <span class="px-3 py-1 rounded-full text-sm font-semibold
+              <%= case @intern_task_completion.status
+                   when 'submitted' then 'bg-yellow-500/20 text-yellow-400'
+                   when 'approved' then 'bg-green-500/20 text-green-400'
+                   when 'rejected' then 'bg-red-500/20 text-red-400'
+                   when 'pending' then 'bg-gray-500/20 text-gray-400'
+                   else 'bg-gray-500/20 text-gray-400'
+                 end %>">
+              <%= @intern_task_completion.status.humanize %>
+            </span>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Submitted At</p>
+            <p class="text-white"><%= @intern_task_completion.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Last Updated</p>
+            <p class="text-white"><%= @intern_task_completion.updated_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          </div>
+          <% if @intern_task_completion.status == "approved" %>
+          <div>
+            <p class="text-gray-400 text-sm">Approved At</p>
+            <p class="text-green-400"><%= @intern_task_completion.updated_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Task Description -->
+    <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700 mb-8">
+      <h3 class="text-2xl font-bold mb-4 text-cyan-400">Task Description</h3>
+      <div class="bg-gray-700/30 p-4 rounded-xl border border-gray-600">
+        <p class="text-white whitespace-pre-line"><%= simple_format(@intern_task_completion.intern_task.description) %></p>
+      </div>
+    </div>
+
+    <!-- Proof Attachment -->
+    <% if @intern_task_completion.proof_attachment.attached? %>
+      <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700 mb-8">
+        <h3 class="text-2xl font-bold mb-4 text-cyan-400">Proof Attachment</h3>
+        <div class="bg-gray-700/30 p-4 rounded-xl border border-gray-600">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center">
+              <i class="fas fa-file text-2xl text-blue-400 mr-3"></i>
+              <div>
+                <p class="text-white font-medium"><%= @intern_task_completion.proof_attachment.filename %></p>
+                <p class="text-gray-400 text-sm"><%= number_to_human_size(@intern_task_completion.proof_attachment.byte_size) %></p>
+              </div>
+            </div>
+            <%= link_to "Download", rails_blob_path(@intern_task_completion.proof_attachment, disposition: "attachment"), class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition" %>
+          </div>
+          
+          <!-- File Information -->
+          <div class="mt-4 pt-4 border-t border-gray-600">
+            <div class="flex flex-wrap gap-4 text-sm text-gray-400">
+              <span>Content Type: <%= @intern_task_completion.proof_attachment.content_type %></span>
+              <span>Uploaded: <%= time_ago_in_words(@intern_task_completion.proof_attachment.created_at) %> ago</span>
+              <% if @intern_task_completion.proof_attachment.variable? %>
+                <span class="text-green-400">✓ Image Processable</span>
+              <% elsif @intern_task_completion.proof_attachment.image? %>
+                <span class="text-yellow-400">✓ Image Detected</span>
+              <% else %>
+                <span class="text-red-400">ℹ Non-image File</span>
+              <% end %>
+            </div>
+          </div>
+
+          <!-- Image Preview Section -->
+          <div class="mt-6">
+            <div class="image-preview-container bg-gray-900 rounded-xl p-4 border border-gray-700">
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="text-lg font-semibold text-white">Image Preview</h4>
+                <span class="px-2 py-1 bg-blue-500/20 text-blue-400 text-xs rounded-full">Live Preview</span>
+              </div>
+              
+              <!-- Main Image Display -->
+              <div class="relative">
+                <% if @intern_task_completion.proof_attachment.variable? %>
+                  <!-- Try processed variant first -->
+                  <%= image_tag @intern_task_completion.proof_attachment.variant(resize_to_limit: [800, 600]), 
+                      class: "rounded-lg max-w-full h-auto shadow-lg border border-gray-600", 
+                      alt: "Task completion proof", 
+                      onerror: "this.style.display='none'; document.getElementById('direct-image').style.display='block';" %>
+                <% end %>
+                
+                <!-- Fallback to direct image -->
+                <%= image_tag @intern_task_completion.proof_attachment, 
+                    id: "direct-image",
+                    class: "rounded-lg max-w-full h-auto shadow-lg border border-gray-600 mt-2", 
+                    alt: "Task completion proof", 
+                    style: "#{'display: none;' if @intern_task_completion.proof_attachment.variable?}",
+                    onerror: "this.style.display='none'; document.getElementById('image-error').style.display='block';" %>
+              </div>
+              
+              <!-- Error message -->
+              <div id="image-error" class="mt-4 p-4 bg-red-900/20 border border-red-700 rounded-lg text-center" style="display: none;">
+                <i class="fas fa-exclamation-triangle text-red-400 text-xl mb-2"></i>
+                <h5 class="text-red-400 font-semibold">Image Preview Unavailable</h5>
+                <p class="text-red-300 text-sm mt-1">The image could not be displayed. You can still download the original file.</p>
+                <div class="mt-3">
+                  <%= link_to "Download Original File", rails_blob_path(@intern_task_completion.proof_attachment, disposition: "attachment"), 
+                      class: "inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium text-white transition" %>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fallback Preview (hidden by default) -->
+          <div id="fallback-preview" class="mt-4 bg-red-900/20 border border-red-700 rounded-xl p-4" style="display: none;">
+            <div class="flex items-start">
+              <i class="fas fa-exclamation-triangle text-red-400 text-xl mr-3 mt-1"></i>
+              <div>
+                <h4 class="text-red-400 font-semibold">Image Preview Failed</h4>
+                <p class="text-red-300 text-sm mt-1">The image could not be processed or displayed. You can still download the original file.</p>
+                <div class="mt-3">
+                  <%= link_to "Download Original File", rails_blob_path(@intern_task_completion.proof_attachment, disposition: "attachment"), 
+                      class: "inline-flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium text-white transition" %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% else %>
+      <!-- No Attachment Warning -->
+      <div class="bg-yellow-900/20 border border-yellow-700 rounded-2xl p-6 mb-8">
+        <div class="flex items-center">
+          <i class="fas fa-exclamation-triangle text-yellow-400 text-xl mr-3"></i>
+          <div>
+            <h3 class="text-lg font-semibold text-yellow-400">No Proof Attachment</h3>
+            <p class="text-yellow-300 text-sm">This task completion was submitted without a proof attachment. You may want to request additional proof from the user or review the text proof provided.</p>
+            <div class="mt-3">
+              <%= button_to "Request More Proof", "#", 
+                  class: "px-4 py-2 bg-yellow-600 hover:bg-yellow-700 rounded-lg font-semibold text-white text-sm transition",
+                  onclick: "alert('Feature to request more proof from user would be implemented here'); return false;" %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <!-- Action Buttons -->
+    <% if @intern_task_completion.status == "submitted" %>
+      <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700">
+        <h3 class="text-2xl font-bold mb-4 text-cyan-400">Admin Actions</h3>
+        <div class="flex space-x-4">
+          <%= button_to "Approve", submit_admin_intern_task_completion_path(@intern_task_completion), 
+                      method: :post, 
+                      params: { status: "approved" },
+                      class: "px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl hover:from-green-700 hover:to-emerald-700 transition font-semibold",
+                      data: { confirm: "Are you sure you want to approve this task completion?" } %>
+          
+          <%= button_to "Reject", submit_admin_intern_task_completion_path(@intern_task_completion), 
+                      method: :post, 
+                      params: { status: "rejected" },
+                      class: "px-6 py-3 bg-gradient-to-r from-red-600 to-red-700 rounded-xl hover:from-red-700 hover:to-red-800 transition font-semibold",
+                      data: { confirm: "Are you sure you want to reject this task completion?" } %>
+        </div>
+        <p class="text-gray-400 mt-4">Approving this task will count toward the user's intern progress and may trigger a level-up.</p>
+      </div>
+    <% elsif @intern_task_completion.status == "approved" %>
+      <div class="bg-green-900/30 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-green-700">
+        <h3 class="text-2xl font-bold mb-4 text-green-400">Status: Approved ✓</h3>
+        <p class="text-green-300">This task completion has been approved and counted toward the user's intern progress.</p>
+      </div>
+    <% elsif @intern_task_completion.status == "rejected" %>
+      <div class="bg-red-900/30 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-red-700">
+        <h3 class="text-2xl font-bold mb-4 text-red-400">Status: Rejected ✗</h3>
+        <p class="text-red-300">This task completion has been rejected and will not count toward the user's intern progress.</p>
+      </div>
+    <% end %>
+  </div>
+</div>

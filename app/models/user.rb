@@ -62,6 +62,7 @@ class User < ApplicationRecord
   has_many :promotional_codes, through: :user_promotional_codes
   has_many :affiliate_relationships, dependent: :destroy
   has_many :affiliate_programs, through: :affiliate_relationships
+  has_many :intern_task_completions, dependent: :destroy
 
 
   def social_tasks_completed_count

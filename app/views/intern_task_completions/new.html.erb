@@ -1,0 +1,169 @@
+<% content_for :title, "Submit Task Completion" %>
+
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+        📝 Submit Task Completion
+      </h1>
+      <p class="text-gray-300 mt-2">Complete your intern learning task</p>
+    </div>
+
+    <div class="max-w-3xl mx-auto bg-gray-800/50 backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-gray-700">
+      <!-- Task Details -->
+      <div class="mb-6 p-6 bg-gray-700/30 rounded-xl border border-gray-600">
+        <h2 class="text-2xl font-bold mb-4 text-white"><%= @intern_task.title %></h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <p class="text-gray-400 text-sm">Task Type</p>
+            <p class="text-white">
+              <% task_type_class = case @intern_task.task_type
+                   when 'assignment' then 'bg-purple-500/20 text-purple-400'
+                   when 'tutorial' then 'bg-blue-500/20 text-blue-400'
+                   when 'project' then 'bg-green-500/20 text-green-400'
+                   when 'quiz' then 'bg-yellow-500/20 text-yellow-400'
+                   when 'video_learning' then 'bg-red-500/20 text-red-400'
+                   else 'bg-gray-500/20 text-gray-400'
+                 end %>
+              <span class="px-3 py-1 rounded-full <%= task_type_class %>">
+                <%= @intern_task.task_type.humanize %>
+              </span>
+            </p>
+          </div>
+          <div>
+            <p class="text-gray-400 text-sm">Status</p>
+            <p class="text-white">
+              <% status_class = case @intern_task.status
+                   when 'pending' then 'bg-gray-500/20 text-gray-400'
+                   when 'active' then 'bg-green-500/20 text-green-400'
+                   when 'completed' then 'bg-blue-500/20 text-blue-400'
+                   when 'archived' then 'bg-purple-500/20 text-purple-400'
+                   else 'bg-gray-500/20 text-gray-400'
+                 end %>
+              <span class="px-3 py-1 rounded-full <%= status_class %>">
+                <%= @intern_task.status.humanize %>
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <div class="mb-4">
+          <p class="text-gray-400 text-sm mb-2">Description</p>
+          <div class="text-white whitespace-pre-line"><%= simple_format(@intern_task.description) %></div>
+        </div>
+
+        <!-- Video Content -->
+        <% if @intern_task.video_url.present? || @intern_task.video_file.attached? %>
+          <div class="mb-4">
+            <p class="text-gray-400 text-sm mb-2">Video Content</p>
+            <div class="bg-gray-600/30 p-4 rounded-lg border border-gray-500">
+              <% if @intern_task.video_url.present? %>
+                <% embed_url = @intern_task.youtube_embed_url %>
+                <% if embed_url %>
+                  <div class="aspect-w-16 aspect-h-9 mb-4">
+                    <iframe 
+                      src="<%= embed_url %>"
+                      frameborder="0"
+                      allowfullscreen
+                      class="w-full h-64 rounded-lg">
+                    </iframe>
+                  </div>
+                  <p class="text-gray-300 text-sm">YouTube Video: <%= @intern_task.video_url %></p>
+                <% else %>
+                  <p class="text-gray-300 text-sm">Video URL: <%= link_to @intern_task.video_url, @intern_task.video_url, target: "_blank", class: "text-blue-400 hover:text-blue-300" %></p>
+                <% end %>
+              <% end %>
+              
+              <% if @intern_task.video_file.attached? %>
+                <div class="mt-4">
+                  <p class="text-gray-300 text-sm">Uploaded Video File:</p>
+                  <div class="flex items-center space-x-2 mt-2">
+                    <i class="fas fa-file-video text-blue-400"></i>
+                    <span class="text-gray-300"><%= @intern_task.video_file.filename %></span>
+                    <span class="text-gray-500 text-xs">(<%= number_to_human_size(@intern_task.video_file.byte_size) %>)</span>
+                    <%= link_to "Download", rails_blob_path(@intern_task.video_file, disposition: "attachment"), class: "ml-2 px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs rounded-lg" %>
+                  </div>
+                  
+                  <!-- Video player for uploaded file -->
+                  <div class="mt-4">
+                    <video controls class="w-full max-w-lg rounded-lg">
+                      <source src="<%= url_for(@intern_task.video_file) %>" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+                  </div>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Completion Form -->
+      <%= form_with model: @intern_task_completion, 
+            url: intern_task_completions_path(intern_task_id: @intern_task.id), 
+            local: true, 
+            multipart: true, 
+            class: "space-y-6",
+            data: { turbo: false } do |f| %>
+        
+        <!-- Hidden field for intern_task_id -->
+        <%= f.hidden_field :intern_task_id, value: @intern_task.id %>
+        <% if @intern_task_completion.errors.any? %>
+          <div class="bg-red-500/10 border border-red-500/50 text-red-400 p-4 rounded-xl mb-6 animate-pulse">
+            <div class="flex items-center mb-2">
+              <i class="fas fa-exclamation-triangle mr-2"></i>
+              <h2 class="font-semibold text-sm">
+                Please correct the following <%= pluralize(@intern_task_completion.errors.count, "error") %>:
+              </h2>
+            </div>
+            <ul class="list-disc pl-5 text-xs space-y-1">
+              <% @intern_task_completion.errors.full_messages.each do |msg| %>
+                <li class="flex items-start">
+                  <span class="inline-block w-2 h-2 bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                  <%= msg %>
+                </li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <div class="space-y-6">
+          <!-- Proof of Completion -->
+          <div class="space-y-1">
+            <%= f.label :proof, "Proof of Completion (optional)", class: "block text-sm font-medium text-gray-300 ml-1" %>
+            <%= f.text_area :proof, rows: 4,
+                  placeholder: "Describe what you learned or accomplished from this task...",
+                  class: "w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all resize-none" %>
+          </div>
+
+          <!-- Proof Attachment -->
+          <div class="space-y-1">
+            <%= f.label :proof_attachment, "Attach Screenshot or Document *", class: "block text-sm font-medium text-gray-300 ml-1" %>
+            <%= f.file_field :proof_attachment, 
+                  accept: "image/*,.pdf,.doc,.docx,.txt",
+                  required: true,
+                  class: "w-full px-4 py-3 bg-gray-700/50 border border-gray-600 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-all" %>
+            <p class="text-xs text-gray-500 mt-1">Upload proof of completion (images, PDF, DOC, etc.) - Required for submission</p>
+            <div class="mt-2 p-3 bg-blue-900/20 border border-blue-700 rounded-lg">
+              <p class="text-blue-300 text-xs flex items-center">
+                <i class="fas fa-info-circle mr-2"></i>
+                For image tasks, please upload a screenshot showing your completed work
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-6">
+          <%= f.submit "Submit Completion", 
+                class: "w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-purple-900/20 transform transition active:scale-[0.98] cursor-pointer" %>
+        </div>
+      <% end %>
+
+      <div class="mt-4 text-center">
+        <%= link_to "← Back to Dashboard", intern_dashboard_path, class: "text-blue-400 hover:text-blue-300" %>
+      </div>
+    </div>
+  </div>
+</div>

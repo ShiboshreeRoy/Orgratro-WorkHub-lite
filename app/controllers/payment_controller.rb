@@ -1,6 +1,6 @@
 class PaymentController < ApplicationController
   before_action :authenticate_user!
-  before_action :ensure_admin!, except: [:process_user_payment]
+  before_action :ensure_admin!, except: [ :process_user_payment ]
 
   def dashboard
     @payment_gateways = PaymentGateway.all
@@ -17,7 +17,7 @@ class PaymentController < ApplicationController
     @payment_gateway = PaymentGateway.new(payment_gateway_params)
 
     if @payment_gateway.save
-      redirect_to payment_gateways_path, notice: 'Payment gateway created successfully.'
+      redirect_to payment_gateways_path, notice: "Payment gateway created successfully."
     else
       @payment_gateways = PaymentGateway.page(params[:page]).per(20)
       render :payment_gateways
@@ -33,7 +33,7 @@ class PaymentController < ApplicationController
     @subscription_plan = SubscriptionPlan.new(subscription_plan_params)
 
     if @subscription_plan.save
-      redirect_to subscription_plans_path, notice: 'Subscription plan created successfully.'
+      redirect_to subscription_plans_path, notice: "Subscription plan created successfully."
     else
       @subscription_plans = SubscriptionPlan.page(params[:page]).per(20)
       render :subscription_plans
@@ -44,16 +44,16 @@ class PaymentController < ApplicationController
     # This method would be used by users to process their own payments
     @payment_processor = PaymentProcessorService.new
     @result = @payment_processor.process_payment(current_user, params[:amount], params[:gateway])
-    
+
     if @result[:success]
-      redirect_to profile_path, notice: 'Payment processed successfully.'
+      redirect_to profiles_path, notice: "Payment processed successfully."
     else
-      redirect_back(fallback_location: profile_path, alert: @result[:error])
+      redirect_back(fallback_location: profiles_path, alert: @result[:error])
     end
   end
 
   def payment_history
-    @payments = current_user.transactions.where(transaction_type: ['payment', 'subscription']).page(params[:page]).per(20)
+    @payments = current_user.transactions.where(transaction_type: [ "payment", "subscription" ]).page(params[:page]).per(20)
   end
 
   def subscription_management
@@ -76,8 +76,8 @@ class PaymentController < ApplicationController
         subscription_end_date: plan.duration_days.days.from_now,
         is_subscribed: true
       )
-      
-      redirect_to payment_subscription_management_path, notice: 'Successfully subscribed to the plan.'
+
+      redirect_to payment_subscription_management_path, notice: "Successfully subscribed to the plan."
     else
       redirect_back(fallback_location: payment_subscription_management_path, alert: result[:error])
     end
@@ -85,11 +85,11 @@ class PaymentController < ApplicationController
 
   def cancel_subscription
     @user = current_user
-    
+
     if @user.update(is_subscribed: false, subscription_end_date: Time.current)
-      redirect_to payment_subscription_management_path, notice: 'Subscription cancelled successfully.'
+      redirect_to payment_subscription_management_path, notice: "Subscription cancelled successfully."
     else
-      redirect_back(fallback_location: payment_subscription_management_path, alert: 'Failed to cancel subscription.')
+      redirect_back(fallback_location: payment_subscription_management_path, alert: "Failed to cancel subscription.")
     end
   end
 

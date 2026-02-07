@@ -162,7 +162,7 @@
                   <%= link_to "Go Dashbord",user_dashbord_index_path, class: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-10 py-4 rounded-3xl shadow-2xl text-xl font-semibold transition duration-300 ease-in-out transform hover:scale-105" %>
     
             <% else %>
-                <%= link_to new_user_session_path,class: "btn-primary px-8 py-4 rounded-2xl text-lg font-semibold text-center" do %>
+                <%= link_to new_user_registration_path, class: "btn-primary px-8 py-4 rounded-2xl text-lg font-semibold text-center" do %>
                     <i class="fas fa-rocket mr-2"></i>Start Earning Now
                 <% end %>
                  <%=link_to new_user_session_path ,class: "btn-secondary px-8 py-4 rounded-2xl text-lg font-semibold text-center" do %>
@@ -319,7 +319,7 @@
         <div class="mt-20 text-center z-10">
             <h2 class="text-3xl md:text-4xl font-bold text-blue-300 mb-6">Ready to Start Earning?</h2>
             <p class="text-xl text-blue-200 max-w-2xl mx-auto mb-10">Finish your training, complete tasks, and unlock your Orgatro Certificate — all for free. Start earning today. Join now!</p>
-            <%=link_to new_user_session_path,class: "btn-primary px-10 py-5 rounded-2xl text-xl font-bold inline-block"  do %>
+            <%=link_to "/users/sign_up",class: "btn-primary px-10 py-5 rounded-2xl text-xl font-bold inline-block"  do %>
                 <i class="fas fa-gift mr-3"></i>Join Now & Get  Certificate
             <% end  %>
         </div>

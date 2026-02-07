@@ -149,7 +149,7 @@
                         View
                       <% end %>
                       
-                      <%= button_to toggle_suspend_admin_path(user), method: :patch, 
+                      <%= button_to toggle_suspend_admin_user_path(user), method: :patch,
                           class: "inline-flex items-center px-3 py-2 #{user.suspended? ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-600 hover:bg-yellow-700'} text-white text-sm font-medium rounded-lg transition",
                           data: { confirm: "Are you sure you want to #{user.suspended? ? 'activate' : 'suspend'} this user?" } do %>
                         <%= user.suspended? ? '✅' : '🚫' %>

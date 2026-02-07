@@ -1,0 +1,42 @@
+<!-- app/views/reports/user_clicks.html.erb -->
+
+<div class="max-w-6xl mx-auto px-4 py-8">
+
+  <!-- PDF Download Button -->
+  <div class="flex justify-end mb-4">
+    <%= link_to "Download PDF", admin_reports_user_clicks_path(format: :pdf),
+        class: "px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-xl transition" %>
+  </div>
+
+  <!-- Users Table -->
+  <div class="overflow-x-auto bg-white rounded-xl shadow">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">ID</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Name</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Email</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-700">Clicks</th>
+        </tr>
+      </thead>
+      <tbody class="bg-white divide-y divide-gray-200">
+        <% @users.each do |user| %>
+          <tr>
+            <td class="px-6 py-4"><%= user.id %></td>
+            <td class="px-6 py-4"><%= user.name.presence || "N/A" %></td>
+            <td class="px-6 py-4"><%= user.email %></td>
+            <td class="px-6 py-4"><%= user.clicks.count %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Chart -->
+  <div class="mt-6">
+    <h2 class="text-lg font-medium mb-2">Clicks per User</h2>
+    <%= bar_chart @chart_data.map { |u| [u[:name], u[:clicks]] },
+                  height: "400px", library: { backgroundColor: "#f9fafb" } %>
+  </div>
+
+</div>

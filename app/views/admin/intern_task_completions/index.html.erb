@@ -1,0 +1,133 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+        📋 Admin: Intern Task Completions
+      </h1>
+      <p class="text-gray-300 mt-2">Review and manage submitted intern task completions</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gradient-to-br from-blue-500/20 to-blue-600/20 backdrop-blur-lg border border-blue-500/30 rounded-xl p-6 shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-blue-300 text-sm">Total Submissions</p>
+            <p class="text-3xl font-bold text-blue-400"><%= @intern_task_completions.count %></p>
+          </div>
+          <i class="fas fa-tasks text-5xl text-white/30"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 backdrop-blur-lg border border-yellow-500/30 rounded-xl p-6 shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-yellow-300 text-sm">Pending Review</p>
+            <p class="text-3xl font-bold text-yellow-400"><%= @pending_completions.count %></p>
+          </div>
+          <i class="fas fa-clock text-5xl text-white/30"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-green-500/20 to-green-600/20 backdrop-blur-lg border border-green-500/30 rounded-xl p-6 shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-green-300 text-sm">Approved</p>
+            <p class="text-3xl font-bold text-green-400"><%= @intern_task_completions.approved.count %></p>
+          </div>
+          <i class="fas fa-check-circle text-5xl text-white/30"></i>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-br from-red-500/20 to-red-600/20 backdrop-blur-lg border border-red-500/30 rounded-xl p-6 shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-red-300 text-sm">Rejected</p>
+            <p class="text-3xl font-bold text-red-400"><%= @intern_task_completions.rejected.count %></p>
+          </div>
+          <i class="fas fa-times-circle text-5xl text-white/30"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="mb-6">
+      <div class="flex space-x-2 overflow-x-auto">
+        <%= link_to "All", admin_intern_task_completions_path, class: "px-4 py-2 rounded-lg font-semibold whitespace-nowrap #{params[:status].nil? ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" %>
+        <%= link_to "Pending", admin_intern_task_completions_path(status: 'submitted'), class: "px-4 py-2 rounded-lg font-semibold whitespace-nowrap #{params[:status] == 'submitted' ? 'bg-yellow-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" %>
+        <%= link_to "Approved", admin_intern_task_completions_path(status: 'approved'), class: "px-4 py-2 rounded-lg font-semibold whitespace-nowrap #{params[:status] == 'approved' ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" %>
+        <%= link_to "Rejected", admin_intern_task_completions_path(status: 'rejected'), class: "px-4 py-2 rounded-lg font-semibold whitespace-nowrap #{params[:status] == 'rejected' ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" %>
+      </div>
+    </div>
+
+    <!-- Task Completions Table -->
+    <div class="bg-gray-800/50 backdrop-blur-lg rounded-2xl p-6 shadow-xl border border-gray-700 overflow-x-auto">
+      <table class="w-full">
+        <thead>
+          <tr class="border-b border-gray-700">
+            <th class="text-left py-3 px-4 text-gray-400">User</th>
+            <th class="text-left py-3 px-4 text-gray-400">Task</th>
+            <th class="text-left py-3 px-4 text-gray-400">Status</th>
+            <th class="text-left py-3 px-4 text-gray-400">Submitted</th>
+            <th class="text-left py-3 px-4 text-gray-400">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+
+
+          <% if @filtered_completions.any? %>
+            <% @filtered_completions.each do |completion| %>
+              <tr class="border-b border-gray-800 hover:bg-gray-700/30 transition">
+                <td class="py-3 px-4">
+                  <div class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center mr-3">
+                      <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                      <p class="font-medium text-white"><%= completion.user.name.presence || completion.user.email %></p>
+                      <p class="text-gray-400 text-sm">#<%= completion.user.id %></p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-3 px-4 text-blue-300">
+                  <%= completion.intern_task.title %>
+                </td>
+                <td class="py-3 px-4">
+                  <span class="px-3 py-1 rounded-full text-sm font-semibold
+                    <%= case completion.status
+                         when 'submitted' then 'bg-yellow-500/20 text-yellow-400'
+                         when 'approved' then 'bg-green-500/20 text-green-400'
+                         when 'rejected' then 'bg-red-500/20 text-red-400'
+                         when 'pending' then 'bg-gray-500/20 text-gray-400'
+                         else 'bg-gray-500/20 text-gray-400'
+                       end %>">
+                    <%= completion.status.humanize %>
+                  </span>
+                </td>
+                <td class="py-3 px-4 text-gray-400">
+                  <%= completion.created_at.strftime("%b %d, %Y %H:%M") %>
+                </td>
+                <td class="py-3 px-4">
+                  <%= link_to "View Details", admin_intern_task_completion_path(completion), class: "px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-semibold transition" %>
+                </td>
+              </tr>
+            <% end %>
+          <% else %>
+            <tr>
+              <td colspan="5" class="py-12 text-center text-gray-400">
+                <i class="fas fa-inbox text-5xl mb-4"></i>
+                <p>No task completions found.</p>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Back to Admin Dashboard -->
+    <div class="mt-8 text-center">
+      <%= link_to "← Back to Admin Dashboard", admin_dashbord_index_path, class: "text-blue-400 hover:text-blue-300 font-semibold" %>
+    </div>
+  </div>
+</div>

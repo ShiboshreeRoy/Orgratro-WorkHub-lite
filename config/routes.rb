@@ -1,4 +1,12 @@
 Rails.application.routes.draw do
+   devise_for :users,
+  controllers: { registrations: "users/registrations", sessions: "devise/sessions" },
+  sign_out_via: [ :get, :delete ]
+
+  resource :profile
+
+  namespace :admin do
+  end
   # Intern Dashboard
   get "intern_dashboard", to: "intern_dashboard#index", as: "intern_dashboard"
   get "intern_dashboard/index"
@@ -8,6 +16,11 @@ Rails.application.routes.draw do
 namespace :admin do
   resources :notifications, only: [ :new, :create ]
   resources :social_task_proofs, only: [ :index, :show, :update ]
+  resources :intern_task_completions, only: [ :index, :show, :update, :destroy ] do
+    member do
+      post :submit
+    end
+  end
   resources :social_tasks, only: [ :index, :new, :create, :edit, :update, :destroy ] do
     collection do
       get :sample_template
@@ -21,25 +34,24 @@ namespace :admin do
       patch :update_balance
       patch :toggle_dashboard_access
       patch :reset_intern
+      patch :toggle_suspend
     end
   end
+
+  # Intern Tasks Management
+  resources :intern_tasks, only: [ :index, :show, :new, :create, :edit, :update, :destroy ]
+
   get "referrals", to: "referrals#index", as: "referrals"
-end
 
 
-  get "user_dashbord/index"
   get "reports/index"
-  get "profile/index"
+
   get "reports/user_clicks", to: "reports#user_clicks"
   get "reports/user_clicks.pdf", to: "reports#user_clicks", defaults: { format: :pdf }
-  # get 'referrals', to: 'referrals#index', as: 'referrals'
+ # get 'referrals', to: 'referrals#index', as: 'referrals'
 
-  resources :withdrawals do
-    member do
-      patch :update_status
-    end
-  end
  resources :clicks, only: [ :create ]
+end
 
   resources :learn_and_earns do
      member do
@@ -56,9 +68,12 @@ end
 
   resources :contact_messages, only: [ :new, :create, :index, :show, :destroy ]
 
-   devise_for :users,
-  controllers: { registrations: "users/registrations" },
-  sign_out_via: [ :get, :delete ]
+  # Intern Task Completions
+  resources :intern_task_completions, only: [ :new, :create, :index, :show ] do
+    member do
+      post :submit
+    end
+  end
 
    resources :links do
     collection { post :import }
@@ -67,23 +82,17 @@ end
   post "click_link/:id", to: "clicks#create", as: "click_link"
   get "click_window/:id", to: "links#click_window", as: :click_window
 
-
-
-
-
-  resources :admin, only: [ :index, :create, :edit, :update, :show, :destroy ], controller: "admin" do
-  member do
-    get :toggle_suspend
-    patch :toggle_suspend
-    patch :update_balance
-  end
-end
-
-
-resources :referrals, only: [ :index, :create ]
-
+  resources :referrals, only: [ :index, :create ]
 
   resources :admin_dashbord, only: [ :index ]
+  resources :user_dashbord, only: [ :index ]
+  resources :profiles, only: [ :index ]
+
+  resources :withdrawals do
+    member do
+      patch :update_status
+    end
+  end
 
  resources :welcome do
   collection do
@@ -168,4 +177,7 @@ resources :short_links, only: [ :create, :index ]
 
    # Defines the root path route ("/")
    root "welcome#index"
+
+   # Test route
+   get "/test", to: "test#index"
 end

@@ -70,7 +70,7 @@
             </span>
           <% end %>
 
-          <%= form_with url: admin_user_toggle_dashboard_access_path(@user), method: :patch, local: true, class: "inline" do %>
+          <%= form_with url: toggle_dashboard_access_admin_user_path(@user), method: :patch, local: true, class: "inline" do %>
             <% if @user.allow_dashboard_access %>
               <%= button_tag type: "submit", class: "px-6 py-3 bg-red-500 hover:bg-red-600 rounded-xl font-semibold transition" do %>
                 <i class="fas fa-lock mr-2"></i>Revoke Dashboard Access
@@ -82,7 +82,7 @@
             <% end %>
           <% end %>
 
-          <%= form_with url: admin_user_reset_intern_path(@user), method: :patch, local: true, class: "inline", data: { turbo_confirm: "Are you sure you want to reset intern status? This will restart their progress." } do %>
+          <%= form_with url: reset_intern_admin_user_path(@user), method: :patch, local: true, class: "inline", data: { turbo_confirm: "Are you sure you want to reset intern status? This will restart their progress." } do %>
             <%= button_tag type: "submit", class: "px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold transition" do %>
               <i class="fas fa-redo mr-2"></i>Reset Intern Status
             <% end %>
@@ -446,7 +446,7 @@
         <span class="mr-2">←</span> Back to Users List
       <% end %>
       
-      <%= button_to "#{@user.suspended? ? '✅ Activate' : '🚫 Suspend'} User", toggle_suspend_admin_path(@user), method: :patch, 
+      <%= button_to "#{@user.suspended? ? '✅ Activate' : '🚫 Suspend'} User", toggle_suspend_admin_user_path(@user), method: :patch,
           class: "px-6 py-3 #{@user.suspended? ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-600 hover:bg-yellow-700'} text-white font-semibold rounded-lg shadow-lg transition transform hover:scale-105",
           data: { confirm: "Are you sure you want to #{@user.suspended? ? 'activate' : 'suspend'} this user?" } %>
       

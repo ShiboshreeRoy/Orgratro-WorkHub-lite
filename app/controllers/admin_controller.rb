@@ -3,8 +3,8 @@ class AdminController < ApplicationController
   before_action :ensure_admin!
   protect_from_forgery with: :exception
 
-  skip_before_action :verify_authenticity_token, only: [:update, :toggle_suspend]
-  before_action :set_user, only: [:show, :edit, :update, :destroy, :toggle_suspend]
+  skip_before_action :verify_authenticity_token, only: [ :update ]
+  before_action :set_user, only: [ :show, :edit, :update, :destroy ]
 
   # Dashboard / Users list
   def index
@@ -47,16 +47,6 @@ class AdminController < ApplicationController
     end
   end
 
-  # Toggle suspend/unsuspend user
-  def toggle_suspend
-    @user.suspended = !@user.suspended
-    if @user.save
-      status = @user.suspended ? "suspended" : "unsuspended"
-      redirect_to admin_index_path, notice: "User successfully #{status}."
-    else
-      redirect_to admin_index_path, alert: "Failed to change suspend status."
-    end
-  end
 
  def destroy
   # Ensure we don't delete the current admin user
@@ -64,7 +54,7 @@ class AdminController < ApplicationController
     redirect_to admin_index_path, alert: "You cannot delete your own account."
     return
   end
-  
+
   if @user.destroy
     redirect_to admin_index_path, notice: "User deleted successfully."
   else
@@ -78,13 +68,13 @@ class AdminController < ApplicationController
   new_balance = params[:user][:balance].to_d
   old_balance = @user.balance
   balance_difference = new_balance - old_balance
-  
+
   if @user.update(balance: new_balance)
     # Create a transaction record for the balance adjustment
     if balance_difference != 0
-      transaction_type = balance_difference > 0 ? 'credit' : 'debit'
+      transaction_type = balance_difference > 0 ? "credit" : "debit"
       amount = balance_difference.abs
-      
+
       @user.transactions.create!(
         amount: amount,
         transaction_type: transaction_type,
@@ -108,9 +98,9 @@ class AdminController < ApplicationController
 
   # Permit attributes for update (conditionally include password)
   def user_update_params
-    permitted = [:email, :role]
+    permitted = [ :email, :role ]
     if params[:user][:password].present?
-      permitted += [:password, :password_confirmation]
+      permitted += [ :password, :password_confirmation ]
     end
     params.require(:user).permit(permitted)
   end
@@ -119,6 +109,4 @@ class AdminController < ApplicationController
   def set_user
     @user = User.find(params[:id])
   end
-
-  
 end

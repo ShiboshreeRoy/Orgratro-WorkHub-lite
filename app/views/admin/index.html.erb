@@ -141,7 +141,7 @@
                 </div>
                 <div class="flex gap-3 justify-center md:justify-start">
                   <%= f.submit "Update", class: "bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow-md transition" %>
-                  <%= link_to(user.suspended? ? "Unsuspend" : "Suspend", toggle_suspend_admin_path(user), method: :patch, data: { confirm: "Are you sure?" }, class: "bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded shadow transition") %>
+                  <%= link_to(user.suspended? ? "Unsuspend" : "Suspend", toggle_suspend_admin_user_path(user), method: :patch, data: { confirm: "Are you sure?" }, class: "bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded shadow transition") %>
                 </div>
                 <div class="flex flex-col md:flex-row gap-2 justify-center md:justify-start">
                   <%= link_to "Show", admin_path(user), class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded shadow transition" %>

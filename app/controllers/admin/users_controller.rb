@@ -1,5 +1,5 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [ :show, :destroy, :update_balance, :toggle_dashboard_access, :reset_intern ]
+  before_action :set_user, only: [ :show, :destroy, :update_balance, :toggle_dashboard_access, :reset_intern, :toggle_suspend ]
 
   def index
     @users = User.all.order(created_at: :desc)
@@ -111,6 +111,17 @@ class Admin::UsersController < Admin::BaseController
       redirect_back fallback_location: admin_user_path(@user), notice: "Intern status reset successfully."
     else
       redirect_back fallback_location: admin_user_path(@user), alert: "Failed to reset intern status."
+    end
+  end
+
+  # Toggle suspend/unsuspend user
+  def toggle_suspend
+    @user.suspended = !@user.suspended
+    if @user.save
+      status = @user.suspended ? "suspended" : "unsuspended"
+      redirect_back fallback_location: admin_user_path(@user), notice: "User successfully #{status}."
+    else
+      redirect_back fallback_location: admin_user_path(@user), alert: "Failed to change suspend status."
     end
   end
 

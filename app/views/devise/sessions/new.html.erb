@@ -31,6 +31,10 @@
     <% end %>
 
     <div class="text-center text-sm text-gray-400">
+      <%= link_to  "Forgot Password?", new_password_path(resource_name), class: "w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold rounded-lg shadow transition duration-150 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-400" %>
+    </div>
+
+    <div class="text-center text-sm text-gray-400 mt-8 mb-5 ">
       <%= link_to  "Create an Accunt",new_user_registration_path, class: "w-full py-3 px-4 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white font-bold rounded-lg shadow transition duration-150 ease-in-out focus:outline-none focus:ring-4 focus:ring-blue-400" %>
     </div>
   </div>

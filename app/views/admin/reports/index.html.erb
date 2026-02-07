@@ -1,0 +1,96 @@
+<body class="bg-black text-white">
+<% content_for :title, "User Reports" %>
+
+<div class="max-w-7xl mx-auto px-4 py-8 bg-gray-900 text-gray-200 min-h-screen">
+
+  <!-- Header & PDF Download -->
+  <div class="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center mb-6 gap-4">
+    <h1 class="text-2xl font-bold text-blue-400">User Reports</h1>
+    <%= link_to admin_reports_user_clicks_path(format: :pdf), class: "flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white font-semibold rounded-2xl shadow-lg transition" do %>
+      <i class="fas fa-file-pdf"></i> Download PDF
+    <% end %>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="mb-6">
+    <%= search_form_for @q, url: admin_reports_index_path, method: :get, class: "flex w-full sm:w-1/2 gap-2" do |f| %>
+      <div class="relative flex-1">
+        <span class="absolute inset-y-0 left-3 flex items-center text-gray-400">
+          <i class="fas fa-search"></i>
+        </span>
+        <%= f.search_field :email_cont, placeholder: "Search by name or email", class: "w-full pl-10 pr-4 py-2 rounded-2xl border border-gray-700 bg-gray-800 text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm" %>
+      </div>
+      <%= f.submit "Search", class: "px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-2xl shadow transition" %>
+    <% end %>
+  </div>
+
+  <!-- Users Table -->
+  <div class="overflow-x-auto bg-green-500 rounded-2xl shadow-lg">
+    <table class="min-w-full divide-y divide-green-500">
+      <thead class="bg-green-500">
+        <tr>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-300">ID</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-300">Name</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-300">Email</th>
+          <th class="px-6 py-3 text-left text-sm font-medium text-gray-300">Clicks</th>
+        </tr>
+      </thead>
+      <tbody class="bg-green-800 divide-y divide-gray-700">
+        <% @users.each do |user| %>
+          <tr class="hover:bg-gray-700 transition">
+            <td class="px-6 py-4 font-medium text-gray-200"><%= user.id %></td>
+            <td class="px-6 py-4 text-gray-200"><%= user.name.presence || "N/A" %></td>
+            <td class="px-6 py-4 text-gray-400"><%= user.email %></td>
+            <td class="px-6 py-4 font-semibold text-blue-400"><%= user.clicks.count %></td>
+          </tr>
+
+          <!-- Sub-table for clicks -->
+          <tr class="bg-red-900">
+            <td colspan="4" class="px-6 py-4">
+              <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-700 text-sm">
+                  <thead class="bg-gray-800">
+                    <tr>
+                      <th class="px-4 py-2 text-left text-gray-400">Click ID</th>
+                      <th class="px-4 py-2 text-left text-gray-400">Link</th>
+                      <th class="px-4 py-2 text-left text-gray-400">Clicked At</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-700">
+                    <% user.clicks.each do |click| %>
+                      <tr class="hover:bg-gray-700 transition">
+                        <td class="px-4 py-2 text-gray-200"><%= click.id %></td>
+                        <td class="px-4 py-2 text-blue-400"><%= click.link.url %></td>
+                        <td class="px-4 py-2 text-gray-300"><%= click.created_at.strftime("%d %b %Y, %I:%M %p") %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </td>
+          </tr>
+
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  
+
+  <!-- Chart -->
+  <div class="mt-10 bg-gray-800 p-6 rounded-2xl shadow-lg">
+    <h2 class="text-xl font-semibold mb-4 text-blue-400">Clicks per User</h2>
+    <%= bar_chart @clicks_per_user, height: "400px", library: {
+          backgroundColor: "#1f2937",
+          title: { text: "User Clicks", style: { fontSize: '18px', fontWeight: 'bold', color: '#60a5fa' } },
+          xAxis: { title: { text: "Users", style: { color: "#93c5fd" } }, labels: { style: { color: "#93c5fd" } } },
+          yAxis: { title: { text: "Number of Clicks", style: { color: "#93c5fd" } }, labels: { style: { color: "#93c5fd" } } },
+          plotOptions: { series: { colorByPoint: true } },
+          colors: ["#3B82F6", "#10B981", "#F59E0B", "#EF4444"]
+        } %>
+  </div>
+
+</div>
+
+</body>

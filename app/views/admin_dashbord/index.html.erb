@@ -18,10 +18,11 @@
           <i class="fas fa-tachometer-alt"></i> Dashboard
         <% end %>
 
-        <%= link_to profile_index_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+         <%= link_to profiles_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
             <i class="fas fa-user mr-2"></i>My Profile
         <% end %>
-        <%= link_to admin_index_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+       
+        <%= link_to admin_users_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-users"></i> Manage Staff & Employees
         <% end %>
         
@@ -33,7 +34,7 @@
           <i class="fas fa-trophy"></i> Top Earners
         <% end %>
 
-        <%= link_to  new_learn_and_earn_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+        <%= link_to "/learn_and_earns/new", class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-graduation-cap mr-2"></i> Learn & Earn
         <% end %>
 
@@ -48,7 +49,7 @@
         <%= link_to  new_task_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
          <i class="fa-solid fa-list-check"></i> Add Task
         <% end %>
-        <%= link_to new_link_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+        <%= link_to "/links/new", class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-link"></i> Create Short Link
         <% end %>
 
@@ -56,7 +57,11 @@
          <i class="fa-solid fa-list-check"></i> User Submit Task
         <% end %>
 
-        <%= link_to withdrawals_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+        <%= link_to admin_intern_tasks_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+         <i class="fa-solid fa-graduation-cap"></i> Intern Tasks
+        <% end %>
+
+        <%= link_to "/withdrawals", class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fa fa-check" aria-hidden="true"></i> Widthdrawal Requests
         <% end %>
 
@@ -77,7 +82,7 @@
           <i class="fas fa-envelope"></i> Contact Messages
         <% end %>
        
-        <%=link_to reports_index_path,class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+        <%=link_to admin_reports_index_path,class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-chart-bar"></i> Reports
         <% end %>
 
@@ -173,10 +178,16 @@
             <h2 class="text-xl font-semibold text-white flex items-center">
               <i class="fas fa-trophy mr-2"></i>Top Users by Balance
             </h2>
-            <%= link_to top_earners_admin_users_path, class: "bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2 shadow-lg" do %>
-              <i class="fas fa-trophy"></i>
-              View All Top Earners
-            <% end %>
+            <div class="flex space-x-2">
+              <%= link_to top_earners_admin_users_path, class: "bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2 shadow-lg" do %>
+                <i class="fas fa-trophy"></i>
+                View All Top Earners
+              <% end %>
+              <%= link_to admin_intern_tasks_path, class: "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-4 py-2 rounded-lg font-semibold transition flex items-center gap-2 shadow-lg" do %>
+                <i class="fas fa-graduation-cap"></i>
+                Manage Intern Tasks
+              <% end %>
+            </div>
           </div>
           <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-700">
@@ -223,7 +234,7 @@
                       <% end %>
                     </td>
                     <td class="px-4 py-3 whitespace-nowrap text-sm">
-                      <%= form_with model: [user], url: update_balance_admin_path(user), method: :patch, local: true, class: "flex items-center space-x-2" do |f| %>
+                      <%= form_with model: [user], url: update_balance_admin_user_path(user), method: :patch, local: true, class: "flex items-center space-x-2" do |f| %>
                         <%= f.number_field :balance, value: user.balance, step: 0.01, class: "w-24 px-2 py-1 text-white rounded text-sm" %>
                         <%= f.submit 'Update', class: "px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm" %>
                       <% end %>
@@ -242,20 +253,20 @@
             <i class="fas fa-bolt mr-2"></i>Quick Actions
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-            <%= link_to admin_index_path, class: "px-4 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition text-center" do %>
+            <%= link_to admin_users_path, class: "px-4 py-3 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition text-center" do %>
               <i class="fas fa-users mr-2"></i> Manage All Users
             <% end %>
             <%= link_to top_earners_admin_users_path, class: "px-4 py-3 bg-gradient-to-r from-yellow-600 to-orange-600 hover:from-yellow-700 hover:to-orange-700 text-white rounded-lg transition text-center font-semibold shadow-lg" do %>
               <i class="fas fa-trophy mr-2"></i> Top Earners
+            <% end %>
+            <%= link_to admin_intern_tasks_path, class: "px-4 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition text-center font-semibold shadow-lg" do %>
+              <i class="fas fa-graduation-cap mr-2"></i> Intern Tasks
             <% end %>
             <%= link_to admin_referrals_path, class: "px-4 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition text-center" do %>
               <i class="fas fa-user-friends mr-2"></i> View Referrals
             <% end %>
             <%= link_to admin_social_task_proofs_path, class: "px-4 py-3 bg-purple-700 text-white rounded-lg hover:bg-purple-800 transition text-center" do %>
               <i class="fas fa-tasks mr-2"></i> Review Proofs
-            <% end %>
-            <%= link_to new_admin_social_task_path, class: "px-4 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition text-center" do %>
-              <i class="fas fa-plus-circle mr-2"></i> Create Social Task
             <% end %>
           </div>
         </div>
@@ -287,7 +298,7 @@
               <h2 class="text-xl font-semibold text-blue-300">
                 <i class="fas fa-graduation-cap mr-2"></i>Pending Learn & Earn Approvals
               </h2>
-              <%= link_to "View All", learn_and_earns_path, class: "text-blue-400 hover:text-blue-300 text-sm" %>
+              <%= link_to "View All",learn_and_earns_path, class: "text-blue-400 hover:text-blue-300 text-sm" %>
             </div>
             
             <div class="overflow-x-auto">

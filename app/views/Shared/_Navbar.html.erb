@@ -22,7 +22,7 @@
         <%= link_to "Home", root_path, class: "text-gray-300 hover:text-indigo-400 font-medium" %>
         <%= link_to "Services", service_welcome_index_path, class: "text-gray-300 hover:text-indigo-400 font-medium" %>
         <%= link_to "About us", about_welcome_index_path, class: "text-gray-300 hover:text-indigo-400 font-medium" %>
-        <%= link_to "Contact", new_contact_message_path, class: "text-gray-300 hover:text-indigo-400 font-medium" %>
+        <%= link_to "Contact", "/contact_messages/new", class: "text-gray-300 hover:text-indigo-400 font-medium" %>
         <%= link_to "Url Shortener", short_links_path, class: "text-gray-300 hover:text-indigo-400 font-medium" %>
 
         <!-- Dropdown -->
@@ -49,7 +49,7 @@
       <!-- CTA -->
       <div class="hidden md:flex items-center">
         <% if user_signed_in? %>
-          <%= link_to new_contact_message_path, class: "inline-flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r blink from-indigo-600 to-indigo-500 rounded-full shadow-lg transform active:scale-95 transition-all duration-200 hover:shadow-xl hover:ring-4 hover:ring-indigo-300/50" do %>
+          <%= link_to "/contact_messages/new", class: "inline-flex items-center gap-2 px-6 py-3 text-white bg-gradient-to-r blink from-indigo-600 to-indigo-500 rounded-full shadow-lg transform active:scale-95 transition-all duration-200 hover:shadow-xl hover:ring-4 hover:ring-indigo-300/50" do %>
             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 12l6-6m-6 6l6 6" />
             </svg>
@@ -76,7 +76,7 @@
     <%= link_to "Home", root_path, class: "block py-2 text-gray-300 hover:text-indigo-400" %>
     <%= link_to "Services", service_welcome_index_path, class: "block py-2 text-gray-300 hover:text-indigo-400" %>
     <%= link_to "About", about_welcome_index_path, class: "block py-2 text-gray-300 hover:text-indigo-400" %>
-     <%= link_to "Contact", new_contact_message_path, class: "block py-2 text-gray-300 hover:text-indigo-400" %>
+     <%= link_to "Contact", "/contact_messages/new", class: "block py-2 text-gray-300 hover:text-indigo-400" %>
 
     <div class="border-t pt-2">
       <span class="block text-gray-500 text-sm font-semibold">Account</span>
