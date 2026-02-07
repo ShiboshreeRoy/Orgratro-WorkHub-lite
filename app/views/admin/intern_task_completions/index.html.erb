@@ -49,6 +49,16 @@
           <i class="fas fa-times-circle text-5xl text-white/30"></i>
         </div>
       </div>
+
+      <div class="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 backdrop-blur-lg border border-yellow-500/30 rounded-xl p-6 shadow-lg">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-yellow-300 text-sm">Needs More Proof</p>
+            <p class="text-3xl font-bold text-yellow-400"><%= @intern_task_completions.where(status: "needs_more_proof").count %></p>
+          </div>
+          <i class="fas fa-exclamation-triangle text-5xl text-white/30"></i>
+        </div>
+      </div>
     </div>
 
     <!-- Filter Tabs -->
@@ -58,6 +68,7 @@
         <%= link_to "Pending", admin_intern_task_completions_path(status: 'submitted'), class: "px-4 py-2 rounded-lg font-semibold whitespace-nowrap #{params[:status] == 'submitted' ? 'bg-yellow-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" %>
         <%= link_to "Approved", admin_intern_task_completions_path(status: 'approved'), class: "px-4 py-2 rounded-lg font-semibold whitespace-nowrap #{params[:status] == 'approved' ? 'bg-green-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" %>
         <%= link_to "Rejected", admin_intern_task_completions_path(status: 'rejected'), class: "px-4 py-2 rounded-lg font-semibold whitespace-nowrap #{params[:status] == 'rejected' ? 'bg-red-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" %>
+        <%= link_to "Needs More Proof", admin_intern_task_completions_path(status: 'needs_more_proof'), class: "px-4 py-2 rounded-lg font-semibold whitespace-nowrap #{params[:status] == 'needs_more_proof' ? 'bg-yellow-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}" %>
       </div>
     </div>
 
@@ -100,6 +111,7 @@
                          when 'approved' then 'bg-green-500/20 text-green-400'
                          when 'rejected' then 'bg-red-500/20 text-red-400'
                          when 'pending' then 'bg-gray-500/20 text-gray-400'
+                         when 'needs_more_proof' then 'bg-yellow-500/20 text-yellow-400'
                          else 'bg-gray-500/20 text-gray-400'
                        end %>">
                     <%= completion.status.humanize %>
@@ -123,6 +135,11 @@
           <% end %>
         </tbody>
       </table>
+      
+      <!-- Pagination -->
+      <div class="mt-6 flex justify-center">
+        <%= paginate @filtered_completions, theme: 'twitter_bootstrap_4' %>
+      </div>
     </div>
 
     <!-- Back to Admin Dashboard -->

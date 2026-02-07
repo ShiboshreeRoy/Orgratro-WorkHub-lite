@@ -2,16 +2,18 @@ class Admin::InternTaskCompletionsController < Admin::BaseController
   before_action :set_intern_task_completion, only: [ :show, :update, :destroy, :submit ]
 
   def index
-    @intern_task_completions = InternTaskCompletion.includes(:user, :intern_task).order(created_at: :desc)
+    @intern_task_completions = InternTaskCompletion.includes(:user, :intern_task).order(created_at: :desc).page(params[:page]).per(10)
 
     # Apply status filter if provided
     case params[:status]
     when "submitted"
-      @filtered_completions = @intern_task_completions.submitted
+      @filtered_completions = @intern_task_completions.submitted.page(params[:page]).per(10)
     when "approved"
-      @filtered_completions = @intern_task_completions.approved
+      @filtered_completions = @intern_task_completions.approved.page(params[:page]).per(10)
     when "rejected"
-      @filtered_completions = @intern_task_completions.rejected
+      @filtered_completions = @intern_task_completions.rejected.page(params[:page]).per(10)
+    when "needs_more_proof"
+      @filtered_completions = @intern_task_completions.where(status: "needs_more_proof").page(params[:page]).per(10)
     else
       @filtered_completions = @intern_task_completions
     end
