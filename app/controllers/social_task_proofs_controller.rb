@@ -1,6 +1,6 @@
 class SocialTaskProofsController < ApplicationController
     before_action :authenticate_user!
-    before_action :set_proof, only: [:show]
+    before_action :set_proof, only: [ :show ]
 
 
    def index
@@ -8,7 +8,6 @@ class SocialTaskProofsController < ApplicationController
                         .order(created_at: :desc)
                         .page(params[:page])
                         .per(10)  # Adjust the number of items per page
-   
 end
 
 
@@ -22,9 +21,9 @@ end
   @proof.status = :pending
 
   if @proof.save
-    redirect_to @proof, notice: 'Proof submitted — waiting for admin approval.'
+    redirect_to @proof, notice: "Proof submitted — waiting for admin approval."
   else
-    flash.now[:alert] = 'Could not submit proof: ' + @proof.errors.full_messages.join(", ")
+    flash.now[:alert] = "Could not submit proof: " + @proof.errors.full_messages.join(", ")
     render :new, status: :unprocessable_entity
   end
 end
@@ -44,7 +43,6 @@ end
 
 
     def proof_params
-        params.require(:social_task_proof).permit(:post_url, :task_id)
+        params.require(:social_task_proof).permit(:post_url, :task_id, :proof_image)
     end
-
 end

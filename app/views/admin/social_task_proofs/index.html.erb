@@ -12,6 +12,25 @@
             <p class="text-gray-400 text-sm mt-1 "><span class="font-medium text-white">URL:</span> 
               <%= truncate(proof.post_url, length: 10) %>
             </p>
+            
+            <!-- Proof Image Thumbnail -->
+            <% if proof.proof_image.attached? %>
+              <div class="mt-2">
+                <div class="relative inline-block">
+                  <%= image_tag proof.proof_image.variant(resize_to_limit: [100, 100]), 
+                      class: "w-16 h-16 rounded-lg object-cover border border-gray-600", 
+                      alt: "Proof thumbnail" %>
+                  <div class="absolute bottom-0 right-0 bg-green-500 rounded-full w-5 h-5 flex items-center justify-center border-2 border-gray-900">
+                    <i class="fas fa-check text-white text-xs"></i>
+                  </div>
+                </div>
+              </div>
+            <% else %>
+              <div class="mt-2 flex items-center text-yellow-400 text-xs">
+                <i class="fas fa-exclamation-circle mr-1"></i>
+                <span>No image</span>
+              </div>
+            <% end %>
             <p class="mt-2">
               <span class="px-2 py-1 rounded-full text-xs font-semibold 
                 <%= case proof.status
