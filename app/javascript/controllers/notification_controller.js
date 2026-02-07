@@ -11,12 +11,17 @@ export default class extends Controller {
     this.loadNotifications()
     this.startPolling()
     
+    // Add event listener to close dropdown when clicking outside
+    this.closeHandler = this.handleOutsideClick.bind(this)
+    document.addEventListener('click', this.closeHandler)
+    
     // Listen for broadcast events
     this.setupBroadcastListener()
   }
 
   disconnect() {
     this.stopPolling()
+    document.removeEventListener('click', this.closeHandler)
   }
 
   startPolling() {
@@ -147,12 +152,43 @@ export default class extends Controller {
     }
   }
 
-  toggleDropdown() {
+  toggleDropdown(event) {
+    event.preventDefault();
+    event.stopPropagation();
     this.dropdownTarget.classList.toggle('hidden')
+    
+    // If opening the dropdown, load fresh notifications
+    if (!this.dropdownTarget.classList.contains('hidden')) {
+      this.loadNotifications()
+    }
   }
 
   closeDropdown() {
     this.dropdownTarget.classList.add('hidden')
+  }
+  
+  // Close dropdown when clicking outside
+  connect() {
+    this.loadNotifications()
+    this.startPolling()
+    
+    // Add event listener to close dropdown when clicking outside
+    this.closeHandler = this.handleOutsideClick.bind(this)
+    document.addEventListener('click', this.closeHandler)
+    
+    // Listen for broadcast events
+    this.setupBroadcastListener()
+  }
+  
+  disconnect() {
+    this.stopPolling()
+    document.removeEventListener('click', this.closeHandler)
+  }
+  
+  handleOutsideClick(event) {
+    if (!this.element.contains(event.target) && !this.dropdownTarget.classList.contains('hidden')) {
+      this.closeDropdown()
+    }
   }
 
   animateBadge() {

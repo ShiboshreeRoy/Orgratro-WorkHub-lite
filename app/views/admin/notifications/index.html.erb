@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <%= form_with url: create_global_notifications_path, method: :post, local: true, class: "space-y-6" do |form| %>
+    <%= form_with url: admin_notifications_create_global_path, method: :post, local: true, class: "space-y-6" do |form| %>
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div>
           <%= form.label :title, "Title", class: "block text-sm font-medium text-blue-200 mb-2" %>

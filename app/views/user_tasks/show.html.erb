@@ -1,0 +1,83 @@
+<body class="bg-black text-white">
+  <div class="max-w-4xl mx-auto p-6">
+    <h1 class="text-3xl font-bold mb-6 text-center text-blue-400">Task Submission Details</h1>
+    
+    <div class="border border-blue-800 rounded-xl bg-gray-900 p-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h2 class="text-xl font-semibold text-blue-300 mb-4">Submission Info</h2>
+          
+          <div class="space-y-3">
+            <p class="text-blue-200"><strong>👤 User:</strong> <%= @user_task.user.email %></p>
+            <p class="text-blue-200"><strong>📝 Task:</strong> <%= @user_task.task.name %></p>
+            <p class="text-blue-200"><strong>🏷️ Type:</strong> <%= @user_task.task.task_type %></p>
+            
+            <p class="text-blue-200"><strong>📊 Status:</strong> 
+              <% if @user_task.approved? %>
+                <span class="px-2 py-1 bg-green-600 text-white rounded-full text-xs font-semibold">✅ Approved</span>
+              <% else %>
+                <span class="px-2 py-1 bg-yellow-500 text-white rounded-full text-xs font-semibold">⏳ Pending</span>
+              <% end %>
+            </p>
+            
+            <p class="text-blue-200 text-sm"><strong>📅 Submitted:</strong> <%= @user_task.created_at.strftime("%b %d, %Y at %I:%M %p") %></p>
+            <% if @user_task.updated_at != @user_task.created_at %>
+              <p class="text-blue-200 text-sm"><strong>🔄 Updated:</strong> <%= @user_task.updated_at.strftime("%b %d, %Y at %I:%M %p") %></p>
+            <% end %>
+          </div>
+        </div>
+        
+        <div>
+          <h2 class="text-xl font-semibold text-blue-300 mb-4">Proof Details</h2>
+          
+          <div class="space-y-4">
+            <div>
+              <p class="text-blue-200"><strong>🔗 Proof Link:</strong></p>
+              <div class="mt-2">
+                <% if @user_task.proof.present? %>
+                  <%= link_to @user_task.proof, @user_task.proof, target: "_blank", class: "text-blue-400 hover:text-blue-300 underline break-all" %>
+                <% else %>
+                  <span class="text-gray-400">No proof link provided</span>
+                <% end %>
+              </div>
+            </div>
+            
+            <div>
+              <p class="text-blue-200"><strong>🖼️ Proof Image:</strong></p>
+              <div class="mt-2">
+                <% if @user_task.image.attached? %>
+                  <%= image_tag @user_task.image, class: "w-full max-w-md rounded-lg border border-blue-600", alt: "Proof image" %>
+                  <div class="mt-2">
+                    <%= link_to "📥 Download Image", rails_blob_path(@user_task.image, disposition: "attachment"), 
+                        class: "text-blue-400 hover:text-blue-300 underline text-sm" %>
+                  </div>
+                <% else %>
+                  <span class="text-gray-400">No proof image attached</span>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Action Buttons -->
+      <div class="mt-8 flex justify-center space-x-4">
+        <% if current_user.admin? %>
+          <div class="flex space-x-2">
+            <% unless @user_task.approved? %>
+              <%= button_to "✅ Approve", approve_admin_user_task_path(@user_task), method: :post, 
+                  class: "px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-medium" %>
+            <% end %>
+            
+            <%= button_to "❌ Reject", reject_admin_user_task_path(@user_task), method: :post, 
+                class: "px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium",
+                data: { confirm: "Are you sure you want to reject this task?" } %>
+          </div>
+        <% end %>
+        
+        <%= link_to "← Back to Tasks", request.referrer || user_tasks_path, 
+            class: "px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition font-medium" %>
+      </div>
+    </div>
+  </div>
+</body>

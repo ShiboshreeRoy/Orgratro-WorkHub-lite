@@ -38,7 +38,7 @@
         <i class="fas fa-link mr-2"></i> Complite Task & Earn
         <% end %>
 
-        <%= link_to user_tasks_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
+        <%= link_to my_user_tasks_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
          <i class="fa-solid fa-list-check mr-2"></i>  User Submit Task
         <% end %>
 
@@ -203,9 +203,31 @@
 
     <!-- Main Content -->
     <main class="flex-1 p-4 sm:p-6 md:p-10 max-w-screen-xl mx-auto">
-      <h2 class="text-3xl font-bold text-blue-400 mb-6 flex items-center">
-        <i class="fas fa-user-circle mr-2"></i> Your Dashboard
-      </h2>
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-3xl font-bold text-blue-400 flex items-center">
+          <i class="fas fa-user-circle mr-2"></i> Your Dashboard
+        </h2>
+        <div data-controller="notification" data-notification-user-id-value="<%= current_user.id %>" data-notification-polling-enabled-value="true">
+          <div class="relative">
+            <button data-action="click->notification#toggleDropdown" class="p-2 rounded-lg hover:bg-gray-800 transition-colors relative">
+              <i class="fas fa-bell text-blue-400"></i>
+              <span data-notification-target="badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+            </button>
+            
+            <div data-notification-target="dropdown" class="hidden absolute right-0 mt-2 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-50">
+              <div class="p-4 border-b border-gray-700 flex justify-between items-center">
+                <h3 class="font-semibold text-white">Notifications</h3>
+                <button data-action="click->notification#markAllAsRead" class="text-sm text-blue-400 hover:text-blue-300">Mark all as read</button>
+              </div>
+              <div data-notification-target="list" class="max-h-96 overflow-y-auto">
+                <div class="p-4 text-center text-gray-500" data-notification-target="emptyMessage">
+                  No notifications yet
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <!-- Dashboard Cards -->
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-10">

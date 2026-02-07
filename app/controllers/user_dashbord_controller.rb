@@ -17,6 +17,11 @@ class UserDashbordController < ApplicationController
     # Social tasks data
     @available_tasks = SocialTask.all
     @user_proofs = current_user.social_task_proofs.includes(:social_task).where.not(task_id: nil).order(created_at: :desc).limit(5)
+
+    # Load notifications for the current user and global notifications
+    @unread_notifications_count = current_user.notifications.unread.count
+    @recent_notifications = current_user.notifications.includes(:user).order(created_at: :desc).limit(10)
+    @global_notifications = Notification.where(user_id: nil).order(created_at: :desc).limit(5)
   end
 
   private

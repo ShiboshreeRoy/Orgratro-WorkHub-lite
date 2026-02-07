@@ -5,9 +5,6 @@ Rails.application.routes.draw do
 
   resource :profile
 
-  namespace :admin do
-    resources :notifications, only: [ :index ]
-  end
   # Intern Dashboard
   get "intern_dashboard", to: "intern_dashboard#index", as: "intern_dashboard"
   get "intern_dashboard/index"
@@ -15,7 +12,8 @@ Rails.application.routes.draw do
    resources :social_task_proofs, only: [ :new, :create, :index, :show ]
 
 namespace :admin do
-  resources :notifications, only: [ :new, :create ]
+  resources :notifications, only: [ :index ]
+  post "notifications/create_global", to: "notifications#create_global"
   resources :social_task_proofs, only: [ :index, :show, :update ] do
     member do
       get :test_image
@@ -75,10 +73,9 @@ end
     member do
       patch :mark_as_read
     end
-    collection do
-      post :create_global
-    end
   end
+
+
 
   resources :contact_messages, only: [ :new, :create, :index, :show, :destroy ]
 
@@ -100,7 +97,7 @@ end
 
   resources :admin_dashbord, only: [ :index ]
   resources :user_dashbord, only: [ :index ]
-  resources :profiles, only: [ :index ]
+  resources :profiles, only: [ :index, :show ]
 
   resources :withdrawals do
     member do
@@ -126,16 +123,21 @@ resources :tasks do
   collection do
     get :sample_template
   end
-   resources :user_tasks, only: [ :new, :create ]
+   resources :user_tasks
 end
 
+# User-specific tasks route
+get "/my_user_tasks", to: "user_tasks#index", as: "my_user_tasks"
 
-resources :user_tasks do
+# Admin user tasks management (non-nested)
+resources :admin_user_tasks, controller: :user_tasks, only: [ :index, :show ] do
   member do
     post :approve
     post :reject
   end
 end
+
+
 
 
 resources :short_links, only: [ :create, :index ]

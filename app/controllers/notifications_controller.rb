@@ -7,31 +7,76 @@ class NotificationsController < ApplicationController
       user_id = params[:user_id] || current_user.id
       user = User.find_by(id: user_id) || current_user
 
-      notifications = user.notifications
-                        .active
-                        .recent
-                        .limit(10)
+      # Get both user-specific and global notifications
+      user_notifications = user.notifications.active.recent.limit(10)
+      global_notifications = Notification.global.active.recent.limit(10)
 
-      unread_count = user.notifications.unread.active.count
+      # Combine and sort by creation time
+      all_notifications = (user_notifications + global_notifications)
+                        .sort_by { |n| n.created_at }
+                        .reverse
+                        .first(10)
+
+      # Count unread notifications (both user-specific and global)
+      user_unread = user.notifications.unread.active.count
+      global_unread = Notification.global.unread.active.count
+      unread_count = user_unread + global_unread
 
       render json: {
-        notifications: notifications.as_json(only: [ :id, :title, :message, :read, :created_at, :priority, :notification_type ]),
+        notifications: all_notifications.as_json(only: [ :id, :title, :message, :read, :created_at, :priority, :notification_type ]),
         unread_count: unread_count
       }
     else
       # Regular HTML view
-      @notifications = current_user.notifications.order(created_at: :desc)
-      @total_notifications = @notifications.count
+      @user_notifications = current_user.notifications.order(created_at: :desc)
+      @global_notifications = Notification.global.order(created_at: :desc)
+      @notifications = (@user_notifications + @global_notifications)
+                         .sort_by { |n| n.created_at }
+                         .reverse
     end
   end
 
   def show
-    @notification = current_user.notifications.find(params[:id])
+    # Check if it's a user-specific notification
+    @notification = current_user.notifications.find_by(id: params[:id])
+
+    if @notification.nil?
+      # Check if it's a global notification
+      @notification = Notification.global.find_by(id: params[:id])
+    end
+
+    # If still nil, the notification doesn't exist
+    if @notification.nil?
+      redirect_to notifications_path, alert: "Notification not found."
+      nil
+    end
   end
 
   def mark_as_read
-    @notification = current_user.notifications.find(params[:id])
-    @notification.mark_as_read!
+    # Check if it's a global notification or user-specific notification
+    @notification = current_user.notifications.find_by(id: params[:id])
+
+    if @notification.nil?
+      # Check if it's a global notification that the user has seen
+      @notification = Notification.global.find_by(id: params[:id])
+      if @notification
+        # For global notifications, we create a user-specific read record
+        current_user.notifications.create(
+          title: @notification.title,
+          message: @notification.message,
+          notification_type: @notification.notification_type,
+          priority: @notification.priority,
+          read: true,
+          read_at: Time.current,
+          expires_at: @notification.expires_at
+        )
+      else
+        redirect_to notifications_path, alert: "Notification not found."
+        return
+      end
+    else
+      @notification.mark_as_read!
+    end
 
     if request.format.json?
       render json: { success: true }
@@ -41,34 +86,36 @@ class NotificationsController < ApplicationController
   end
 
   def destroy
-    @notification = current_user.notifications.find(params[:id])
-    @notification.destroy
+    # Check if it's a user-specific notification
+    @notification = current_user.notifications.find_by(id: params[:id])
+
+    if @notification
+      # It's a user-specific notification
+      @notification.destroy
+    else
+      # It might be a global notification, we can't truly delete it
+      # Instead, we can create a user-specific record to mark it as dismissed
+      global_notification = Notification.global.find_by(id: params[:id])
+      if global_notification
+        current_user.notifications.create(
+          title: global_notification.title,
+          message: global_notification.message,
+          notification_type: global_notification.notification_type,
+          priority: global_notification.priority,
+          read: true,
+          read_at: Time.current,
+          expires_at: global_notification.expires_at
+        )
+      else
+        redirect_to notifications_path, alert: "Notification not found."
+        return
+      end
+    end
 
     if request.format.json?
       render json: { success: true }
     else
       redirect_to notifications_path, notice: "Notification deleted successfully."
-    end
-  end
-
-  # Admin actions for creating global notifications
-  def create_global
-    unless current_user.admin?
-      redirect_to root_path, alert: "Access denied."
-      return
-    end
-
-    title = params[:title]
-    message = params[:message]
-    notification_type = params[:notification_type] || "announcement"
-    priority = params[:priority] || "medium"
-    expires_in = params[:expires_in]&.to_i&.hours
-
-    if title.present? && message.present?
-      Notification.create_global(title, message, type: notification_type.to_sym, priority: priority.to_sym, expires_in: expires_in)
-      redirect_back(fallback_location: admin_dashbord_index_path, notice: "Global notification sent successfully.")
-    else
-      redirect_back(fallback_location: admin_dashbord_index_path, alert: "Title and message are required.")
     end
   end
 end
