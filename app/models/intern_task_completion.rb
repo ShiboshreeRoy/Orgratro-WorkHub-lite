@@ -4,9 +4,9 @@ class InternTaskCompletion < ApplicationRecord
   has_one_attached :proof_attachment
 
   # Validations
-  validates :status, inclusion: { in: %w[pending submitted approved rejected] }, allow_blank: true
+  validates :status, inclusion: { in: %w[pending submitted approved rejected needs_more_proof] }, allow_blank: true
   validates :intern_task_id, presence: true
-  validates :intern_task_id, uniqueness: { scope: :user_id, conditions: -> { where.not(status: "approved") }, message: "can't be resubmitted after approval" }
+  validates :intern_task_id, uniqueness: { scope: :user_id, conditions: -> { where.not(status: [ "approved", "needs_more_proof" ]) }, message: "can't be resubmitted while pending review" }
   validate :task_not_already_approved
   validate :intern_task_must_exist
 
@@ -17,7 +17,7 @@ class InternTaskCompletion < ApplicationRecord
   scope :by_recent, -> { order(created_at: :desc) }
 
   # Enums
-  enum status: { pending: "pending", submitted: "submitted", approved: "approved", rejected: "rejected" }
+  enum status: { pending: "pending", submitted: "submitted", approved: "approved", rejected: "rejected", needs_more_proof: "needs_more_proof" }
 
   # Callbacks
   after_save :update_user_intern_progress
@@ -27,6 +27,11 @@ class InternTaskCompletion < ApplicationRecord
   def task_not_already_approved
     if status == "submitted" && user.intern_task_completions.where(intern_task: intern_task, status: "approved").exists?
       errors.add(:intern_task_id, "has already been approved and cannot be resubmitted")
+    end
+
+    # Allow resubmission if previous submission was rejected or needs more proof
+    if status == "submitted" && user.intern_task_completions.where(intern_task: intern_task, status: [ "rejected", "needs_more_proof" ]).exists?
+      # This is allowed, so no error
     end
   end
 

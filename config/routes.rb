@@ -19,6 +19,7 @@ namespace :admin do
   resources :intern_task_completions, only: [ :index, :show, :update, :destroy ] do
     member do
       post :submit
+      get :test_image
     end
   end
   resources :social_tasks, only: [ :index, :new, :create, :edit, :update, :destroy ] do

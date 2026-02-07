@@ -22,6 +22,11 @@ class Admin::InternTaskCompletionsController < Admin::BaseController
   def show
   end
 
+  def test_image
+    @intern_task_completion = InternTaskCompletion.find(params[:id])
+    render "admin/intern_task_completions/test_image"
+  end
+
   def update
     if @intern_task_completion.update(intern_task_completion_params)
       redirect_to admin_intern_task_completions_path, notice: "Task completion updated successfully."
@@ -35,12 +40,14 @@ class Admin::InternTaskCompletionsController < Admin::BaseController
     # Check if status is passed as URL parameter or request parameter
     status = params[:status] || params["status"]
 
-    if [ "approved", "rejected" ].include?(status)
+    if [ "approved", "rejected", "needs_more_proof" ].include?(status)
       @intern_task_completion.update!(status: status)
 
       if status == "approved"
         # The after_save callback in the model will handle updating user progress
         redirect_to admin_intern_task_completions_path, notice: "Task completion approved successfully."
+      elsif status == "needs_more_proof"
+        redirect_to admin_intern_task_completions_path, notice: "Requested more proof from user. They can now resubmit."
       else
         redirect_to admin_intern_task_completions_path, notice: "Task completion rejected."
       end

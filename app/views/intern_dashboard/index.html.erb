@@ -244,8 +244,8 @@
                       <span class="ml-4 px-4 py-2 bg-green-600 rounded-lg text-sm font-semibold transition cursor-not-allowed opacity-70" title="Task completed and approved">Completed ✓</span>
                     <% elsif existing_completion.submitted? %>
                       <span class="ml-4 px-4 py-2 bg-yellow-600 rounded-lg text-sm font-semibold transition cursor-not-allowed opacity-70" title="Task submitted for review">Submitted</span>
-                    <% elsif existing_completion.rejected? %>
-                      <%= link_to "Retry Task", new_intern_task_completion_path(intern_task_id: task.id), class: "ml-4 px-4 py-2 bg-orange-600 hover:bg-orange-700 rounded-lg text-sm font-semibold transition" %>
+                    <% elsif existing_completion.rejected? || existing_completion.needs_more_proof? %>
+                      <%= link_to "Retry Task", new_intern_task_completion_path(intern_task_id: task.id), class: "ml-4 px-4 py-2 #{existing_completion.needs_more_proof? ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-orange-600 hover:bg-orange-700'} rounded-lg text-sm font-semibold transition", title: "#{existing_completion.needs_more_proof? ? 'More proof requested - please provide better evidence' : 'Task was rejected - please try again'}" %>
                     <% else %>
                       <%= link_to "Start Task", new_intern_task_completion_path(intern_task_id: task.id), class: "ml-4 px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-lg text-sm font-semibold transition" %>
                     <% end %>
