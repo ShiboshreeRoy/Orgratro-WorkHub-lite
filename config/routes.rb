@@ -15,7 +15,11 @@ Rails.application.routes.draw do
 
 namespace :admin do
   resources :notifications, only: [ :new, :create ]
-  resources :social_task_proofs, only: [ :index, :show, :update ]
+  resources :social_task_proofs, only: [ :index, :show, :update ] do
+    member do
+      get :test_image
+    end
+  end
   resources :intern_task_completions, only: [ :index, :show, :update, :destroy ] do
     member do
       post :submit
@@ -62,6 +66,7 @@ end
      end
      collection do
       post :bulk_create
+      delete :bulk_delete
      end
   end
 

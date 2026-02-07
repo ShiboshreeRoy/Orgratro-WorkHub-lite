@@ -6,4 +6,6 @@ class Task < ApplicationRecord
 
 
   TASK_TYPES = [ "Click Link", "Social Media Post", "Follow & Subscribe", "Survey", "Other" ]
+
+  scope :active, -> { where(active: true) }
 end

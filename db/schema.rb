@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_07_111738) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_07_114633) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -201,6 +201,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_07_111738) do
     t.datetime "updated_at", null: false
     t.bigint "learn_and_earn_id"
     t.integer "total_clicks", default: 0, null: false
+    t.boolean "active"
     t.index ["learn_and_earn_id"], name: "index_links_on_learn_and_earn_id"
     t.index ["url"], name: "index_links_on_url", unique: true
     t.index ["user_id"], name: "index_links_on_user_id"
@@ -311,6 +312,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_07_111738) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.boolean "active"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
