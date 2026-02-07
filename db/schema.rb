@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_07_011950) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_07_014036) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -148,6 +148,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_07_011950) do
     t.index ["scheduled_at"], name: "index_email_campaigns_on_scheduled_at"
     t.index ["sent_at"], name: "index_email_campaigns_on_sent_at"
     t.index ["status"], name: "index_email_campaigns_on_status"
+  end
+
+  create_table "intern_tasks", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.string "task_type"
+    t.string "video_url"
+    t.integer "admin_id"
+    t.string "status"
+    t.integer "priority"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "learn_and_earns", force: :cascade do |t|

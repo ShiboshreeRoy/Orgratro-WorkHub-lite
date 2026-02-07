@@ -19,6 +19,8 @@ namespace :admin do
     end
     member do
       patch :update_balance
+      patch :toggle_dashboard_access
+      patch :reset_intern
     end
   end
   get "referrals", to: "referrals#index", as: "referrals"

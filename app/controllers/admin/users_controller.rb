@@ -1,5 +1,5 @@
 class Admin::UsersController < Admin::BaseController
-  before_action :set_user, only: [ :show, :destroy, :update_balance ]
+  before_action :set_user, only: [ :show, :destroy, :update_balance, :toggle_dashboard_access, :reset_intern ]
 
   def index
     @users = User.all.order(created_at: :desc)
@@ -84,6 +84,33 @@ class Admin::UsersController < Admin::BaseController
       redirect_back fallback_location: admin_users_path, notice: "Balance updated successfully to $#{new_balance}"
     else
       redirect_back fallback_location: admin_users_path, alert: "Failed to update balance"
+    end
+  end
+
+  # Toggle dashboard access for interns
+  def toggle_dashboard_access
+    new_status = !@user.allow_dashboard_access
+
+    if @user.update(allow_dashboard_access: new_status)
+      status_text = new_status ? "granted" : "revoked"
+      redirect_back fallback_location: admin_user_path(@user), notice: "Dashboard access #{status_text} successfully."
+    else
+      redirect_back fallback_location: admin_user_path(@user), alert: "Failed to update dashboard access."
+    end
+  end
+
+  # Reset intern status
+  def reset_intern
+    if @user.update(
+      is_intern: true,
+      intern_level: 1,
+      intern_tasks_completed: 0,
+      intern_graduated: false,
+      allow_dashboard_access: false
+    )
+      redirect_back fallback_location: admin_user_path(@user), notice: "Intern status reset successfully."
+    else
+      redirect_back fallback_location: admin_user_path(@user), alert: "Failed to reset intern status."
     end
   end
 

@@ -1,0 +1,2 @@
+class InternTask < ApplicationRecord
+end

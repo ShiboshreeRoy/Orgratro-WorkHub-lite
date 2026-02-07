@@ -12,7 +12,7 @@ class User < ApplicationRecord
 
 
 
-  enum role: { standard: 1, admin: 2, staff: 3 }
+  enum role: { standard: 1, admin: 2, staff: 3, intern: 4 }
 
   has_many :clicks, dependent: :destroy
   has_many :links, dependent: :destroy

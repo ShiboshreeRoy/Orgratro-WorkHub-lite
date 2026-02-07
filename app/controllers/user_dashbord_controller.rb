@@ -1,7 +1,7 @@
 class UserDashbordController < ApplicationController
   before_action :authenticate_user!
   before_action :check_dashboard_access
-  
+
   def index
     @user = User.all
     @links = Link.all
@@ -18,9 +18,9 @@ class UserDashbordController < ApplicationController
     @available_tasks = SocialTask.all
     @user_proofs = current_user.social_task_proofs.includes(:social_task).where.not(task_id: nil).order(created_at: :desc).limit(5)
   end
-  
+
   private
-  
+
   def check_dashboard_access
     # Redirect interns to intern dashboard
     unless current_user.can_access_dashboard?

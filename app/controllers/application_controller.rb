@@ -2,7 +2,17 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
   before_action :store_referral_token
 
-  
+  # Redirect to appropriate dashboard after sign in
+  def after_sign_in_path_for(resource)
+    if resource.admin?
+      admin_dashbord_index_path
+    elsif resource.is_intern && !resource.can_access_dashboard?
+      intern_dashboard_path
+    else
+      user_dashbord_index_path
+    end
+  end
+
   protected
 
   # Only allow admins
@@ -11,8 +21,8 @@ class ApplicationController < ActionController::Base
   end
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:name, :wp_number])
-    devise_parameter_sanitizer.permit(:account_update, keys: [:name, :wp_number])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :name, :wp_number ])
+    devise_parameter_sanitizer.permit(:account_update, keys: [ :name, :wp_number ])
   end
 
   private

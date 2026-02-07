@@ -34,6 +34,63 @@
       </div>
     </div>
 
+    <!-- Intern Status Control (Admin Only) -->
+    <% if @user.is_intern || @user.intern_graduated %>
+      <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-6 mb-8 shadow-2xl">
+        <h2 class="text-2xl font-bold mb-4 flex items-center">
+          <span class="text-3xl mr-3">🎓</span>
+          Intern Status Management
+        </h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+          <div class="bg-white/10 backdrop-blur-lg rounded-xl p-4">
+            <p class="text-blue-200 text-sm mb-1">Current Level</p>
+            <p class="text-3xl font-bold">Level <%= @user.intern_level %></p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-lg rounded-xl p-4">
+            <p class="text-blue-200 text-sm mb-1">Tasks Completed</p>
+            <p class="text-3xl font-bold"><%= @user.intern_tasks_completed %> / <%= @user.required_tasks_for_graduation %></p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-lg rounded-xl p-4">
+            <p class="text-blue-200 text-sm mb-1">Progress</p>
+            <p class="text-3xl font-bold"><%= @user.intern_progress_percentage %>%</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <% if @user.intern_graduated %>
+            <span class="px-6 py-3 bg-green-500/30 rounded-xl font-semibold flex items-center">
+              <i class="fas fa-trophy mr-2"></i>
+              Graduated - Awaiting Dashboard Access
+            </span>
+          <% else %>
+            <span class="px-6 py-3 bg-yellow-500/30 rounded-xl font-semibold">
+              <i class="fas fa-graduation-cap mr-2"></i>
+              In Training
+            </span>
+          <% end %>
+
+          <%= form_with url: admin_user_toggle_dashboard_access_path(@user), method: :patch, local: true, class: "inline" do %>
+            <% if @user.allow_dashboard_access %>
+              <%= button_tag type: "submit", class: "px-6 py-3 bg-red-500 hover:bg-red-600 rounded-xl font-semibold transition" do %>
+                <i class="fas fa-lock mr-2"></i>Revoke Dashboard Access
+              <% end %>
+            <% else %>
+              <%= button_tag type: "submit", class: "px-6 py-3 bg-green-500 hover:bg-green-600 rounded-xl font-semibold transition" do %>
+                <i class="fas fa-unlock mr-2"></i>Grant Dashboard Access
+              <% end %>
+            <% end %>
+          <% end %>
+
+          <%= form_with url: admin_user_reset_intern_path(@user), method: :patch, local: true, class: "inline", data: { turbo_confirm: "Are you sure you want to reset intern status? This will restart their progress." } do %>
+            <%= button_tag type: "submit", class: "px-6 py-3 bg-orange-500 hover:bg-orange-600 rounded-xl font-semibold transition" do %>
+              <i class="fas fa-redo mr-2"></i>Reset Intern Status
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+
     <!-- Financial Overview Cards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
       <!-- Total Balance -->
