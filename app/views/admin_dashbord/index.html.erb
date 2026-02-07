@@ -20,7 +20,7 @@
           <i class="fas fa-tachometer-alt"></i> Dashboard
         <% end %>
 
-         <%= link_to profiles_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+         <%= link_to profile_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
             <i class="fas fa-user mr-2"></i>My Profile
         <% end %>
        
@@ -350,6 +350,51 @@
             </div>
           </div>
         <% end %>
+        
+        <!-- New Buyer Registrations -->
+        <div class="bg-gray-900 mt-6 p-6 rounded-lg shadow-lg">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-semibold text-blue-300">
+              <i class="fas fa-user-plus mr-2"></i>New Buyer Registrations
+            </h2>
+            <div class="flex space-x-2">
+              <%= link_to "View All", admin_notifications_path, class: "text-blue-400 hover:text-blue-300 text-sm" %>
+            </div>
+          </div>
+          
+          <% if @new_buyer_notifications.any? %>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-700">
+                <thead class="bg-gray-800">
+                  <tr>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Email</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Date</th>
+                    <th class="px-4 py-3 text-left text-xs font-medium text-black uppercase tracking-wider">Action</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-700">
+                  <% @new_buyer_notifications.each do |notification| %>
+                    <tr class="hover:bg-gray-800 transition">
+                      <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-white">
+                        <%= notification.message.gsub(/A new buyer has registered: /, '').gsub(/\. Please assign work\./, '') %>
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-300">
+                        <%= notification.created_at.strftime("%b %d, %Y") %>
+                      </td>
+                      <td class="px-4 py-3 whitespace-nowrap text-sm">
+                        <%= link_to "Assign Work", admin_user_tasks_path, class: "text-blue-400 hover:text-blue-300 text-xs" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          <% else %>
+            <div class="text-center py-4">
+              <p class="text-gray-400">No new buyer registrations.</p>
+            </div>
+          <% end %>
+        </div>
         
         <!-- Social Tasks Overview -->
         <div class="bg-gray-900 mt-6 p-6 rounded-lg shadow-lg">

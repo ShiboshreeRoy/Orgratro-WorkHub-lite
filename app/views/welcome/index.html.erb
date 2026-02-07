@@ -23,7 +23,7 @@
                         },
                         'pulse-slower': {
                             '0%, 100%': { opacity: '0.15' },
-                            '50%': { opacity: '0.25' }
+                            '50%': { opacity: '0.35' }
                         },
                         'fade-in-down': {
                             '0%': { opacity: '0', transform: 'translateY(-1.25rem)' },
@@ -125,19 +125,32 @@
         .floating {
             animation: float 4s ease-in-out infinite;
         }
+        
+        .buyer-feature-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: .0625rem solid rgba(34, 197, 94, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .buyer-feature-card:hover {
+            transform: translateY(-0.3125rem);
+            background: rgba(56, 134, 74, 0.8);
+            border-color: rgba(34, 197, 94, 0.5);
+            box-shadow: 0 .625rem 1.5625rem rgba(34, 197, 94, 0.3);
+        }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden">
     <!-- Decorative elements -->
     <div aria-hidden="true" class="fixed top-[5%] left-[5%] w-60 h-60 rounded-full bg-blue-600 opacity-10 filter blur-3xl animate-pulse-slow"></div>
     <div aria-hidden="true" class="fixed top-[15%] right-[10%] w-80 h-80 rounded-full bg-blue-400 opacity-10 filter blur-3xl animate-pulse-slower"></div>
-    <div aria-hidden="true" class="fixed bottom-[10%] left-[10%] w-72 h-72 rounded-full bg-cyan-500 opacity-10 filter blur-3xl animate-pulse-slow"></div>
+    <div aria-hidden="true" class="fixed bottom-[10%] left-[10%] w-72 h-72 rounded-full bg-green-500 opacity-10 filter blur-3xl animate-pulse-slow"></div>
     
     <!-- Main content -->
     <div class="min-h-screen relative flex flex-col items-center justify-center px-4 sm:px-6 md:px-10 py-16 md:py-24 overflow-hidden">
         <!-- Floating elements -->
         <div class="floating absolute top-20 left-10 w-8 h-8 rounded-full bg-blue-500 opacity-20"></div>
-        <div class="floating absolute bottom-40 right-20 w-12 h-12 rounded-full bg-cyan-400 opacity-20"></div>
+        <div class="floating absolute bottom-40 right-20 w-12 h-12 rounded-full bg-green-400 opacity-20"></div>
         
         <!-- Header -->
         <div class="text-center max-w-4xl z-10">
@@ -150,8 +163,8 @@
             
             <!-- Subtext -->
             <p class="text-xl sm:text-2xl text-blue-200 mb-10 animate-fade-in-up max-w-3xl mx-auto leading-relaxed">
-                Get paid for every link you visit. No experience needed.<br class="hidden md:block">
-                Click, earn, withdraw. Join thousands earning effortlessly today!
+                Connect with service providers and get your projects done!<br class="hidden md:block">
+                Register as a buyer, post your requirements, and let experts work for you.
             </p>
             
             <!-- CTA Buttons -->
@@ -160,10 +173,10 @@
                   <%= current_user.admin? ? link_to("Admin Dashboard", admin_dashbord_index_path, class: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-10 py-4 rounded-3xl shadow-2xl text-xl font-semibold transition duration-300 ease-in-out transform hover:scale-105") : nil %>
 
                   <%= link_to "Go Dashbord",user_dashbord_index_path, class: "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-10 py-4 rounded-3xl shadow-2xl text-xl font-semibold transition duration-300 ease-in-out transform hover:scale-105" %>
-    
+            
             <% else %>
                 <%= link_to new_user_registration_path, class: "btn-primary px-8 py-4 rounded-2xl text-lg font-semibold text-center" do %>
-                    <i class="fas fa-rocket mr-2"></i>Start Earning Now
+                    <i class="fas fa-user-plus mr-2"></i>Register as Buyer
                 <% end %>
                  <%=link_to new_user_session_path ,class: "btn-secondary px-8 py-4 rounded-2xl text-lg font-semibold text-center" do %>
                     <i class="fas fa-sign-in-alt mr-2"></i>Log In
@@ -192,9 +205,42 @@
             </div>
         </div>
         
-        <!-- Features Section -->
+        <!-- Buyer Features Section -->
         <div class="max-w-6xl w-full z-10">
-            <h2 class="text-3xl font-bold text-center text-blue-300 mb-16">How It Works</h2>
+            <h2 class="text-3xl font-bold text-center text-blue-300 mb-16">Buyer Benefits</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="buyer-feature-card rounded-2xl p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center mb-5">
+                        <i class="fas fa-briefcase text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-green-400 mb-3">Post Requirements</h3>
+                    <p class="text-green-200">Easily post your project requirements and get matched with qualified service providers.</p>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="buyer-feature-card rounded-2xl p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center mb-5">
+                        <i class="fas fa-handshake text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-green-400 mb-3">Connect with Experts</h3>
+                    <p class="text-green-200">Connect with verified professionals who specialize in various services like marketing, SEO, design, and more.</p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="buyer-feature-card rounded-2xl p-6">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-green-800 flex items-center justify-center mb-5">
+                        <i class="fas fa-check-circle text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-green-400 mb-3">Quality Assurance</h3>
+                    <p class="text-green-200">Review work quality and ensure satisfaction before releasing payment to service providers.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Service Provider Features Section -->
+        <div class="max-w-6xl w-full z-10 mt-16">
+            <h2 class="text-3xl font-bold text-center text-blue-300 mb-16">For Service Providers</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Feature 1 -->
                 <div class="feature-card rounded-2xl p-6">
@@ -317,10 +363,10 @@
         
         <!-- Final CTA -->
         <div class="mt-20 text-center z-10">
-            <h2 class="text-3xl md:text-4xl font-bold text-blue-300 mb-6">Ready to Start Earning?</h2>
-            <p class="text-xl text-blue-200 max-w-2xl mx-auto mb-10">Finish your training, complete tasks, and unlock your Orgatro Certificate — all for free. Start earning today. Join now!</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-blue-300 mb-6">Ready to Get Your Projects Done?</h2>
+            <p class="text-xl text-blue-200 max-w-2xl mx-auto mb-10">Join thousands of satisfied buyers who have posted their requirements and connected with service providers. Sign up as a buyer today and get your work done quickly and professionally.</p>
             <%=link_to "/users/sign_up",class: "btn-primary px-10 py-5 rounded-2xl text-xl font-bold inline-block"  do %>
-                <i class="fas fa-gift mr-3"></i>Join Now & Get  Certificate
+                <i class="fas fa-user-plus mr-3"></i>Sign Up as Buyer Today
             <% end  %>
         </div>
         

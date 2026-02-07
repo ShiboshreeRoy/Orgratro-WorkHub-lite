@@ -203,6 +203,17 @@
 
     <!-- Main Content -->
     <main class="flex-1 p-4 sm:p-6 md:p-10 max-w-screen-xl mx-auto">
+      <% if current_user.role == 'standard' && current_user.user_tasks.empty? %>
+        <div class="bg-yellow-900/20 border border-yellow-700 rounded-lg p-4 mb-6">
+          <div class="flex items-center">
+            <i class="fas fa-info-circle text-yellow-400 mr-3 text-xl"></i>
+            <div>
+              <h3 class="text-lg font-semibold text-yellow-300">Waiting for Work Assignment</h3>
+              <p class="text-yellow-200">You have signed up as a buyer. Our team will assign work to you soon. Please check back later.</p>
+            </div>
+          </div>
+        </div>
+      <% end %>
       <div class="flex justify-between items-center mb-6">
         <h2 class="text-3xl font-bold text-blue-400 flex items-center">
           <i class="fas fa-user-circle mr-2"></i> Your Dashboard

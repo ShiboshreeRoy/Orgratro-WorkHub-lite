@@ -33,7 +33,18 @@ class ApplicationController < ActionController::Base
     elsif resource.is_intern && !resource.can_access_dashboard?
       intern_dashboard_path
     else
-      user_dashbord_index_path
+      # For standard users (buyers), redirect to a page where they can see assigned work
+      if resource.role == "standard"
+        # Check if they have been assigned any tasks
+        if resource.user_tasks.any?
+          user_dashbord_index_path  # They have tasks, show dashboard
+        else
+          # No tasks assigned yet, show a waiting page
+          profile_path  # Or create a specific waiting page
+        end
+      else
+        user_dashbord_index_path
+      end
     end
   end
 

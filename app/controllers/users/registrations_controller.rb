@@ -1,5 +1,5 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  before_action :configure_sign_up_params, only: [:create]
+  before_action :configure_sign_up_params, only: [ :create ]
 
   def create
     # Check password confirmation manually
@@ -10,11 +10,25 @@ Password and confirmation did not match 😓"
     end
 
     super do |resource|
-      apply_referral_if_present(resource) if resource.persisted?
+      # Set user as standard role (buyer) by default
+      resource.role = :standard
+      # Send notification to admin about new user registration
+      send_admin_notification(resource) if resource.persisted?
+      apply_referral_if_present(resource)
     end
   end
 
   private
+
+  def send_admin_notification(user)
+    # Create a notification for admins about the new buyer registration
+    Notification.create(
+      title: "New Buyer Registration",
+      message: "A new buyer has registered: #{user.email}. Please assign work.",
+      notification_type: "admin_alert",
+      priority: "high"
+    )
+  end
 
   def apply_referral_if_present(user)
     token = params[:ref] || params[:referral_token] || session.delete(:referral_token)
@@ -31,6 +45,6 @@ Password and confirmation did not match 😓"
   protected
 
   def configure_sign_up_params
-    devise_parameter_sanitizer.permit(:sign_up, keys: [:role])
+    devise_parameter_sanitizer.permit(:sign_up, keys: [ :role ])
   end
 end

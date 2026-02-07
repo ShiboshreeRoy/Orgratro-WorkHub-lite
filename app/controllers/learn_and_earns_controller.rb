@@ -1,6 +1,6 @@
 class LearnAndEarnsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_learn_and_earn, only: %i[show edit update destroy track_click]
+  before_action :set_learn_and_earn, only: %i[show edit update destroy track_click approve reject]
   before_action :authorize_admin!, only: %i[new create bulk_create]
   before_action :authorize_user_or_admin!, only: %i[edit update destroy]
 
