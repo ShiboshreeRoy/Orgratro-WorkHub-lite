@@ -6,6 +6,27 @@
   .blink {
     animation: blink 1s infinite;
   }
+  
+  @keyframes pulse-ring {
+    0% { transform: scale(0.33); opacity: 1; }
+    80%, 100% { transform: scale(1); opacity: 0; }
+  }
+  
+  .notification-pulse {
+    position: relative;
+  }
+  
+  .notification-pulse::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    border: 2px solid #ef4444;
+    animation: pulse-ring 1.5s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+  }
 </style>
 
 <nav class="bg-black text-white shadow-md sticky top-0 z-50">
@@ -24,6 +45,45 @@
         <%= link_to "About us", about_welcome_index_path, class: "text-gray-300 hover:text-indigo-400 font-medium" %>
         <%= link_to "Contact", "/contact_messages/new", class: "text-gray-300 hover:text-indigo-400 font-medium" %>
         <%= link_to "Url Shortener", short_links_path, class: "text-gray-300 hover:text-indigo-400 font-medium" %>
+        
+        <!-- Notifications -->
+        <% if user_signed_in? %>
+          <div class="relative" data-controller="notification" data-notification-user-id-value="<%= current_user.id %>">
+            <button class="text-gray-300 hover:text-indigo-400 relative p-1" 
+                    data-action="notification#toggleDropdown">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+              </svg>
+              <span data-notification-target="badge" 
+                    class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center hidden notification-pulse">
+                0
+              </span>
+            </button>
+            
+            <!-- Notifications Dropdown -->
+            <div data-notification-target="dropdown" 
+                 class="absolute right-0 mt-2 w-80 bg-gray-900 border border-gray-700 rounded-lg shadow-xl z-50 hidden">
+              <div class="p-4 border-b border-gray-700">
+                <h3 class="text-lg font-semibold text-white">Notifications</h3>
+              </div>
+              
+              <div data-notification-target="list" class="max-h-96 overflow-y-auto">
+                <!-- Notifications will be loaded here -->
+              </div>
+              
+              <div data-notification-target="emptyState" class="p-8 text-center text-gray-400 hidden">
+                <svg class="mx-auto h-12 w-12 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                </svg>
+                <p class="mt-2">No notifications</p>
+              </div>
+              
+              <div class="p-3 border-t border-gray-700 text-center">
+                <%= link_to "View All", notifications_path, class: "text-indigo-400 hover:text-indigo-300 text-sm" %>
+              </div>
+            </div>
+          </div>
+        <% end %>
 
         <!-- Dropdown -->
         <div class="relative">
@@ -86,6 +146,7 @@
         <% else %>
           <%= link_to "User Dashboard", user_dashbord_index_path, class: "block py-2 pl-4 text-gray-300 hover:text-indigo-400" %>
         <% end %>
+        <%= link_to "Notifications", notifications_path, class: "block py-2 pl-4 text-gray-300 hover:text-indigo-400" %>
       <% else %>
          <%= link_to "Intern Login", new_user_session_path, class: "block py-2 pl-4 text-gray-300 hover:text-indigo-400" %>
       <% end %>

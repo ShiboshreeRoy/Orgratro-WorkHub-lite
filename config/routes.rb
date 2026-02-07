@@ -70,7 +70,14 @@ end
      end
   end
 
-  resources :notifications, only: [ :index, :destroy ]
+  resources :notifications do
+    member do
+      patch :mark_as_read
+    end
+    collection do
+      post :create_global
+    end
+  end
 
   resources :contact_messages, only: [ :new, :create, :index, :show, :destroy ]
 

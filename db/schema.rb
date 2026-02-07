@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_07_114633) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_07_123415) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -214,6 +214,10 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_07_114633) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "read_at"
+    t.datetime "expires_at"
+    t.string "notification_type"
+    t.integer "priority"
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
