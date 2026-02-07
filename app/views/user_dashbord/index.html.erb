@@ -31,11 +31,11 @@
         <% end %>
 
         <%= link_to links_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
-          <i class="fas fa-link mr-2"></i> PTC Click & Earn
+           <i class="fas fa-mouse-pointer mr-2"></i> Click & Earn
         <% end %>
 
         <%= link_to tasks_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
-         <i class="fas fa-mouse-pointer mr-2"></i> Click & Earn
+        <i class="fas fa-link mr-2"></i> Complite Task & Earn
         <% end %>
 
         <%= link_to user_tasks_path, class: "block px-4 py-2 rounded hover:bg-gray-800 text-blue-300 transition" do %>
@@ -300,6 +300,7 @@
         <% if @user_proofs.any? %>
           <div class="space-y-4">
             <% @user_proofs.each do |proof| %>
+              <% next unless proof.social_task.present? %>
               <div class="bg-gray-800 p-4 rounded-xl border-l-4 <%= proof.approved? ? 'border-green-500' : proof.rejected? ? 'border-red-500' : 'border-yellow-500' %> hover:shadow-md transition">
                 <div class="flex justify-between items-start mb-2">
                   <div class="flex-1">

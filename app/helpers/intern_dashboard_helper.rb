@@ -1,0 +1,2 @@
+module InternDashboardHelper
+end

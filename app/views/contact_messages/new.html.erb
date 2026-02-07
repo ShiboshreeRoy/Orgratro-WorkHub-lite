@@ -1,10 +1,10 @@
 <body class="bg-slate-950 text-slate-200 font-sans">
   <% content_for :title, "Contact Us" %>
 
-  <div class="max-w-2xl w-full mx-auto bg-slate-900/50 backdrop-blur-xl border border-slate-800 shadow-2xl mt-5  rounded-3xl p-8 sm:p-12">
+  <div class="max-w-4xl w-full mx-auto bg-slate-900/50 backdrop-blur-xl border border-slate-800 shadow-2xl mt-5  rounded-3xl p-8 sm:p-12">
     <div class="text-center mt-5 mb-10">
       <h1 class="text-4xl font-extrabold tracking-tight text-white mb-2">Get in Touch</h1>
-      <p class="text-slate-400">Have a question? We'd love to hear from you.</p>
+      <p class="text-slate-400">Have a question or project? We'd love to hear from you.</p>
     </div>
 
     <%= form_with model: @contact_message, class: "space-y-6", local: true do |f| %>
@@ -47,10 +47,140 @@
               class: "w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all resize-none" %>
       </div>
 
+      <!-- Project Details Section -->
+      <div class="border-t border-slate-700 pt-6 mt-6">
+        <h3 class="text-xl font-bold text-white mb-4 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+          </svg>
+          Project Details (Optional)
+        </h3>
+        <p class="text-slate-400 text-sm mb-6">Share your project information to help us understand your needs better.</p>
+
+        <div class="space-y-6">
+          <div class="space-y-1">
+            <%= f.label :project_name, "Project Name", class: "block text-sm font-medium text-slate-300 ml-1" %>
+            <%= f.text_field :project_name, placeholder: "My Awesome Project",
+                  class: "w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all" %>
+          </div>
+
+          <div class="space-y-1">
+            <%= f.label :project_description, "Project Description", class: "block text-sm font-medium text-slate-300 ml-1" %>
+            <%= f.text_area :project_description, rows: 4, placeholder: "Describe your project, goals, timeline, budget, etc...",
+                  class: "w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all resize-none" %>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-1">
+              <%= f.label :project_url, "Project URL", class: "block text-sm font-medium text-slate-300 ml-1" %>
+              <%= f.url_field :project_url, placeholder: "https://example.com",
+                    class: "w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all" %>
+            </div>
+
+            <div class="space-y-1">
+              <%= f.label :contact_number, "Contact Number", class: "block text-sm font-medium text-slate-300 ml-1" %>
+              <%= f.telephone_field :contact_number, placeholder: "+1 234 567 8900",
+                    class: "w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all" %>
+            </div>
+          </div>
+
+          <div class="space-y-1">
+            <%= f.label :address, "Address", class: "block text-sm font-medium text-slate-300 ml-1" %>
+            <%= f.text_area :address, rows: 2, placeholder: "Your company/business address...",
+                  class: "w-full px-4 py-3 bg-slate-800/50 border border-slate-700 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all resize-none" %>
+          </div>
+
+          <!-- Project Image Upload -->
+          <div class="space-y-1">
+            <%= f.label :project_image, "Project Image", class: "block text-sm font-medium text-slate-300 ml-1" %>
+            <div class="relative">
+              <%= f.file_field :project_image, 
+                    accept: "image/*",
+                    class: "hidden",
+                    id: "project_image_input",
+                    onchange: "previewImage(event)" %>
+              <label for="project_image_input" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer bg-slate-800/30 hover:bg-slate-800/50 transition-all">
+                <div id="image_preview" class="hidden absolute inset-0 rounded-xl overflow-hidden">
+                  <img id="preview_img" class="w-full h-full object-cover" />
+                </div>
+                <div id="upload_placeholder" class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg class="w-10 h-10 mb-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  <p class="mb-2 text-sm text-slate-400"><span class="font-semibold">Click to upload</span> project image</p>
+                  <p class="text-xs text-slate-500">PNG, JPG, GIF, WebP (MAX. 5MB)</p>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Project Files Upload -->
+          <div class="space-y-1">
+            <%= f.label :project_files, "Project Files", class: "block text-sm font-medium text-slate-300 ml-1" %>
+            <div class="relative">
+              <%= f.file_field :project_files, 
+                    multiple: true,
+                    accept: ".pdf,.doc,.docx,.xls,.xlsx,.zip,.rar,.txt",
+                    class: "hidden",
+                    id: "project_files_input",
+                    onchange: "showFileNames(event)" %>
+              <label for="project_files_input" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-700 rounded-xl cursor-pointer bg-slate-800/30 hover:bg-slate-800/50 transition-all">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <svg class="w-10 h-10 mb-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                  </svg>
+                  <p class="mb-2 text-sm text-slate-400"><span class="font-semibold">Click to upload</span> project documents</p>
+                  <p class="text-xs text-slate-500">PDF, DOC, DOCX, XLS, XLSX, ZIP, RAR, TXT (MAX. 10MB each)</p>
+                </div>
+              </label>
+            </div>
+            <div id="file_names" class="mt-2 text-xs text-slate-400"></div>
+          </div>
+        </div>
+      </div>
+
       <div class="pt-4">
         <%= f.submit "Send Message",
               class: "w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-blue-900/20 transform transition active:scale-[0.98] cursor-pointer" %>
       </div>
     <% end %>
   </div>
+
+  <script>
+    // Image preview functionality
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          document.getElementById('preview_img').src = e.target.result;
+          document.getElementById('image_preview').classList.remove('hidden');
+          document.getElementById('upload_placeholder').classList.add('hidden');
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+    
+    // Show selected file names
+    function showFileNames(event) {
+      const files = event.target.files;
+      const fileNamesDiv = document.getElementById('file_names');
+      
+      if (files.length > 0) {
+        let fileList = '<div class="space-y-1"><p class="font-semibold text-slate-300 mb-2">Selected files:</p>';
+        for (let i = 0; i < files.length; i++) {
+          const fileSize = (files[i].size / 1024 / 1024).toFixed(2);
+          fileList += `<div class="flex items-center space-x-2 text-slate-400">`;
+          fileList += `<svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">`;
+          fileList += `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>`;
+          fileList += `<span>${files[i].name} (${fileSize} MB)</span>`;
+          fileList += `</div>`;
+        }
+        fileList += '</div>';
+        fileNamesDiv.innerHTML = fileList;
+      } else {
+        fileNamesDiv.innerHTML = '';
+      }
+    }
+  </script>
 </body>

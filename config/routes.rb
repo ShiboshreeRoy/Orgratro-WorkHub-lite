@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  # Intern Dashboard
+  get "intern_dashboard", to: "intern_dashboard#index", as: "intern_dashboard"
+  get "intern_dashboard/index"
+
    resources :social_task_proofs, only: [ :new, :create, :index, :show ]
 
 namespace :admin do
@@ -9,7 +13,14 @@ namespace :admin do
       get :sample_template
     end
   end
-  resources :users, only: [ :index, :show ]       # ← add this
+  resources :users, only: [ :index, :show, :destroy ] do
+    collection do
+      get :top_earners
+    end
+    member do
+      patch :update_balance
+    end
+  end
   get "referrals", to: "referrals#index", as: "referrals"
 end
 
@@ -97,6 +108,7 @@ end
 resources :user_tasks do
   member do
     post :approve
+    post :reject
   end
 end
 
@@ -115,7 +127,7 @@ resources :short_links, only: [ :create, :index ]
     get :task_analytics, to: "analytics#task_analytics"
     get :referral_analytics, to: "analytics#referral_analytics"
   end
-  
+
   # Marketing routes
   namespace :marketing do
     get :dashboard, to: "marketing#dashboard"
@@ -129,7 +141,7 @@ resources :short_links, only: [ :create, :index ]
     post :create_affiliate_program, to: "marketing#create_affiliate_program"
     get :reports, to: "marketing#marketing_reports"
   end
-  
+
   # Payment routes
   namespace :payment do
     get :dashboard, to: "payment#dashboard"

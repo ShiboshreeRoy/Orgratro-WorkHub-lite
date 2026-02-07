@@ -144,7 +144,7 @@
             <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 animate-fade-in-down">
                 <span class="text-gradient">Welcome to Orgratro WorkHub</span>
                 <span class="inline-block ml-3 px-3 py-1 rounded-full beta-badge text-xs sm:text-sm font-semibold text-white tracking-wide">
-                    Beta Version 1.0
+                    Lite Version 1.0
                 </span>
             </h1>
             
@@ -326,6 +326,160 @@
         
        
     </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-20 right-4 z-50 space-y-3 max-w-sm w-full pointer-events-none">
+    </div>
+
+    <!-- GSAP Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <script>
+        // Toast notification data from Rails
+        const topUsers = <%= raw @top_users.to_json %>;
+        const recentWithdrawals = <%= raw @recent_withdrawals.map { |w| { user_name: w.user.name.presence || w.user.email.split('@').first, amount: w.amount, created_at: w.created_at } }.to_json %>;
+        
+        // Merge and shuffle notifications
+        const notifications = [
+            ...topUsers.map(user => ({
+                type: 'top_user',
+                name: user.name || user.email.split('@')[0],
+                balance: user.balance,
+                icon: '🏆',
+                bgGradient: 'from-yellow-500/90 to-orange-600/90'
+            })),
+            ...recentWithdrawals.map(withdrawal => ({
+                type: 'withdrawal',
+                name: withdrawal.user_name,
+                amount: withdrawal.amount,
+                icon: '💸',
+                bgGradient: 'from-green-500/90 to-emerald-600/90'
+            }))
+        ];
+        
+        // Shuffle array
+        function shuffleArray(array) {
+            const shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+        
+        const shuffledNotifications = shuffleArray(notifications);
+        let currentIndex = 0;
+        
+        function createToast(notification) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast-notification bg-gradient-to-r ${notification.bgGradient} backdrop-blur-lg rounded-2xl shadow-2xl p-4 mb-3 border border-white/20 pointer-events-auto transform translate-x-full opacity-0`;
+            
+            let content = '';
+            if (notification.type === 'top_user') {
+                content = `
+                    <div class="flex items-center space-x-4">
+                        <div class="text-4xl">${notification.icon}</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-white text-sm">Top Earner Alert!</div>
+                            <div class="text-white/90 text-xs mt-1">
+                                <span class="font-semibold">${notification.name}</span> has earned
+                            </div>
+                            <div class="text-2xl font-bold text-white mt-1">
+                                $${parseFloat(notification.balance).toFixed(2)}
+                            </div>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-white/70 hover:text-white transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            } else {
+                content = `
+                    <div class="flex items-center space-x-4">
+                        <div class="text-4xl">${notification.icon}</div>
+                        <div class="flex-1">
+                            <div class="font-bold text-white text-sm">Withdrawal Success!</div>
+                            <div class="text-white/90 text-xs mt-1">
+                                <span class="font-semibold">${notification.name}</span> just withdrew
+                            </div>
+                            <div class="text-2xl font-bold text-white mt-1">
+                                $${parseFloat(notification.amount).toFixed(2)}
+                            </div>
+                        </div>
+                        <button onclick="this.parentElement.parentElement.remove()" class="text-white/70 hover:text-white transition">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                `;
+            }
+            
+            toast.innerHTML = content;
+            container.appendChild(toast);
+            
+            // GSAP Animation - Slide in from right with bounce
+            gsap.to(toast, {
+                x: 0,
+                opacity: 1,
+                duration: 0.6,
+                ease: "back.out(1.7)",
+                onComplete: () => {
+                    // Pulse effect
+                    gsap.to(toast, {
+                        scale: 1.05,
+                        duration: 0.3,
+                        yoyo: true,
+                        repeat: 1,
+                        ease: "power2.inOut"
+                    });
+                }
+            });
+            
+            // Auto remove after 6 seconds with slide out animation
+            setTimeout(() => {
+                gsap.to(toast, {
+                    x: 400,
+                    opacity: 0,
+                    duration: 0.5,
+                    ease: "back.in(1.7)",
+                    onComplete: () => toast.remove()
+                });
+            }, 6000);
+            
+            // Remove old toasts if more than 3
+            const toasts = container.querySelectorAll('.toast-notification');
+            if (toasts.length > 3) {
+                gsap.to(toasts[0], {
+                    x: 400,
+                    opacity: 0,
+                    duration: 0.4,
+                    ease: "power2.in",
+                    onComplete: () => toasts[0].remove()
+                });
+            }
+        }
+        
+        // Show notifications periodically
+        function showNextNotification() {
+            if (shuffledNotifications.length === 0) return;
+            
+            createToast(shuffledNotifications[currentIndex]);
+            currentIndex = (currentIndex + 1) % shuffledNotifications.length;
+            
+            // Random interval between 5-10 seconds
+            const nextDelay = 5000 + Math.random() * 5000;
+            setTimeout(showNextNotification, nextDelay);
+        }
+        
+        // Start showing notifications after 3 seconds
+        if (shuffledNotifications.length > 0) {
+            setTimeout(showNextNotification, 3000);
+        }
+    </script>
 
     <script>
         // Simple accordion for FAQ

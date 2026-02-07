@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
+ActiveRecord::Schema[7.2].define(version: 2026_02_07_011950) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -104,26 +104,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.index ["user_id"], name: "index_asks_on_user_id"
   end
 
-  create_table "audit_logs", force: :cascade do |t|
-    t.bigint "user_id"
-    t.string "action", null: false
-    t.string "resource_type", null: false
-    t.integer "resource_id"
-    t.text "changes"
-    t.text "previous_values"
-    t.text "ip_address"
-    t.text "user_agent"
-    t.text "session_id"
-    t.jsonb "metadata"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["action"], name: "index_audit_logs_on_action"
-    t.index ["created_at"], name: "index_audit_logs_on_created_at"
-    t.index ["resource_type", "resource_id"], name: "index_audit_logs_on_resource_type_and_resource_id"
-    t.index ["user_id", "created_at"], name: "index_audit_logs_on_user_id_and_created_at"
-    t.index ["user_id"], name: "index_audit_logs_on_user_id"
-  end
-
   create_table "clicks", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.bigint "link_id", null: false
@@ -131,10 +111,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.datetime "updated_at", null: false
     t.bigint "learn_and_earn_id"
     t.index ["learn_and_earn_id"], name: "index_clicks_on_learn_and_earn_id"
-    t.index ["link_id", "created_at"], name: "index_clicks_on_link_id_and_created_at"
     t.index ["link_id"], name: "index_clicks_on_link_id"
-    t.index ["user_id", "created_at"], name: "index_clicks_on_user_id_and_created_at"
-    t.index ["user_id", "link_id"], name: "index_clicks_on_user_id_and_link_id", unique: true
     t.index ["user_id"], name: "index_clicks_on_user_id"
   end
 
@@ -146,6 +123,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.string "project_name"
+    t.text "project_description"
+    t.string "project_url"
+    t.text "address"
+    t.string "contact_number"
     t.index ["user_id"], name: "index_contact_messages_on_user_id"
   end
 
@@ -196,10 +178,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.datetime "updated_at", null: false
     t.bigint "learn_and_earn_id"
     t.integer "total_clicks", default: 0, null: false
-    t.index ["created_at"], name: "index_links_on_created_at"
     t.index ["learn_and_earn_id"], name: "index_links_on_learn_and_earn_id"
     t.index ["url"], name: "index_links_on_url", unique: true
-    t.index ["user_id", "created_at"], name: "index_links_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_links_on_user_id"
   end
 
@@ -210,8 +190,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id", "created_at"], name: "index_notifications_on_user_id_and_created_at"
-    t.index ["user_id", "read"], name: "index_notifications_on_user_id_and_read"
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
@@ -250,13 +228,11 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.boolean "claimed", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.boolean "reward_processed", default: false
-    t.decimal "processed_reward_amount", precision: 16, scale: 8
-    t.index ["referred_user_id", "created_at"], name: "index_referrals_on_referred_user_id_and_created_at"
+    t.integer "uses_remaining"
+    t.boolean "single_use"
+    t.integer "max_uses", default: 1
     t.index ["referred_user_id"], name: "index_referrals_on_referred_user_id"
-    t.index ["referrer_id", "created_at"], name: "index_referrals_on_referrer_id_and_created_at"
     t.index ["referrer_id"], name: "index_referrals_on_referrer_id"
-    t.index ["reward_processed"], name: "index_referrals_on_reward_processed"
     t.index ["token"], name: "index_referrals_on_token", unique: true
   end
 
@@ -279,9 +255,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.datetime "updated_at", null: false
     t.integer "admin_id"
     t.index ["admin_id"], name: "index_social_task_proofs_on_admin_id"
-    t.index ["status", "created_at"], name: "index_social_task_proofs_on_status_and_created_at"
     t.index ["task_id"], name: "index_social_task_proofs_on_task_id"
-    t.index ["user_id", "created_at"], name: "index_social_task_proofs_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_social_task_proofs_on_user_id"
   end
 
@@ -314,29 +288,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
-    t.string "category"
-    t.string "difficulty_level"
-    t.decimal "reward_amount", precision: 16, scale: 8
-    t.integer "quality_score"
-    t.string "status", default: "pending"
-    t.index ["category"], name: "index_tasks_on_category"
-    t.index ["difficulty_level"], name: "index_tasks_on_difficulty_level"
-    t.index ["status"], name: "index_tasks_on_status"
     t.index ["user_id"], name: "index_tasks_on_user_id"
   end
 
   create_table "transactions", force: :cascade do |t|
     t.bigint "user_id", null: false
-    t.decimal "amount", precision: 16, scale: 8, null: false
+    t.decimal "amount", precision: 20, scale: 10, null: false
     t.string "transaction_type", null: false
     t.text "description"
-    t.decimal "balance_after", precision: 16, scale: 8
-    t.string "reference_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["transaction_type"], name: "index_transactions_on_transaction_type"
     t.index ["user_id", "created_at"], name: "index_transactions_on_user_id_and_created_at"
-    t.index ["user_id", "transaction_type"], name: "index_transactions_on_user_id_and_transaction_type"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
@@ -392,10 +355,7 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.boolean "approved"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["task_id", "created_at"], name: "index_user_tasks_on_task_id_and_created_at"
     t.index ["task_id"], name: "index_user_tasks_on_task_id"
-    t.index ["user_id", "created_at"], name: "index_user_tasks_on_user_id_and_created_at"
-    t.index ["user_id", "task_id"], name: "index_user_tasks_on_user_id_and_task_id", unique: true
     t.index ["user_id"], name: "index_user_tasks_on_user_id"
   end
 
@@ -419,13 +379,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.integer "total_referrals", default: 0
     t.decimal "referral_balance", precision: 16, scale: 8, default: "0.0", null: false
     t.bigint "referred_by_id"
-    t.boolean "email_verified"
-    t.string "email_verification_token"
-    t.datetime "email_verification_sent_at"
-    t.string "otp_secret"
-    t.boolean "otp_required_for_login"
-    t.text "otp_backup_codes"
-    t.boolean "two_factor_enabled"
     t.datetime "last_active_at"
     t.integer "total_clicks"
     t.decimal "total_earnings"
@@ -435,15 +388,18 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.datetime "subscription_start_date"
     t.datetime "subscription_end_date"
     t.boolean "is_subscribed", default: false
+    t.boolean "is_intern", default: true
+    t.integer "intern_level", default: 1
+    t.integer "intern_tasks_completed", default: 0
+    t.boolean "intern_graduated", default: false
+    t.boolean "allow_dashboard_access", default: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["is_subscribed"], name: "index_users_on_is_subscribed"
     t.index ["referred_by_id"], name: "index_users_on_referred_by_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
-    t.index ["role", "created_at"], name: "index_users_on_role_and_created_at"
     t.index ["subscription_end_date"], name: "index_users_on_subscription_end_date"
     t.index ["subscription_plan_id"], name: "index_users_on_subscription_plan_id"
     t.index ["subscription_start_date"], name: "index_users_on_subscription_start_date"
-    t.index ["suspended", "created_at"], name: "index_users_on_suspended_and_created_at"
   end
 
   create_table "withdrawals", force: :cascade do |t|
@@ -452,15 +408,8 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
     t.string "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "payment_method"
-    t.string "transaction_id"
-    t.datetime "processed_at"
-    t.string "failure_reason"
-    t.string "fraud_reason"
-    t.string "crypto_address"
     t.text "payment_details"
-    t.index ["status", "created_at"], name: "index_withdrawals_on_status_and_created_at"
-    t.index ["user_id", "created_at"], name: "index_withdrawals_on_user_id_and_created_at"
+    t.string "payment_method"
     t.index ["user_id"], name: "index_withdrawals_on_user_id"
   end
 
@@ -469,7 +418,6 @@ ActiveRecord::Schema[7.2].define(version: 2026_02_03_140000) do
   add_foreign_key "affiliate_relationships", "affiliate_programs"
   add_foreign_key "affiliate_relationships", "users"
   add_foreign_key "asks", "users"
-  add_foreign_key "audit_logs", "users"
   add_foreign_key "clicks", "learn_and_earns"
   add_foreign_key "clicks", "links"
   add_foreign_key "clicks", "users"

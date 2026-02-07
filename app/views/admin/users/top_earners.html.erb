@@ -1,0 +1,269 @@
+<div class=" bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white">
+  <div class="container mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <div class="flex justify-between items-center mb-4">
+        <%= link_to admin_users_path, class: "inline-flex items-center text-blue-400 hover:text-blue-300 transition" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+          </svg>
+          Back to All Users
+        <% end %>
+        
+        <%= link_to admin_dashbord_index_path, class: "inline-flex items-center text-gray-400 hover:text-gray-300 transition" do %>
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+          </svg>
+          Dashboard
+        <% end %>
+      </div>
+      
+      <div class="bg-gradient-to-r from-yellow-600 to-orange-600 rounded-2xl p-8 shadow-2xl">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-4xl font-bold mb-2 flex items-center">
+              <span class="text-5xl mr-3">🏆</span>
+              Top Users by Balance
+            </h1>
+            <p class="text-yellow-100 text-lg">Top <%= @top_users.count %> highest balance users</p>
+          </div>
+          <div class="text-right">
+            <p class="text-yellow-100 text-sm">Total Platform</p>
+            <p class="text-3xl font-bold">$<%= number_with_precision(@total_balance, precision: 2, delimiter: ',') %></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+      <div class="bg-gradient-to-br from-blue-500/20 to-blue-600/20 backdrop-blur-lg border border-blue-500/30 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-blue-300 text-sm font-semibold uppercase">Total Users</h3>
+          <span class="text-3xl">👥</span>
+        </div>
+        <p class="text-4xl font-bold text-blue-400"><%= number_with_delimiter(@total_users) %></p>
+      </div>
+
+      <div class="bg-gradient-to-br from-green-500/20 to-green-600/20 backdrop-blur-lg border border-green-500/30 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-green-300 text-sm font-semibold uppercase">Total Balance</h3>
+          <span class="text-3xl">💰</span>
+        </div>
+        <p class="text-4xl font-bold text-green-400">$<%= number_with_precision(@total_balance, precision: 2, delimiter: ',') %></p>
+      </div>
+
+      <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/20 backdrop-blur-lg border border-purple-500/30 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-purple-300 text-sm font-semibold uppercase">Average Balance</h3>
+          <span class="text-3xl">📊</span>
+        </div>
+        <p class="text-4xl font-bold text-purple-400">$<%= number_with_precision(@average_balance, precision: 2) %></p>
+      </div>
+
+      <div class="bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 backdrop-blur-lg border border-yellow-500/30 rounded-xl p-6">
+        <div class="flex items-center justify-between mb-2">
+          <h3 class="text-yellow-300 text-sm font-semibold uppercase">Top 10 Total</h3>
+          <span class="text-3xl">🔝</span>
+        </div>
+        <p class="text-4xl font-bold text-yellow-400">$<%= number_with_precision(@top_10_balance, precision: 2, delimiter: ',') %></p>
+      </div>
+    </div>
+
+    <!-- Top Users Table -->
+    <div class="bg-gray-800/50 backdrop-blur-lg border border-gray-700 rounded-xl shadow-2xl overflow-hidden">
+      <div class="p-6 border-b border-gray-700">
+        <h2 class="text-2xl font-bold">Leaderboard</h2>
+      </div>
+      
+      <% if @top_users.any? %>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead>
+              <tr class="bg-gray-700/50 border-b border-gray-700">
+                <th class="text-left py-4 px-6 text-gray-300 font-semibold">Rank</th>
+                <th class="text-left py-4 px-6 text-gray-300 font-semibold">User</th>
+                <th class="text-left py-4 px-6 text-gray-300 font-semibold">Email</th>
+                <th class="text-left py-4 px-6 text-gray-300 font-semibold">Balance</th>
+                <th class="text-left py-4 px-6 text-gray-300 font-semibold">Wallet Balance</th>
+                <th class="text-left py-4 px-6 text-gray-300 font-semibold">Referral Balance</th>
+                <th class="text-left py-4 px-6 text-gray-300 font-semibold">Status</th>
+                <th class="text-center py-4 px-6 text-gray-300 font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @top_users.each_with_index do |user, index| %>
+                <tr class="border-b border-gray-800 hover:bg-gray-700/30 transition <%= 'bg-yellow-900/20' if index < 3 %>">
+                  <td class="py-4 px-6">
+                    <div class="flex items-center">
+                      <% if index == 0 %>
+                        <span class="text-3xl">🥇</span>
+                      <% elsif index == 1 %>
+                        <span class="text-3xl">🥈</span>
+                      <% elsif index == 2 %>
+                        <span class="text-3xl">🥉</span>
+                      <% else %>
+                        <span class="text-xl font-bold text-gray-400">#<%= index + 1 %></span>
+                      <% end %>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex items-center">
+                      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold mr-3">
+                        <%= user.name.presence&.first&.upcase || user.email.first.upcase %>
+                      </div>
+                      <div>
+                        <p class="text-white font-semibold"><%= user.name.presence || 'N/A' %></p>
+                        <p class="text-gray-400 text-xs">ID: #<%= user.id %></p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-gray-300"><%= user.email %></td>
+                  <td class="py-4 px-6">
+                    <div class="flex items-center gap-2">
+                      <span class="text-2xl font-bold text-green-400">$<%= number_with_precision(user.balance || 0, precision: 6) %></span>
+                      <button onclick="openBalanceModal(<%= user.id %>, '<%= user.email %>', <%= user.balance || 0 %>)" 
+                              class="text-blue-400 hover:text-blue-300 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="py-4 px-6 text-blue-400 font-semibold">$<%= number_with_precision(user.wallet_balance || 0, precision: 6) %></td>
+                  <td class="py-4 px-6 text-purple-400 font-semibold">$<%= number_with_precision(user.referral_balance || 0, precision: 6) %></td>
+                  <td class="py-4 px-6">
+                    <% if user.suspended? %>
+                      <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm font-semibold">🚫 Suspended</span>
+                    <% else %>
+                      <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-semibold">✅ Active</span>
+                    <% end %>
+                  </td>
+                  <td class="py-4 px-6">
+                    <div class="flex items-center justify-center gap-2">
+                      <%= link_to admin_user_path(user), class: "inline-flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition" do %>
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        View
+                      <% end %>
+                      
+                      <%= button_to toggle_suspend_admin_path(user), method: :patch, 
+                          class: "inline-flex items-center px-3 py-2 #{user.suspended? ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-600 hover:bg-yellow-700'} text-white text-sm font-medium rounded-lg transition",
+                          data: { confirm: "Are you sure you want to #{user.suspended? ? 'activate' : 'suspend'} this user?" } do %>
+                        <%= user.suspended? ? '✅' : '🚫' %>
+                      <% end %>
+                    </div>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      <% else %>
+        <div class="text-center py-12">
+          <p class="text-xl text-gray-400">No users found</p>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Balance Distribution Chart Section -->
+    <div class="mt-8 bg-gray-800/50 backdrop-blur-lg border border-gray-700 rounded-xl p-6 shadow-lg">
+      <h2 class="text-2xl font-bold mb-6">Quick Stats</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-gray-700/50 p-6 rounded-xl text-center">
+          <p class="text-gray-400 mb-2">Users with Balance > $100</p>
+          <p class="text-4xl font-bold text-green-400"><%= @top_users.where('balance > ?', 100).count %></p>
+        </div>
+        <div class="bg-gray-700/50 p-6 rounded-xl text-center">
+          <p class="text-gray-400 mb-2">Users with Balance > $500</p>
+          <p class="text-4xl font-bold text-blue-400"><%= @top_users.where('balance > ?', 500).count %></p>
+        </div>
+        <div class="bg-gray-700/50 p-6 rounded-xl text-center">
+          <p class="text-gray-400 mb-2">Users with Balance > $1000</p>
+          <p class="text-4xl font-bold text-purple-400"><%= @top_users.where('balance > ?', 1000).count %></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Balance Update Modal -->
+<div id="balanceModal" class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center">
+  <div class="bg-gray-800 rounded-2xl p-8 max-w-md w-full mx-4 border border-gray-700 shadow-2xl">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-2xl font-bold text-white">Update Balance</h3>
+      <button onclick="closeBalanceModal()" class="text-gray-400 hover:text-white transition">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    
+    <%= form_with url: '', method: :patch, id: 'balanceForm', class: 'space-y-4', local: true do |f| %>
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+      <div>
+        <label class="block text-gray-300 mb-2 font-semibold">User Email</label>
+        <input type="text" id="modalUserEmail" readonly class="w-full px-4 py-3 bg-gray-700 text-gray-400 rounded-lg" />
+      </div>
+      
+      <div>
+        <label class="block text-gray-300 mb-2 font-semibold">Current Balance</label>
+        <input type="text" id="modalCurrentBalance" readonly class="w-full px-4 py-3 bg-gray-700 text-gray-400 rounded-lg" />
+      </div>
+      
+      <div>
+        <label class="block text-white mb-2 font-semibold">New Balance</label>
+        <input type="number" name="balance" id="modalNewBalance" step="0.000001" required 
+               class="w-full px-4 py-3 bg-gray-900 text-white rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none" 
+               placeholder="Enter new balance" />
+      </div>
+      
+      <div class="flex gap-3 mt-6">
+        <button type="button" onclick="closeBalanceModal()" 
+                class="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition">
+          Cancel
+        </button>
+        <button type="submit" 
+                class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition">
+          Update Balance
+        </button>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<script>
+function openBalanceModal(userId, userEmail, currentBalance) {
+  const modal = document.getElementById('balanceModal');
+  const form = document.getElementById('balanceForm');
+  
+  form.action = '/admin/users/' + userId + '/update_balance';
+  document.getElementById('modalUserEmail').value = userEmail;
+  document.getElementById('modalCurrentBalance').value = '$' + parseFloat(currentBalance).toFixed(6);
+  document.getElementById('modalNewBalance').value = parseFloat(currentBalance).toFixed(6);
+  
+  modal.classList.remove('hidden');
+}
+
+function closeBalanceModal() {
+  const modal = document.getElementById('balanceModal');
+  modal.classList.add('hidden');
+  document.getElementById('modalNewBalance').value = '';
+}
+
+// Close modal on outside click
+document.getElementById('balanceModal')?.addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeBalanceModal();
+  }
+});
+
+// Close modal on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    closeBalanceModal();
+  }
+});
+</script>

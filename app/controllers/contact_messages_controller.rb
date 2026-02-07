@@ -30,6 +30,12 @@ class ContactMessagesController < ApplicationController
   private
 
   def contact_message_params
-    params.require(:contact_message).permit(:name, :email, :subject, :message)
+    params.require(:contact_message).permit(
+      :name, :email, :subject, :message,
+      :project_name, :project_description, :project_url,
+      :address, :contact_number,
+      :project_image,
+      project_files: []
+    )
   end
 end

@@ -1,6 +1,6 @@
 class UserTasksController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_user_task, only: [:edit, :update, :approve]
+  before_action :set_user_task, only: [ :edit, :update, :approve, :reject ]
 
   def index
     if current_user.admin?
@@ -42,6 +42,15 @@ class UserTasksController < ApplicationController
     if current_user.admin?
       @user_task.update(approved: true)
       redirect_to user_tasks_path, notice: "Task approved!"
+    else
+      redirect_to root_path, alert: "Access denied"
+    end
+  end
+
+  def reject
+    if current_user.admin?
+      @user_task.destroy
+      redirect_to user_tasks_path, notice: "Task rejected and removed."
     else
       redirect_to root_path, alert: "Access denied"
     end

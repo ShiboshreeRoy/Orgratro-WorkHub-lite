@@ -1,14 +1,26 @@
 class WelcomeController < ApplicationController
   def index
     @active_user = User.all
-     
+
     @referrals = Referral.includes(:user, :referrer).order(created_at: :desc)
     @recent_referred = Referral.includes(:user, :referrer)
                            .where.not(user_id: nil)
                            .order(created_at: :desc)
                            .limit(10)
 
- 
+    # Top users by balance for toast notifications
+    @top_users = User.where.not(balance: nil)
+                     .where("balance > ?", 0)
+                     .order(balance: :desc)
+                     .limit(10)
+                     .select(:id, :name, :email, :balance)
+
+    # Recent withdrawals for toast notifications
+    @recent_withdrawals = Withdrawal.includes(:user)
+                                    .where(status: "approved")
+                                    .order(created_at: :desc)
+                                    .limit(10)
+                                    .select(:id, :user_id, :amount, :created_at)
   end
 
   def about
@@ -17,7 +29,7 @@ class WelcomeController < ApplicationController
   def service
   end
 
-  def contact_us 
+  def contact_us
   end
 
   def about_developer
