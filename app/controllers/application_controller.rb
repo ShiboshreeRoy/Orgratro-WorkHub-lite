@@ -14,6 +14,12 @@ class ApplicationController < ActionController::Base
     redirect_to new_user_session_path unless user_signed_in?
   end
 
+  def admin_user?
+    current_user&.admin?
+  end
+
+  helper_method :admin_user?
+
   private
 
   def warden

@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   resource :profile
 
   namespace :admin do
+    resources :notifications, only: [ :index ]
   end
   # Intern Dashboard
   get "intern_dashboard", to: "intern_dashboard#index", as: "intern_dashboard"

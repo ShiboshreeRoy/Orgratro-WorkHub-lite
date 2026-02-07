@@ -8,59 +8,7 @@
 <body class="bg-black text-blue-300 ">
   <div class="flex flex-col md:flex-row mt-16 h-screen overflow-hidden">
     
-    <!-- Global Notification Form -->
-    <% if current_user.admin? %>
-      <div class="w-full bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-6 border-b border-blue-700/50">
-        <div class="max-w-4xl mx-auto">
-          <h2 class="text-xl font-bold text-blue-300 mb-4 flex items-center gap-2">
-            <i class="fas fa-bullhorn"></i> Send Global Notification
-          </h2>
-          
-          <%= form_with url: create_global_notifications_path, method: :post, local: true, class: "space-y-4" do |form| %>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <%= form.label :title, "Title", class: "block text-sm font-medium text-blue-200 mb-1" %>
-                <%= form.text_field :title, required: true, class: "w-full p-3 bg-gray-800 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400" %>
-              </div>
-              
-              <div>
-                <%= form.label :notification_type, "Type", class: "block text-sm font-medium text-blue-200 mb-1" %>
-                <%= form.select :notification_type, options_for_select([
-                  ['Announcement', 'announcement'],
-                  ['System Update', 'update'],
-                  ['Warning', 'warning'],
-                  ['Information', 'info']
-                ]), {}, class: "w-full p-3 bg-gray-800 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400" %>
-              </div>
-            </div>
-            
-            <div>
-              <%= form.label :message, "Message", class: "block text-sm font-medium text-blue-200 mb-1" %>
-              <%= form.text_area :message, rows: 3, required: true, class: "w-full p-3 bg-gray-800 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400 resize-none" %>
-            </div>
-            
-            <div class="flex flex-wrap gap-4 items-end">
-              <div>
-                <%= form.label :priority, "Priority", class: "block text-sm font-medium text-blue-200 mb-1" %>
-                <%= form.select :priority, options_for_select([
-                  ['Low', 'low'],
-                  ['Medium', 'medium'],
-                  ['High', 'high'],
-                  ['Urgent', 'urgent']
-                ], 'medium'), {}, class: "p-3 bg-gray-800 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400" %>
-              </div>
-              
-              <div>
-                <%= form.label :expires_in, "Expires In (hours)", class: "block text-sm font-medium text-blue-200 mb-1" %>
-                <%= form.number_field :expires_in, min: 1, max: 168, placeholder: "24", class: "p-3 bg-gray-800 text-blue-100 border border-blue-400 rounded-lg focus:ring-2 focus:ring-blue-400" %>
-              </div>
-              
-              <%= form.submit "Send to All Users", class: "bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200" %>
-            </div>
-          <% end %>
-        </div>
-      </div>
-    <% end %>
+
     
     <!-- Sidebar -->
     <aside class="w-full md:w-64 bg-gray-900 text-white flex-shrink-0 p-4 space-y-6 overflow-y-auto md:overflow-visible h-auto md:h-full">
@@ -103,6 +51,10 @@
         <%= link_to  new_task_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
          <i class="fa-solid fa-list-check"></i> Add Task
         <% end %>
+        
+        <%= link_to admin_notifications_path, class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+          <i class="fas fa-bell"></i> Manage Notifications
+        <% end %>
         <%= link_to "/links/new", class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-link"></i> Create Short Link
         <% end %>
@@ -120,7 +72,7 @@
         <% end %>
 
 
-        <%= link_to new_admin_notification_path,class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
+        <%= link_to admin_notifications_path,class: "flex items-center gap-3 hover:text-blue-400 transition" do %>
           <i class="fas fa-bell "></i> Send Notifications
         <% end %>
 
@@ -155,9 +107,7 @@
         <div class="flex items-center gap-2 text-sm">
           <i class="fas fa-bell text-blue-300"></i>
         <span>Welcome
-        <%= if current_user.admin?
-        current_user.name.present? ? current_user.name : current_user.email.split("@").first.capitalize
-        end %>
+        <%= current_user.name.present? ? current_user.name : current_user.email.split("@").first.capitalize %>
       </span>
 
         </div>

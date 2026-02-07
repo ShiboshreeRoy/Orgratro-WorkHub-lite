@@ -1,30 +1,17 @@
 class Admin::NotificationsController < ApplicationController
-  #before_action :authenticate_admin! # use Devise or custom logic
   before_action :authenticate_user!
+  before_action :require_admin!
 
-  def new
-    @users = User.all
+  def index
+    @notifications = Notification.includes(:user)
+                               .order(created_at: :desc)
+                               .limit(20)
+    @total_notifications = Notification.count
   end
 
-  def create
-    selected_ids = params[:user_ids]
-    title = params[:notification][:title]
-    message = params[:notification][:message]
+  private
 
-    if selected_ids.blank? || title.blank? || message.blank?
-      redirect_to new_admin_notification_path, alert: "Please fill in all fields and select users."
-      return
-    end
-
-    selected_ids.each do |user_id|
-      Notification.create!(
-        user_id: user_id,
-        title: title,
-        message: message,
-        read: false
-      )
-    end
-
-    redirect_to new_admin_notification_path, notice: "Notification sent successfully!"
+  def require_admin!
+    redirect_to root_path, alert: "Access denied. Admin privileges required." unless current_user.admin?
   end
 end
